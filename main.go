@@ -11,10 +11,10 @@ type FileLoader interface {
 type TagType string
 
 var (
-	Why      TagType = "WHY"
-	Readme   TagType = "README"
-	FileLine TagType = "FILELINE"
-	Flag     TagType = "FLAG"
+	TagWhy      TagType = "WHY"
+	TagReadme   TagType = "README"
+	TagFileLine TagType = "FILELINE"
+	TagFlag     TagType = "FLAG"
 )
 
 type Tag struct {
@@ -34,7 +34,7 @@ type TagFinder interface {
 
 type ProcessedTag struct {
 	Type  TagType
-	Value interface{}
+	Value string
 }
 
 type TagProcessor interface {
@@ -42,6 +42,7 @@ type TagProcessor interface {
 }
 
 type Generator interface {
+	Generate(tags []ProcessedTag) (io.Reader, error)
 }
 
 func main() {
