@@ -11,10 +11,10 @@ import (
 type TagType string
 
 var (
-	Why      TagType = "WHY"
-	Readme   TagType = "README"
-	FileLine TagType = "FILELINE"
-	Flag     TagType = "FLAG"
+	TagWhy      TagType = "WHY"
+	TagReadme   TagType = "README"
+	TagFileLine TagType = "FILELINE"
+	TagFlag     TagType = "FLAG"
 )
 
 type Tag struct {
@@ -37,8 +37,9 @@ type TagFinder interface {
 }
 
 type ProcessedTag struct {
-	Type  TagType
-	Value interface{}
+	Type     TagType
+	Value    string
+	Children []ProcessedTag
 }
 
 type TagProcessor interface {
