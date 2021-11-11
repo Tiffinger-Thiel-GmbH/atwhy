@@ -1,7 +1,10 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"io"
+	"strings"
 )
 
 type TagType string
@@ -45,8 +48,26 @@ type TagProcessor interface {
 type Generator interface {
 }
 
+type FakeFinder struct {
+}
+
+func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []Tag, err error) {
+	return []Tag{
+		{Type: TagReadme, Filename: filename, Line: 5, Value: "jdfglh"},
+	}, nil
+}
+
 func main() {
-	/* var finder TagFinder = Finder{}
-	var loader FileLoader = Loader{}
-	loader.Load("", finder) */
+	ext := flag.String("ext", "", "")
+	flag.Parse()
+	path := flag.Arg(0)
+	fileExtensions := strings.Split(*ext, ",")
+
+	var finder TagFinder = FakeFinder{}
+	var loader FileLoader = Loader{fileExtensions}
+	tags, err := loader.Load(path, finder)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(tags)
 }

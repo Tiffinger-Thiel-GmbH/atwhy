@@ -1,6 +1,8 @@
 package main
 
-import "internal/itoa"
+import (
+	"strconv"
+)
 
 /**
  * @FILELINE
@@ -26,7 +28,7 @@ func (p Processor) Process(tags []Tag) ([]ProcessedTag, error) {
 
 		switch t.Type {
 		case TagFileLine:
-			filename := t.Filename + ":" + itoa.Itoa(t.Line)
+			filename := t.Filename + ":" + strconv.Itoa(t.Line)
 			lastChildren = append(lastChildren, ProcessedTag{
 				Type:  t.Type,
 				Value: "[" + filename + "](" + filename + ")",

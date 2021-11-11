@@ -16,17 +16,20 @@ func (l Loader) Load(dir string, finder TagFinder) ([]Tag, error) {
 	allTags := []Tag{}
 
 	err := afero.Walk(AppFs, dir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 
 		if info.IsDir() {
 			return nil
 		}
 
-		hasFoundExtension := true
+		hasFoundExtension := false
 
 		for _, e := range l.FileExtensions {
 			fileName := info.Name()
-			if !strings.HasSuffix(fileName, e) {
-				hasFoundExtension = false
+			if strings.HasSuffix(fileName, e) {
+				hasFoundExtension = true
 			}
 		}
 
