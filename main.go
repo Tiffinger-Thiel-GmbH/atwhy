@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"io"
-)
+	"io/fs"
 
-type FileLoader interface {
-}
+	"github.com/spf13/afero"
+)
 
 type TagType string
 
@@ -24,8 +24,12 @@ type Tag struct {
 	Value    string
 }
 
+type FileLoader interface {
+	Load(dir string, finder TagFinder) (allTags []Tag, err error)
+}
+
 type TagFinder interface {
-	Find(filename string, reader io.Reader) ([]Tag, error)
+	Find(filename string, reader io.Reader) error
 	// SaveByTag()
 	// scan()
 	// findTag()
@@ -33,8 +37,9 @@ type TagFinder interface {
 }
 
 type ProcessedTag struct {
-	Type  TagType
-	Value string
+	Type     TagType
+	Value    string
+	Children []ProcessedTag
 }
 
 type TagProcessor interface {
@@ -46,5 +51,13 @@ type Generator interface {
 }
 
 func main() {
-	fmt.Println("Hello World")
+	var AppFs = afero.NewOsFs()
+
+	err := afero.Walk(AppFs, "../GoKt", func(path string, info fs.FileInfo, err error) error {
+		fmt.Println(path)
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
 }
