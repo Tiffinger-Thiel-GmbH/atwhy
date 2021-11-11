@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"strings"
 
 	"github.com/spf13/afero"
 )
@@ -47,7 +48,7 @@ type TagProcessor interface {
 }
 
 type Generator interface {
-	Generate(tags []ProcessedTag) (io.Reader, error)
+	Generate(tags []ProcessedTag, writer io.Writer) error
 }
 
 func main() {
@@ -60,4 +61,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	var tags []ProcessedTag = []ProcessedTag{{Type: TagReadme, Value: "# Config \n ## API \n Test 123", Children: []ProcessedTag{{Type: TagFileLine, Value: "[13:1]", Children: nil}}}}
+
+	var g Generate = Generate{}
+	b := strings.Builder{}
+	fmt.Println(g.Generate(tags, &b))
+	fmt.Println(b.String())
 }

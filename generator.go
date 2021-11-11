@@ -6,13 +6,15 @@ import (
 )
 
 func MarkdownMapper(t ProcessedTag) string {
-	t.Value = strings.ReplaceAll(t.Value, "#", "##")
+	t.Value = strings.ReplaceAll(t.Value, "# ", "## ")
 	result := strings.Split(t.Value, "\n")
-	for _, c := range t.Children {
-		if c.Type == TagFileLine {
-			result = append(result, "")
-			copy(result[2:], result[1:])
-			result[1] = c.Value
+	if t.Children != nil {
+		for _, c := range t.Children {
+			if c.Type == TagFileLine {
+				result = append(result, "")
+				copy(result[2:], result[1:])
+				result[1] = c.Value
+			}
 		}
 	}
 
@@ -22,17 +24,16 @@ func MarkdownMapper(t ProcessedTag) string {
 type Generate struct {
 }
 
-func (mG Generate) Generate(tags []ProcessedTag) (io.Reader, error) {
-	var result []string
+func (mG Generate) Generate(tags []ProcessedTag, writer io.Writer) error {
 	for _, t := range tags {
 		switch t.Type {
 		case TagReadme:
-			result = append(result, MarkdownMapper(t))
+			writer.Write([]byte(MarkdownMapper(t)))
+			writer.Write([]byte("\n"))
 		}
 	}
-	// resultString := strings.Join(result, "\n")
 
-	return nil, nil
+	return nil
 }
 
 // check if really implements everything from Generator interface
