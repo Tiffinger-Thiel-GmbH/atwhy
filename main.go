@@ -1,12 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
-	"io/fs"
 	"strings"
-
-	"github.com/spf13/afero"
 )
 
 type TagType string
@@ -30,7 +28,7 @@ type FileLoader interface {
 }
 
 type TagFinder interface {
-	Find(filename string, reader io.Reader) error
+	Find(filename string, reader io.Reader) (tags []Tag, err error)
 	// SaveByTag()
 	// scan()
 	// findTag()
@@ -51,21 +49,32 @@ type Generator interface {
 	Generate(tags []ProcessedTag, writer io.Writer) error
 }
 
-func main() {
-	var AppFs = afero.NewOsFs()
+type FakeFinder struct {
+}
 
-	err := afero.Walk(AppFs, "../GoKt", func(path string, info fs.FileInfo, err error) error {
-		fmt.Println(path)
-		return nil
-	})
+func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []Tag, err error) {
+	return []Tag{
+		{Type: TagReadme, Filename: filename, Line: 5, Value: "jdfglh"},
+	}, nil
+}
+
+func main() {
+	ext := flag.String("ext", "", "")
+	flag.Parse()
+	path := flag.Arg(0)
+	fileExtensions := strings.Split(*ext, ",")
+
+	var finder TagFinder = FakeFinder{}
+	var loader FileLoader = Loader{fileExtensions}
+	_, err := loader.Load(path, finder)
 	if err != nil {
 		panic(err)
 	}
 
-	var tags []ProcessedTag = []ProcessedTag{{Type: TagReadme, Value: "# Config \n ## API \n Test 123", Children: []ProcessedTag{{Type: TagFileLine, Value: "[13:1]", Children: nil}}}}
+	var mockedTags []ProcessedTag = []ProcessedTag{{Type: TagReadme, Value: "# Config \n ## API \n Test 123", Children: []ProcessedTag{{Type: TagFileLine, Value: "[13:1]", Children: nil}}}}
 
 	var g Generate = Generate{}
 	b := strings.Builder{}
-	fmt.Println(g.Generate(tags, &b))
+	fmt.Println(g.Generate(mockedTags, &b))
 	fmt.Println(b.String())
 }
