@@ -16,8 +16,14 @@ type Processor struct{}
 func (p Processor) Process(tags []Tag) ([]ProcessedTag, error) {
 	var processed []ProcessedTag
 	var lastChildren []ProcessedTag
+	var currentFile string
 
 	for _, t := range tags {
+		if currentFile != t.Filename {
+			lastChildren = nil
+		}
+		currentFile = t.Filename
+
 		switch t.Type {
 		case TagFileLine:
 			filename := t.Filename + ":" + itoa.Itoa(t.Line)
