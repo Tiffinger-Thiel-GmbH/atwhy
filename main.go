@@ -1,11 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"io"
-	"io/fs"
-
-	"github.com/spf13/afero"
 )
 
 type TagType string
@@ -29,7 +25,7 @@ type FileLoader interface {
 }
 
 type TagFinder interface {
-	Find(filename string, reader io.Reader) error
+	Find(filename string, reader io.Reader) (tags []Tag, err error)
 	// SaveByTag()
 	// scan()
 	// findTag()
@@ -50,13 +46,7 @@ type Generator interface {
 }
 
 func main() {
-	var AppFs = afero.NewOsFs()
-
-	err := afero.Walk(AppFs, "../GoKt", func(path string, info fs.FileInfo, err error) error {
-		fmt.Println(path)
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
+	/* var finder TagFinder = Finder{}
+	var loader FileLoader = Loader{}
+	loader.Load("", finder) */
 }
