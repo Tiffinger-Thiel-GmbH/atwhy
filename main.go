@@ -37,6 +37,10 @@ func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []tag.Raw, er
 		{Type: "README", Filename: filename, Line: 7, Value: ` * @README`},
 		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
 LOOOOL
+ * gdgds
+ * gdsfg
+  * dfsg
+  * gsdg
 This is another line`},
 		{Type: "README", Filename: filename, Line: 8, Value: "jdfglh"},
 	}, nil
