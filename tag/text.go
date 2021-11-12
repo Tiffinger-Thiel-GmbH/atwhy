@@ -26,12 +26,16 @@ func (t Text) IsParent() bool {
 }
 
 func textFactory(input Raw, children []Tag) Tag {
-	// TODO: implement with logic that strips out the header
-
 	// Remove the first line.
-	parts := strings.SplitAfterN(input.Value, "\n", 2)[1:]
+	parts := strings.SplitAfterN(input.Value, "\n", 3)[1:]
+
+	var header string
 	if len(parts) > 0 {
-		input.Value = parts[0]
+		header = parts[0]
+	}
+
+	if len(parts) > 1 {
+		input.Value = parts[1]
 	} else {
 		input.Value = ""
 	}
@@ -41,7 +45,7 @@ func textFactory(input Raw, children []Tag) Tag {
 			tagType: input.Type,
 			value:   input.Value,
 		},
-		header:   "",
+		header:   header,
 		children: children,
 	}
 }
