@@ -58,14 +58,13 @@ func (p Processor) Process(tags []tag.Raw) ([]tag.Tag, error) {
 				continue
 			}
 
-			// If children is not nil (not empty), the tag supports children.
-			// This means all lastChildren are used now and the lastChildren can be reset.
+			// If the new tag is a parent, it consumed all children.
+			// This means all lastChildren are used now and the lastChildren can be reset to an empty slice.
 			if newTag.IsParent() {
 				lastChildren = []tag.Tag{}
 				processed = append(processed, newTag)
 			} else {
-				// If it is nil, the children are not consumed and
-				// the new tag has to be cached for later.
+				// If the new tag is a child, it has to be cached for later.
 				lastChildren = append(lastChildren, newTag)
 			}
 		}
