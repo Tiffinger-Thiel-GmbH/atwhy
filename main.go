@@ -3,46 +3,25 @@ package main
 import (
 	"flag"
 	"fmt"
+	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 	"io"
 	"strings"
 )
 
-type TagType string
-
-var (
-	TagWhy      TagType = "WHY"
-	TagReadme   TagType = "README"
-	TagFileLine TagType = "FILELINE"
-	TagFlag     TagType = "FLAG"
-)
-
-type Tag struct {
-	Type     TagType
-	Filename string
-	Line     int
-	Value    string
-}
-
 type FileLoader interface {
-	Load(dir string, finder TagFinder) (allTags []Tag, err error)
+	Load(dir string, finder TagFinder) (allTags []tag.Raw, err error)
 }
 
 type TagFinder interface {
-	Find(filename string, reader io.Reader) (tags []Tag, err error)
+	Find(filename string, reader io.Reader) (tags []tag.Raw, err error)
 	// SaveByTag()
 	// scan()
 	// findTag()
 	// saveByTag()
 }
 
-type ProcessedTag struct {
-	Type     TagType
-	Value    string
-	Children []ProcessedTag
-}
-
 type TagProcessor interface {
-	Process(tags []Tag) ([]ProcessedTag, error)
+	Process(tags []tag.Raw) ([]tag.Tag, error)
 }
 
 type Generator interface {
@@ -51,17 +30,26 @@ type Generator interface {
 type FakeFinder struct {
 }
 
-func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []Tag, err error) {
-	return []Tag{
-		{Type: TagReadme, Filename: filename, Line: 5, Value: "jdfglh"},
+func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []tag.Raw, err error) {
+	return []tag.Raw{
+		{Type: "FILELINK", Filename: filename, Line: 5, Value: `// @FILELINK`},
+		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README`},
+		{Type: "README", Filename: filename, Line: 7, Value: ` * @README`},
+		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
+LOOOOL
+This is another line`},
+		{Type: "README", Filename: filename, Line: 8, Value: "jdfglh"},
 	}, nil
 }
 
 func main() {
-	ext := flag.String("ext", "", "")
+	ext := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "")
 	flag.Parse()
 	path := flag.Arg(0)
 	fileExtensions := strings.Split(*ext, ",")
+	if path == "" {
+		path = "."
+	}
 
 	var finder TagFinder = FakeFinder{}
 	var loader FileLoader = Loader{fileExtensions}
@@ -70,4 +58,21 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(tags)
+
+	processor := Processor{
+		cleaners: []Cleaner{
+			SlashStarCleaner{},
+		},
+		tagFactories: []tag.Factory{
+			tag.Why,
+			tag.Readme,
+			tag.FileLink,
+		},
+	}
+
+	processed, err := processor.Process(tags)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(processed)
 }
