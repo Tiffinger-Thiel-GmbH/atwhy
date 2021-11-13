@@ -26,16 +26,7 @@ type TagProcessor interface {
 }
 
 type Generator interface {
-	Generate(tags []ProcessedTag, writer io.Writer) error
-}
-
-type FakeFinder struct {
-}
-
-func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []Tag, err error) {
-	return []Tag{
-		{Type: TagReadme, Filename: filename, Line: 5, Value: "jdfglh"},
-	}, nil
+	Generate(tags []tag.Tag, writer io.Writer) error
 }
 
 type FakeFinder struct {
@@ -47,7 +38,7 @@ func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []tag.Raw, er
 		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README`},
 		{Type: "README", Filename: filename, Line: 7, Value: ` * @README`},
 		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
-LOOOOL
+# LOOOOL
  * gdgds
  * gdsfg
   * dfsg
@@ -72,7 +63,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(tags)
 
 	processor := Processor{
 		cleaners: []Cleaner{
@@ -89,9 +79,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(processed)
 
 	var g Generate = Generate{}
 	b := strings.Builder{}
-	fmt.Println(g.Generate(processed, &b))
+	g.Generate(processed, &b)
+	fmt.Println(b.String())
 }
