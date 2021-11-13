@@ -1,13 +1,11 @@
 package tag
 
-import "strconv"
-
-type TagType string
+type Type string
 
 var (
-	TypeWhy      TagType = "WHY"
-	TypeReadme   TagType = "README"
-	TypeFileLink TagType = "FILELINK"
+	TypeWhy      Type = "WHY"
+	TypeReadme   Type = "README"
+	TypeFileLink Type = "FILELINK"
 )
 
 const (
@@ -16,7 +14,7 @@ const (
 
 // Raw represents a not yet processed tag.
 type Raw struct {
-	Type     TagType
+	Type     Type
 	Filename string
 	Line     int
 	Value    string
@@ -24,7 +22,7 @@ type Raw struct {
 
 // Tag which was parsed from the code.
 type Tag interface {
-	Type() TagType
+	Type() Type
 
 	IsParent() bool
 
@@ -36,31 +34,3 @@ type Tag interface {
 // If the resulting Tag does not return nil on Tag.Children(), it means that the
 // children have been consumed and the next factory call should get a new slice.
 type Factory func(input Raw, children []Tag) Tag
-
-type Basic struct {
-	tagType TagType
-	value   string
-}
-
-func (b Basic) Type() TagType {
-	return b.tagType
-}
-
-func (b Basic) Markdown() string {
-	return b.value
-}
-
-func (b Basic) IsParent() bool {
-	return false
-}
-
-func FileLink(input Raw, _ []Tag) Tag {
-	if input.Type != TypeFileLink {
-		return nil
-	}
-
-	return Basic{
-		tagType: input.Type,
-		value:   "[" + input.Filename + ":" + strconv.Itoa(input.Line) + "](" + input.Filename + ")",
-	}
-}

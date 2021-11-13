@@ -9,11 +9,11 @@ import (
 	"github.com/spf13/afero"
 )
 
-type Loader struct {
+type FileLoader struct {
 	FileExtensions []string
 }
 
-func (l Loader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
+func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 	var AppFs = afero.NewOsFs()
 	allTags := make([]tag.Raw, 0)
 
@@ -28,7 +28,7 @@ func (l Loader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 
 		hasFoundExtension := false
 
-		for _, e := range l.FileExtensions {
+		for _, e := range fl.FileExtensions {
 			fileName := info.Name()
 			if strings.HasSuffix(fileName, e) {
 				hasFoundExtension = true

@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
-type FileLoader interface {
+type Loader interface {
 	Load(dir string, finder TagFinder) (allTags []tag.Raw, err error)
 }
 
@@ -63,7 +63,7 @@ func main() {
 	}
 
 	var finder TagFinder = FakeFinder{}
-	var loader FileLoader = Loader{fileExtensions}
+	var loader Loader = FileLoader{fileExtensions}
 	tags, err := loader.Load(path, finder)
 	if err != nil {
 		panic(err)
