@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
@@ -81,7 +81,6 @@ func main() {
 	}
 
 	var g Generate = Generate{}
-	b := strings.Builder{}
-	g.Generate(processed, &b)
-	fmt.Println(b.String())
+	// TODO stdout when no -out
+	g.Generate(processed, os.Stdout)
 }
