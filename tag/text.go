@@ -8,10 +8,6 @@ type Text struct {
 	children []Tag
 }
 
-func (t Text) Children() []Tag {
-	return t.children
-}
-
 func (t Text) Markdown() string {
 	markdown := t.header + NewLine
 	for _, child := range t.children {
