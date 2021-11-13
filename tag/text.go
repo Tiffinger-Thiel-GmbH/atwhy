@@ -26,7 +26,7 @@ func (t Text) IsParent() bool {
 }
 
 func textFactory(input Raw, children []Tag) Tag {
-	// Remove the first line.
+	// Remove the first line. (It only contains the tag -> not interesting)
 	parts := strings.SplitAfterN(input.Value, "\n", 3)[1:]
 
 	var header string

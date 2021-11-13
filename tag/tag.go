@@ -68,7 +68,7 @@ func FileLink(input Raw, _ []Tag) Tag {
 	}
 
 	return Basic{
-		tagType: TypeWhy,
+		tagType: input.Type,
 		value:   "[" + input.Filename + ":" + strconv.Itoa(input.Line) + "](" + input.Filename + ")",
 	}
 }
