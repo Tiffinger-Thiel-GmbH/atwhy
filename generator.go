@@ -16,7 +16,7 @@ type Generate struct {
 }
 
 func (mG Generate) Generate(tags []tag.Tag, writer io.Writer) error {
-	groupedTags := make(map[tag.TagType][]tag.Tag)
+	groupedTags := make(map[tag.Type][]tag.Tag)
 	for _, t := range tags {
 		groupedTags[t.Type()] = append(groupedTags[t.Type()], t)
 	}
