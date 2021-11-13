@@ -35,21 +35,26 @@ type FakeFinder struct {
 func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []tag.Raw, err error) {
 	return []tag.Raw{
 		{Type: "FILELINK", Filename: filename, Line: 5, Value: `// @FILELINK`},
-		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README`},
-		{Type: "README", Filename: filename, Line: 7, Value: ` * @README`},
+		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README
+** Headeeeeeer
+* Ich bin Grün`},
 		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
-# LOOOOL
+Irgend n Header
+ - irgend n Blödsin
+  - Blöd`},
+		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
+ LOOOOL
  * gdgds
  * gdsfg
   * dfsg
   * gsdg
 This is another line`},
-		{Type: "README", Filename: filename, Line: 8, Value: "jdfglh"},
 	}, nil
 }
 
 func main() {
 	ext := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "")
+	outputFile := flag.String("out", "", "")
 	flag.Parse()
 	path := flag.Arg(0)
 	fileExtensions := strings.Split(*ext, ",")
@@ -82,5 +87,15 @@ func main() {
 
 	var g Generate = Generate{}
 	// TODO stdout when no -out
-	g.Generate(processed, os.Stdout)
+	if *outputFile != "" {
+		file, err := os.OpenFile(*outputFile, os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+
+		g.Generate(processed, file)
+	} else {
+		g.Generate(processed, os.Stdout)
+	}
 }

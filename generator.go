@@ -24,9 +24,9 @@ func (mG Generate) Generate(tags []tag.Tag, writer io.Writer) error {
 	// TODO Sort inside of the groups
 
 	for tagType, tagGroup := range groupedTags {
-		writer.Write([]byte(string(tagType) + "\n"))
+		writer.Write([]byte("# " + string(tagType) + "\n"))
 		for _, tag := range tagGroup {
-			writer.Write([]byte(tag.Markdown() + "\n"))
+			writer.Write([]byte(MarkdownMapper(tag) + "\n\n"))
 		}
 	}
 
