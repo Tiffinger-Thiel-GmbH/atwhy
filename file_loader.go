@@ -5,19 +5,18 @@ import (
 	"strings"
 
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
-
-	"github.com/spf13/afero"
 )
 
 type FileLoader struct {
+	FS             fs.FS
 	FileExtensions []string
 }
 
 func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
-	var AppFs = afero.NewOsFs()
+	filesystem := fl.FS
 	allTags := make([]tag.Raw, 0)
 
-	err := afero.Walk(AppFs, dir, func(path string, info fs.FileInfo, err error) error {
+	err := fs.WalkDir(filesystem, dir, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -39,7 +38,7 @@ func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 			return nil
 		}
 
-		file, err := AppFs.Open(path)
+		file, err := filesystem.Open(path)
 		if err != nil {
 			return err
 		}
