@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"sort"
 	"strings"
 
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
@@ -9,7 +10,7 @@ import (
 
 func MarkdownMapper(t tag.Tag) string {
 	// TODO Regex !
-	return strings.ReplaceAll(t.Markdown(), "# ", "## ")
+	return strings.ReplaceAll(t.String(), "# ", "## ")
 }
 
 type MarkdownGenerator struct {
@@ -21,9 +22,12 @@ func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 		groupedTags[t.Type()] = append(groupedTags[t.Type()], t)
 	}
 
-	// TODO Sort inside of the groups
-
 	for tagType, tagGroup := range groupedTags {
+
+		sort.Slice(tagGroup, func(i, j int) bool {
+			return tagGroup[i].Position() < tagGroup[j].Position()
+		})
+
 		writer.Write([]byte("# " + string(tagType) + "\n"))
 		for _, tag := range tagGroup {
 			writer.Write([]byte(MarkdownMapper(tag) + "\n\n"))

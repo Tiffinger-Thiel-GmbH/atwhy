@@ -54,7 +54,10 @@ func (p Processor) Process(tags []tag.Raw) ([]tag.Tag, error) {
 		currentFile = t.Filename
 
 		for _, factory := range p.tagFactories {
-			newTag := factory(t, lastChildren)
+			newTag, err := factory(t, lastChildren)
+			if err != nil {
+				return nil, err
+			}
 			if newTag == nil {
 				continue
 			}

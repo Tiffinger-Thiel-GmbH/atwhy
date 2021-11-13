@@ -49,14 +49,14 @@ type FakeFinder struct {
 func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []tag.Raw, err error) {
 	return []tag.Raw{
 		{Type: "FILELINK", Filename: filename, Line: 5, Value: `// @FILELINK`},
-		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README
+		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README 10
 ** Headeeeeeer
 * Ich bin Grün`},
-		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
+		{Type: "README", Filename: filename, Line: 7, Value: ` * @README 5
 Irgend n Header
  - irgend n Blödsin
   - Blöd`},
-		{Type: "README", Filename: filename, Line: 7, Value: ` * @README
+		{Type: "README", Filename: filename, Line: 7, Value: ` * @README 20
  LOOOOL
  * gdgds
  * gdsfg
