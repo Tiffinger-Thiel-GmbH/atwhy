@@ -50,6 +50,7 @@ This is another line`},
 
 func main() {
 	ext := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "")
+	outputFile := flag.String("out", "", "")
 	flag.Parse()
 	path := flag.Arg(0)
 	fileExtensions := strings.Split(*ext, ",")
@@ -82,5 +83,15 @@ func main() {
 
 	var g Generate = Generate{}
 	// TODO stdout when no -out
-	g.Generate(processed, os.Stdout)
+	if *outputFile != "" {
+		file, err := os.OpenFile(*outputFile, os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+
+		g.Generate(processed, file)
+	} else {
+		g.Generate(processed, os.Stdout)
+	}
 }
