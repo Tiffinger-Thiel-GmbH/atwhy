@@ -3,33 +3,30 @@ package main
 import (
 	"io"
 	"strings"
+
+	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
-func MarkdownMapper(t ProcessedTag) string {
-	t.Value = strings.ReplaceAll(t.Value, "# ", "## ")
-	result := strings.Split(t.Value, "\n")
-	if t.Children != nil {
-		for _, c := range t.Children {
-			if c.Type == TagFileLine {
-				result = append(result, "")
-				copy(result[2:], result[1:])
-				result[1] = c.Value
-			}
-		}
-	}
-
-	return strings.Join(result, "\n")
+func MarkdownMapper(t tag.Tag) string {
+	// TODO Regex !
+	return strings.ReplaceAll(t.Markdown(), "# ", "## ")
 }
 
 type Generate struct {
 }
 
-func (mG Generate) Generate(tags []ProcessedTag, writer io.Writer) error {
+func (mG Generate) Generate(tags []tag.Tag, writer io.Writer) error {
+	groupedTags := make(map[tag.TagType][]tag.Tag)
 	for _, t := range tags {
-		switch t.Type {
-		case TagReadme:
-			writer.Write([]byte(MarkdownMapper(t)))
-			writer.Write([]byte("\n"))
+		groupedTags[t.Type()] = append(groupedTags[t.Type()], t)
+	}
+
+	// TODO Sort inside of the groups
+
+	for tagType, tagGroup := range groupedTags {
+		writer.Write([]byte(string(tagType) + "\n"))
+		for _, tag := range tagGroup {
+			writer.Write([]byte(tag.Markdown() + "\n"))
 		}
 	}
 
