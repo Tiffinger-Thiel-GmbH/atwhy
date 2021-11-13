@@ -26,10 +26,6 @@ type Raw struct {
 type Tag interface {
 	Type() TagType
 
-	// Children should return nil, if no children are possible.
-	// If they are possible but there is none, it should return an empty slice.
-	Children() []Tag
-
 	IsParent() bool
 
 	// Markdown can be used to render the whole tag including the children.
@@ -48,10 +44,6 @@ type Basic struct {
 
 func (b Basic) Type() TagType {
 	return b.tagType
-}
-
-func (b Basic) Children() []Tag {
-	return nil
 }
 
 func (b Basic) Markdown() string {
