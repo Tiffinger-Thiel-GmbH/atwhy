@@ -13,7 +13,12 @@ func (t Text) Children() []Tag {
 }
 
 func (t Text) Markdown() string {
-	markdown := t.header + NewLine
+	var markdown string
+
+	if strings.Trim(t.header, " \n") != "" {
+		markdown = "# " + t.header
+	}
+
 	for _, child := range t.children {
 		markdown += child.Markdown() + NewLine
 	}
