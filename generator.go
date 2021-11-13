@@ -12,10 +12,10 @@ func MarkdownMapper(t tag.Tag) string {
 	return strings.ReplaceAll(t.Markdown(), "# ", "## ")
 }
 
-type Generate struct {
+type MarkdownGenerator struct {
 }
 
-func (mG Generate) Generate(tags []tag.Tag, writer io.Writer) error {
+func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 	groupedTags := make(map[tag.Type][]tag.Tag)
 	for _, t := range tags {
 		groupedTags[t.Type()] = append(groupedTags[t.Type()], t)
@@ -34,4 +34,4 @@ func (mG Generate) Generate(tags []tag.Tag, writer io.Writer) error {
 }
 
 // check if really implements everything from Generator interface
-var _ Generator = (*Generate)(nil)
+var _ Generator = (*MarkdownGenerator)(nil)

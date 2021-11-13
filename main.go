@@ -52,24 +52,26 @@ This is another line`},
 	}, nil
 }
 
-func main() {
-	ext := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "")
-	outputFile := flag.String("out", "", "")
+func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
+	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "")
+	outputFileVar := flag.String("out", "", "")
 	flag.Parse()
-	path := flag.Arg(0)
-	fileExtensions := strings.Split(*ext, ",")
-	if path == "" {
-		path = "."
+
+	inputPath = flag.Arg(0)
+	fileExtensions = strings.Split(*extVar, ",")
+	if inputPath == "" {
+		inputPath = "."
 	}
+
+	return fileExtensions, *outputFileVar, inputPath
+}
+
+func main() {
+	fileExtensions, outputFile, inputPath := ParseCmd()
 
 	var finder TagFinder = FakeFinder{}
 	var loader Loader = FileLoader{fileExtensions}
-	tags, err := loader.Load(path, finder)
-	if err != nil {
-		panic(err)
-	}
-
-	processor := Processor{
+	var processor TagProcessor = Processor{
 		cleaners: []Cleaner{
 			SlashStarCleaner{},
 		},
@@ -79,22 +81,28 @@ func main() {
 			tag.FileLink,
 		},
 	}
+	var generator Generator = MarkdownGenerator{}
 
-	processed, err := processor.Process(tags)
-	if err != nil {
-		panic(err)
-	}
-
-	var g Generate = Generate{}
-	if *outputFile != "" {
-		file, err := os.OpenFile(*outputFile, os.O_CREATE|os.O_WRONLY, 0755)
+	writer := os.Stdout
+	if outputFile != "" {
+		file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0755)
 		if err != nil {
 			panic(err)
 		}
 		defer file.Close()
 
-		g.Generate(processed, file)
-	} else {
-		g.Generate(processed, os.Stdout)
+		writer = file
+	}
+
+	crazyDoc := CrazyDoc{
+		Finder:    finder,
+		Loader:    loader,
+		Processor: processor,
+		Generator: generator,
+		Writer:    writer,
+	}
+
+	if err := crazyDoc.Run(inputPath); err != nil {
+		panic(err)
 	}
 }
