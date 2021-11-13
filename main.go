@@ -86,7 +86,6 @@ func main() {
 	}
 
 	var g Generate = Generate{}
-	// TODO stdout when no -out
 	if *outputFile != "" {
 		file, err := os.OpenFile(*outputFile, os.O_CREATE|os.O_WRONLY, 0755)
 		if err != nil {
