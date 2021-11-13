@@ -1,8 +1,8 @@
 package main
 
 /*
-@README
-1. What is CrazyDoc
+@README 10
+What is CrazyDoc
 CrazyDoc can be used to generate a documentation out of comments in the code.
 That way you can for example describe all available options in the same file
 where they are coded. A developer therefore doesn't have to know exactly where
@@ -67,13 +67,13 @@ This is another line`},
 }
 
 func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
-	// @README
-	// 2. Usage
+	// @README 20
+	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
 	// To get all possible file extensions just run `crazydoc -help`
 
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS]... [PROJECT_ROOT]\n", os.Args[0])
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS]... [PROJECT_ROOT]\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "comma separated list of file extensions to search for")

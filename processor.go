@@ -6,15 +6,6 @@ import (
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
-/**
- * @FILELINE
- * @README
- * # My super Headline.
- * ##
- * __Body__ sdfag fd
- * dfgdfsg
- */
-
 type Cleaner interface {
 	Clean(string) (string, error)
 }

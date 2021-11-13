@@ -3,7 +3,8 @@ package main
 import "io"
 
 // CrazyDoc combines all parts of the application.
-// @WHY
+//
+// @WHY 10
 // Architecture
 // The idea behind CrazyDoc is to have several interfaces,
 // each one for a small purpose.
