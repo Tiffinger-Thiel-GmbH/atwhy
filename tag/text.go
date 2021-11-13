@@ -13,9 +13,9 @@ func (t Text) Children() []Tag {
 }
 
 func (t Text) Markdown() string {
-	markdown := t.header + newLine
+	markdown := t.header + NewLine
 	for _, child := range t.children {
-		markdown += child.Markdown() + newLine
+		markdown += child.Markdown() + NewLine
 	}
 
 	return markdown + t.value

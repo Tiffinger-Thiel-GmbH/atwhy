@@ -10,8 +10,8 @@ var (
 	TypeFileLink TagType = "FILELINK"
 )
 
-var (
-	newLine = "  \n"
+const (
+	NewLine = "  \n"
 )
 
 // Raw represents a not yet processed tag.
@@ -47,7 +47,7 @@ type Basic struct {
 }
 
 func (b Basic) Type() TagType {
-	return b.Type()
+	return b.tagType
 }
 
 func (b Basic) Children() []Tag {
