@@ -13,6 +13,8 @@ stages:
   - build
 
 before_script:
+  - apt-get update -y
+  - apt-get install -y zip
   - mkdir -p /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds
   - cp -r $CI_PROJECT_DIR /go/src/gitlab.com/tiffinger-thiel/crazydoc
   - ln -s /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds/tiffinger-thiel
