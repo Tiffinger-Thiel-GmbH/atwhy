@@ -78,8 +78,8 @@ build_win_installer:
   script:
     - apt-get install -y unzip
     - unzip artifacts/windows_amd64-crazydoc.zip
-    - mkdir /work/install-dir
-    - cp crazydoc.exe /work/install-dir
+    - mkdir install-dir
+    - cp crazydoc.exe install-dir
     - iscc
     - cp /work/install-dir/installer/CrazyDocSetup.exe artifacts
   artifacts:

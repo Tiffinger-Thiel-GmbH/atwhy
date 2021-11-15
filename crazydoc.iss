@@ -28,7 +28,7 @@ UserInfoPage=YES
 ;DisableDirPage=YES
 DisableReadyPage=YES
 UsePreviousAppDir=YES
-UninstallFilesDir={pf}\CrazyDoc\Uninstall Information
+UninstallFilesDir={commonpf}\CrazyDoc\Uninstall Information
 ShowTasksTreeLines=YES
 
 ; More options in setup section as well as other sections like Files, Components, Tasks...
