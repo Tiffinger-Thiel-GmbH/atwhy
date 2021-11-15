@@ -80,8 +80,9 @@ build_win_installer:
     - unzip artifacts/windows_amd64-crazydoc.zip
     - mkdir install-dir
     - cp crazydoc.exe install-dir
+    - ls install-dir
     - iscc crazydoc.iss
-    - cp /work/install-dir/installer/CrazyDocSetup.exe artifacts
+    - cp install-dir/installer/CrazyDocSetup.exe artifacts
   artifacts:
     paths:
       - artifacts/*
