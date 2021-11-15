@@ -72,10 +72,11 @@ build:
 #  - main
 
 build_win_installer:
-  image: amake/innosetup
+  image:
+    name: amake/innosetup
+    entrypoint: [""]
   stage: deploy
   when: manual
-  entrypoint: [""]
   script:
     - apt-get install -y unzip
     - unzip artifacts/windows_amd64-crazydoc.zip
