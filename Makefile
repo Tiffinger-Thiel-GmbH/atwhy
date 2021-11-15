@@ -7,21 +7,20 @@ GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 GOOS ?= linux
 GOARCH ?= amd64
 
-.PHONY: all dep build clean test coverage coverhtml lint dist
+.PHONY: all dep build clean test race coverage coverhtml lint dist
 
 all: build
 
 lint: ## Lint the files
-	@golint -set_exit_status ${PKG_LIST}
+	@go vet	
+	@go install honnef.co/go/tools/cmd/staticcheck@latest
+	@staticcheck
 
 test: ## Run unittests
 	@go test -short ${PKG_LIST}
 
 race: dep ## Run data race detector
 	@go test -race -short ${PKG_LIST}
-
-msan: dep ## Run memory sanitizer
-	@go test -msan -short ${PKG_LIST}
 
 coverage: ## Generate global code coverage report
 	echo TODO: ./tools/coverage.sh; 
@@ -42,7 +41,6 @@ else
 	@zip ${GOOS}-${GOARCH}-crazydoc.zip ${PROJECT_NAME}
 endif
 	
-
 clean: ## Remove previous build
 	@go clean
 
