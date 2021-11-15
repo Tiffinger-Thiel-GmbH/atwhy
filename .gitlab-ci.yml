@@ -68,8 +68,8 @@ build:
   artifacts:
     paths:
       - artifacts/*
-  only:
-  - main
+#  only:
+#  - main
 
 build_win_installer:
   image: amake/innosetup
