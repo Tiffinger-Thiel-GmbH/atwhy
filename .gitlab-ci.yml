@@ -18,34 +18,29 @@ before_script:
   - ln -s /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds/tiffinger-thiel
   - make dep
 
-unit_tests:
-  stage: test
-  script:
-    # First just test if building works.
-    - make build
-    - make test
+# unit_tests:
+#   stage: test
+#   script:
+#     # First just test if building works.
+#     - make build
+#     - make test
 
-race_detector:
-  stage: test
-  script:
-    - make race
+# race_detector:
+#   stage: test
+#   script:
+#     - make race
 
-memory_sanitizer:
-  stage: test
-  script:
-    - make msan
+# code_coverage:
+#   stage: test
+#   script:
+#     - make coverage
 
-code_coverage:
-  stage: test
-  script:
-    - make coverage
-
-code_coverage_report:
-  stage: test
-  script:
-    - make coverhtml
-  only:
-  - main
+# code_coverage_report:
+#   stage: test
+#   script:
+#     - make coverhtml
+#   only:
+#   - main
 
 lint_code:
   stage: test
