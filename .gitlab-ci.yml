@@ -80,11 +80,7 @@ build_win_installer:
     entrypoint: [""]
   stage: deploy
   when: manual
-  before_script:
-    - mkdir -p /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds
-    - cp -r $CI_PROJECT_DIR /go/src/gitlab.com/tiffinger-thiel/crazydoc
-    - ln -s /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds/tiffinger-thiel
-    - make dep
+  before_script: []
   script:
     - mkdir tools/install-dir
     - mv installer_deps/crazydoc.exe tools/install-dir
