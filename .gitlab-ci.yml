@@ -11,6 +11,7 @@ cache:
 stages:
   - test
   - build
+  - deploy
 
 before_script:
   - apt-get update -y
@@ -69,3 +70,18 @@ build:
       - artifacts/*
   only:
   - main
+
+build_win_installer:
+  image: amake/innosetup
+  stage: deploy
+  when: manual
+  script:
+    - apt-get install -y unzip
+    - unzip artifacts/windows_amd64-crazydoc.zip
+    - mkdir /work/install-dir
+    - cp crazydoc.exe /work/install-dir
+    - iscc
+    - cp /work/install-dir/installer/CrazyDocSetup.exe artifacts
+  artifacts:
+    paths:
+      - artifacts/*
