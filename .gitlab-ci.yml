@@ -80,10 +80,9 @@ build_win_installer:
   stage: deploy
   when: manual
   script:
-    - apt-get install -y unzip
-    - unzip installer_deps/crazydoc.exe
     - mkdir tools/install-dir
-    - mv crazydoc.exe tools/install-dir
+    - mv installer_deps/crazydoc.exe tools/install-dir
+    - rmdir installer_deps
     - cd tools
     - iscc crazydoc.iss
     - cp install-dir/installer/CrazyDocSetup.exe dist
