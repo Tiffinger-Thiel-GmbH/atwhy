@@ -9,7 +9,7 @@ cache:
     - /go/src/gopkg.in
 
 stages:
-  - test
+#  - test
   - build
   - deploy
 
@@ -45,23 +45,23 @@ before_script:
 #   only:
 #   - main
 
-lint_code:
-  stage: test
-  script:
-    - make lint
+#lint_code:
+#  stage: test
+#  script:
+#    - make lint
 
 build:
   stage: build
   script:
-    - GOOS=linux GOARCH=amd64 make dist
-    - GOOS=linux GOARCH=arm make dist
-    - GOOS=linux GOARCH=arm64 make dist
+#    - GOOS=linux GOARCH=amd64 make dist
+#    - GOOS=linux GOARCH=arm make dist
+#    - GOOS=linux GOARCH=arm64 make dist
 
     - GOOS=windows GOARCH=amd64 make dist
-    - GOOS=windows GOARCH=arm64 make dist
+#    - GOOS=windows GOARCH=arm64 make dist
 
-    - GOOS=darwin GOARCH=amd64 make dist
-    - GOOS=darwin GOARCH=arm64 make dist
+#    - GOOS=darwin GOARCH=amd64 make dist
+#    - GOOS=darwin GOARCH=arm64 make dist
 
     - mkdir artifacts
     - mv *.zip artifacts
@@ -80,7 +80,7 @@ build_win_installer:
     - unzip artifacts/windows_amd64-crazydoc.zip
     - mkdir install-dir
     - cp crazydoc.exe install-dir
-    - iscc
+    - iscc crazydoc.iss
     - cp /work/install-dir/installer/CrazyDocSetup.exe artifacts
   artifacts:
     paths:
