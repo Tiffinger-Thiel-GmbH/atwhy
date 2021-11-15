@@ -58,16 +58,18 @@ build:
 #    - GOOS=linux GOARCH=arm64 make dist
 
     - GOOS=windows GOARCH=amd64 make dist
+    - cp crazydoc.exe installer_deps
 #    - GOOS=windows GOARCH=arm64 make dist
 
 #    - GOOS=darwin GOARCH=amd64 make dist
 #    - GOOS=darwin GOARCH=arm64 make dist
 
-    - mkdir artifacts
-    - mv *.zip artifacts
+    - mkdir dist
+    - mv *.zip dist
   artifacts:
     paths:
-      - artifacts/*
+      - dist/*
+      - installer_deps/*
 #  only:
 #  - main
 
@@ -79,12 +81,12 @@ build_win_installer:
   when: manual
   script:
     - apt-get install -y unzip
-    - unzip artifacts/windows_amd64-crazydoc.zip
-    - mkdir install-dir
-    - cp crazydoc.exe install-dir
-    - ls install-dir 1>&2
+    - unzip installer_deps/crazydoc.exe
+    - mkdir tools/install-dir
+    - mv crazydoc.exe tools/install-dir
+    - cd tools
     - iscc crazydoc.iss
-    - cp install-dir/installer/CrazyDocSetup.exe artifacts
+    - cp install-dir/installer/CrazyDocSetup.exe dist
   artifacts:
     paths:
-      - artifacts/*
+      - dist/*
