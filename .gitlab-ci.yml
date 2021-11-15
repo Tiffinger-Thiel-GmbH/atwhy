@@ -80,6 +80,7 @@ build_win_installer:
     entrypoint: [""]
   stage: deploy
   when: manual
+  before_script: []
   script:
     - mkdir tools/install-dir
     - mv installer_deps/crazydoc.exe tools/install-dir
