@@ -7,7 +7,7 @@ GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 GOOS ?= linux
 GOARCH ?= amd64
 
-.PHONY: all dep build clean test coverage coverhtml lint
+.PHONY: all dep build clean test coverage coverhtml lint dist
 
 all: build
 
