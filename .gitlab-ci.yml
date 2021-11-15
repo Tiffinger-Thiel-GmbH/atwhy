@@ -1,0 +1,74 @@
+image: golang:1.17
+
+cache:
+  paths:
+    - /apt-cache
+    - /go/src/github.com
+    - /go/src/golang.org
+    - /go/src/google.golang.org
+    - /go/src/gopkg.in
+
+stages:
+  - test
+  - build
+
+before_script:
+  - mkdir -p /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds
+  - cp -r $CI_PROJECT_DIR /go/src/gitlab.com/tiffinger-thiel/crazydoc
+  - ln -s /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds/tiffinger-thiel
+  - make dep
+
+unit_tests:
+  stage: test
+  script:
+    # First just test if building works.
+    - make build
+    - make test
+
+race_detector:
+  stage: test
+  script:
+    - make race
+
+memory_sanitizer:
+  stage: test
+  script:
+    - make msan
+
+code_coverage:
+  stage: test
+  script:
+    - make coverage
+
+code_coverage_report:
+  stage: test
+  script:
+    - make coverhtml
+  only:
+  - main
+
+lint_code:
+  stage: test
+  script:
+    - make lint
+
+build:
+  stage: build
+  script:
+    - GOOS=linux GOARCH=amd64 make dist
+    - GOOS=linux GOARCH=arm make dist
+    - GOOS=linux GOARCH=arm64 make dist
+
+    - GOOS=windows GOARCH=amd64 make dist
+    - GOOS=windows GOARCH=arm64 make dist
+
+    - GOOS=darwin GOARCH=amd64 make dist
+    - GOOS=darwin GOARCH=arm64 make dist
+
+    - mkdir artifacts
+    - mv *.zip artifacts
+  artifacts:
+    paths:
+      - artifacts/*
+  only:
+  - main

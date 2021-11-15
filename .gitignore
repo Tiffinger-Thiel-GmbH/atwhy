@@ -1,3 +1,4 @@
 crazydoc
+*.exe
 *.md
 !README.md
