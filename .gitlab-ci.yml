@@ -92,3 +92,5 @@ build_win_installer:
   artifacts:
     paths:
       - dist/*
+  only:
+    - main
