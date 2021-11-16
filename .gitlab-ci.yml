@@ -9,7 +9,7 @@ cache:
     - /go/src/gopkg.in
 
 stages:
-#  - test
+  - test
   - build
   - deploy
 
@@ -45,25 +45,26 @@ before_script:
 #   only:
 #   - main
 
-#lint_code:
-#  stage: test
-#  script:
-#    - make lint
+lint_code:
+  stage: test
+  script:
+    - make lint
 
 build:
   stage: build
   script:
-#    - GOOS=linux GOARCH=amd64 make dist
-#    - GOOS=linux GOARCH=arm make dist
-#    - GOOS=linux GOARCH=arm64 make dist
+    - GOOS=linux GOARCH=amd64 make dist
+    - GOOS=linux GOARCH=arm make dist
+    - GOOS=linux GOARCH=arm64 make dist
 
     - GOOS=windows GOARCH=amd64 make dist
+    - GOOS=windows GOARCH=arm64 make dist
+    - GOOS=windows GOARCH=386 make dist
     - mkdir installer_deps
     - cp crazydoc.exe installer_deps
-#    - GOOS=windows GOARCH=arm64 make dist
 
-#    - GOOS=darwin GOARCH=amd64 make dist
-#    - GOOS=darwin GOARCH=arm64 make dist
+    - GOOS=darwin GOARCH=amd64 make dist
+    - GOOS=darwin GOARCH=arm64 make dist
 
     - mkdir dist
     - mv *.zip dist
@@ -71,8 +72,8 @@ build:
     paths:
       - dist/*
       - installer_deps/*
-#  only:
-#  - main
+  only:
+  - main
 
 build_win_installer:
   image:
