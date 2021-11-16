@@ -13,18 +13,16 @@ type Finder struct {
 }
 
 func (f Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
-
-
 	var scan = bufio.NewScanner(reader)
 	scan.Split(bufio.ScanLines)
 	var text []string
-    for scan.Scan() {
-        text = append(text, scan.Text())
-    }
+	for scan.Scan() {
+		text = append(text, scan.Text())
+	}
 
 	var tags = findTags(filename, text)
 
-	return tags, nil;
+	return tags, nil
 }
 
 func Example() {
@@ -48,49 +46,46 @@ func Example() {
 	 saveByTag()
 `
 
-   const filename = "test.js"
+	const filename = "test.js"
 
-   var finder = Finder{}
+	var finder = Finder{}
 
-   tags, err :=finder.Find("test.js", strings.NewReader(src))
-  
-   if(err != nil ){
-	fmt.Println("ERROR")
-   }
+	tags, err := finder.Find("test.js", strings.NewReader(src))
 
-   fmt.Println(tags)
+	if err != nil {
+		fmt.Println("ERROR")
+	}
 
-	
+	fmt.Println(tags)
+
 }
 
-
 func findTags(fileName string, text []string) []tag.Raw {
-	var foundTagLine bool;
-	var taggys []string;
-	var tagLine int; 
-	var tagValue string;
-	var tagType string;
+	var foundTagLine bool
+	var taggys []string
+	var tagLine int
+	var tagValue string
+	var tagType string
 	var finalTags []tag.Raw
 
 	for index, eachLn := range text {
 
-		if(findTagLines(eachLn) != ""){
+		if findTagLines(eachLn) != "" {
 			foundTagLine = true
 			tagType = findTagLines(eachLn)
-			tagLine = index + 1;
+			tagLine = index + 1
 		}
 
-		if(foundTagLine){
+		if foundTagLine {
 
-			
-			if(len(strings.TrimSpace(eachLn)) == 0){
-			
-			tagValue = strings.Join(taggys, " \n ")
-			finalTags = append(finalTags, tag.Raw {Type: tag.Type(tagType), Filename: fileName, Line: tagLine, Value: tagValue})
-			taggys = nil
-			foundTagLine = false
-			
-			} else{
+			if len(strings.TrimSpace(eachLn)) == 0 {
+
+				tagValue = strings.Join(taggys, " \n ")
+				finalTags = append(finalTags, tag.Raw{Type: tag.Type(tagType), Filename: fileName, Line: tagLine, Value: tagValue})
+				taggys = nil
+				foundTagLine = false
+
+			} else {
 
 				taggys = append(taggys, eachLn)
 			}
@@ -101,22 +96,22 @@ func findTags(fileName string, text []string) []tag.Raw {
 }
 
 func findTagLines(eachLn string) string {
-	var foundPossibleTag bool = false 
+	var foundPossibleTag bool = false
 	var tagName string = ""
 
-	for charIndex, rune := range eachLn {
-			
+	for charIndex, char := range eachLn {
+
 		if foundPossibleTag {
-			if rune == ' ' || charIndex == len(eachLn){
+			if char == ' ' || charIndex == len(eachLn) {
 				return tagName
 			}
 
-			tagName += string(rune)
-			continue 
+			tagName += string(char)
+			continue
 		}
 
-		if rune == '@' {
-			foundPossibleTag  = true
+		if char == '@' {
+			foundPossibleTag = true
 			continue
 		}
 	}

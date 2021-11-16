@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/fs"
+	"path/filepath"
 	"strings"
 
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
@@ -16,7 +17,14 @@ func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 	filesystem := fl.FS
 	allTags := make([]tag.Raw, 0)
 
-	err := fs.WalkDir(filesystem, dir, func(path string, info fs.DirEntry, err error) error {
+	// Convert to slash path for compatibility with windows.
+	dir = filepath.ToSlash(dir)
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	err = fs.WalkDir(filesystem, absDir[1:], func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
