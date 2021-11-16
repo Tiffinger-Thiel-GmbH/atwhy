@@ -75,7 +75,11 @@ func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
 func main() {
 	fileExtensions, outputFile, inputPath := ParseCmd()
 
-	var finder TagFinder = Finder{}
+	var finder TagFinder = Finder{
+		BlockCommentStarts: []string{"/*"},
+		BlockCommentEnds:   []string{"*/"},
+		LineCommentStarts:  []string{"//"},
+	}
 	var loader Loader = FileLoader{
 		FS:             os.DirFS(""),
 		FileExtensions: fileExtensions,

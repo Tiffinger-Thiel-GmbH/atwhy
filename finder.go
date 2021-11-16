@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"strings"
 
@@ -10,6 +9,9 @@ import (
 )
 
 type Finder struct {
+	BlockCommentStarts []string
+	BlockCommentEnds   []string
+	LineCommentStarts  []string
 }
 
 func (f Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
@@ -20,47 +22,12 @@ func (f Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		text = append(text, scan.Text())
 	}
 
-	var tags = findTags(filename, text)
+	var tags = f.findTags(filename, text)
 
 	return tags, nil
 }
 
-func Example() {
-	const src = `
-	// type TagFinder interface {
-	// Find(filename string, reader io.Reader) ([]Tag, error)
-	// Find(a int, b int ) (int, error)
-	// SaveByTag()
-	// @Test hier steht mein tag
-	// scan()
-	// type TagFinder interface {
-	// Find(filename string, reader io.Reader) ([]Tag, error)
-	// Find(a int, b int ) (int, error)
-	// SaveByTag()
-
-	// @README hier steht mein tag
-	 findTag()
-	// @IMPORTANT
-	// impi impi
-	
-	 saveByTag()
-`
-
-	const filename = "test.js"
-
-	var finder = Finder{}
-
-	tags, err := finder.Find("test.js", strings.NewReader(src))
-
-	if err != nil {
-		fmt.Println("ERROR")
-	}
-
-	fmt.Println(tags)
-
-}
-
-func findTags(fileName string, text []string) []tag.Raw {
+func (f Finder) findTags(fileName string, text []string) []tag.Raw {
 	var foundTagLine bool
 	var taggys []string
 	var tagLine int
@@ -70,9 +37,9 @@ func findTags(fileName string, text []string) []tag.Raw {
 
 	for index, eachLn := range text {
 
-		if findTagLines(eachLn) != "" {
+		if f.findTagLines(eachLn) != "" {
 			foundTagLine = true
-			tagType = findTagLines(eachLn)
+			tagType = f.findTagLines(eachLn)
 			tagLine = index + 1
 		}
 
@@ -95,14 +62,29 @@ func findTags(fileName string, text []string) []tag.Raw {
 	return finalTags
 }
 
-func findTagLines(eachLn string) string {
-	var foundPossibleTag bool = false
-	var tagName string = ""
+// TODO: pass if we are currently inside a block comment (as they go over several lines)
+func (f Finder) findTagLines(line string) string {
+	// TODO: remember if it is currently a comment
 
-	for charIndex, char := range eachLn {
+	var foundPossibleTag bool
+	var tagName string
+
+	// TODO: If we are not in a comment:
+	// Check if the line starts with a LineComment - ignore spaces
+
+	for charIndex, char := range line {
+		// TODO: If not already in comment.
+		// Check if the current position opens one (note: it may be multi-char)
+
+		// If you are now in a comment, continue:
+
+		// TODO: If not already in comment.
+		// Check if the current position closes a comment (note: it may be multi-char)
+
+		// If you are still in a comment, continue:
 
 		if foundPossibleTag {
-			if char == ' ' || charIndex == len(eachLn) {
+			if char == ' ' || charIndex == len(line) {
 				return tagName
 			}
 
