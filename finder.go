@@ -14,9 +14,17 @@ type Finder struct {
 
 func (f Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 
-	filename = "test.js"
 
-	return []tag.Raw{}, nil
+	var scan = bufio.NewScanner(reader)
+	scan.Split(bufio.ScanLines)
+	var text []string
+    for scan.Scan() {
+        text = append(text, scan.Text())
+    }
+
+	var tags = findTags(text)
+
+	return tags, nil;
 }
 
 func Example() {
@@ -34,22 +42,25 @@ func Example() {
 
 	// @README hier steht mein tag
 	 findTag()
+	// @IMPORTANT
+	// impi impi
 	
 	 saveByTag()
 `
 
    const filename = "test.js"
 
-	var scan = bufio.NewScanner(strings.NewReader(src))
-	scan.Split(bufio.ScanLines)
-	var text []string
-    for scan.Scan() {
-        text = append(text, scan.Text())
-    }
+   var finder = Finder{}
 
-	var tags = findTags(text)
+   tags, err :=finder.Find("test.js", strings.NewReader(src))
+  
+   if(err != nil ){
+	fmt.Println("ERROR")
+   }
+
+   fmt.Println(tags)
+
 	
-	fmt.Println(tags)
 }
 
 
@@ -65,29 +76,24 @@ func findTags(text []string) []tag.Raw {
 
 		if(findTagLines(eachLn) != ""){
 			foundTagLine = true
-			tagType = findTagLines(eachLn)
-			tagLine = index;
-
 		}
 
 		if(foundTagLine){
 
+			tagType = findTagLines(eachLn)
+			tagLine = index;
 			
-			if(len(strings.TrimSpace(eachLn)) == 0 ){
+			if(len(strings.TrimSpace(eachLn)) == 0 || findTagLines(eachLn)!= ""){
 			
 			tagValue = strings.Join(taggys, " ")
 			finalTags = append(finalTags, tag.Raw {Type: tag.Type(tagType), Filename: "af", Line: tagLine, Value: tagValue})
-			
+			taggys = nil
 			
 			}
 
 			taggys = append(taggys, eachLn)
-
 		}
-		
 	}
-	
-	
 	return finalTags
 }
 
@@ -95,10 +101,10 @@ func findTagLines(eachLn string) string {
 	var foundPossibleTag bool = false 
 	var tagName string = ""
 
-	for _, rune := range eachLn {
+	for charIndex, rune := range eachLn {
 			
 		if foundPossibleTag {
-			if rune == ' '{
+			if rune == ' ' || charIndex == len(eachLn){
 				return tagName
 			}
 
@@ -106,7 +112,7 @@ func findTagLines(eachLn string) string {
 			continue 
 		}
 
-		if rune == '@'{
+		if rune == '@' {
 			foundPossibleTag  = true
 			continue
 		}
