@@ -76,22 +76,25 @@ func findTags(fileName string, text []string) []tag.Raw {
 
 		if(findTagLines(eachLn) != ""){
 			foundTagLine = true
+			tagType = findTagLines(eachLn)
+			tagLine = index + 1;
 		}
 
 		if(foundTagLine){
 
-			tagType = findTagLines(eachLn)
-			tagLine = index;
 			
-			if(len(strings.TrimSpace(eachLn)) == 0 || findTagLines(eachLn)!= ""){
+			if(len(strings.TrimSpace(eachLn)) == 0){
 			
-			tagValue = strings.Join(taggys, " ")
+			tagValue = strings.Join(taggys, " \n ")
 			finalTags = append(finalTags, tag.Raw {Type: tag.Type(tagType), Filename: fileName, Line: tagLine, Value: tagValue})
 			taggys = nil
+			foundTagLine = false
 			
+			} else{
+
+				taggys = append(taggys, eachLn)
 			}
 
-			taggys = append(taggys, eachLn)
 		}
 	}
 	return finalTags
