@@ -90,49 +90,50 @@ func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
 }
 
 func main() {
-	fileExtensions, outputFile, inputPath := ParseCmd()
+	Example()
+	// fileExtensions, outputFile, inputPath := ParseCmd()
 
-	var finder TagFinder = FakeFinder{}
-	currentDir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	var loader Loader = FileLoader{
-		FS:             os.DirFS(currentDir),
-		FileExtensions: fileExtensions,
-	}
-	var processor TagProcessor = Processor{
-		cleaners: []Cleaner{
-			SlashStarCleaner{},
-		},
-		tagFactories: []tag.Factory{
-			tag.Why,
-			tag.Readme,
-			tag.FileLink,
-		},
-	}
-	var generator Generator = MarkdownGenerator{}
+	// var finder TagFinder = FakeFinder{}
+	// currentDir, err := os.Getwd()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// var loader Loader = FileLoader{
+	// 	FS:             os.DirFS(currentDir),
+	// 	FileExtensions: fileExtensions,
+	// }
+	// var processor TagProcessor = Processor{
+	// 	cleaners: []Cleaner{
+	// 		SlashStarCleaner{},
+	// 	},
+	// 	tagFactories: []tag.Factory{
+	// 		tag.Why,
+	// 		tag.Readme,
+	// 		tag.FileLink,
+	// 	},
+	// }
+	// var generator Generator = MarkdownGenerator{}
 
-	writer := os.Stdout
-	if outputFile != "" {
-		file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0755)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
+	// writer := os.Stdout
+	// if outputFile != "" {
+	// 	file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0755)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	defer file.Close()
 
-		writer = file
-	}
+	// 	writer = file
+	// }
 
-	crazyDoc := CrazyDoc{
-		Finder:    finder,
-		Loader:    loader,
-		Processor: processor,
-		Generator: generator,
-		Writer:    writer,
-	}
+	// crazyDoc := CrazyDoc{
+	// 	Finder:    finder,
+	// 	Loader:    loader,
+	// 	Processor: processor,
+	// 	Generator: generator,
+	// 	Writer:    writer,
+	// }
 
-	if err := crazyDoc.Run(inputPath); err != nil {
-		panic(err)
-	}
+	// if err := crazyDoc.Run(inputPath); err != nil {
+	// 	panic(err)
+	// }
 }
