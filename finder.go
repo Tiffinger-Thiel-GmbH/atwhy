@@ -22,7 +22,7 @@ func (f Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
         text = append(text, scan.Text())
     }
 
-	var tags = findTags(text)
+	var tags = findTags(filename, text)
 
 	return tags, nil;
 }
@@ -64,7 +64,7 @@ func Example() {
 }
 
 
-func findTags(text []string) []tag.Raw {
+func findTags(fileName string, text []string) []tag.Raw {
 	var foundTagLine bool;
 	var taggys []string;
 	var tagLine int; 
@@ -86,7 +86,7 @@ func findTags(text []string) []tag.Raw {
 			if(len(strings.TrimSpace(eachLn)) == 0 || findTagLines(eachLn)!= ""){
 			
 			tagValue = strings.Join(taggys, " ")
-			finalTags = append(finalTags, tag.Raw {Type: tag.Type(tagType), Filename: "af", Line: tagLine, Value: tagValue})
+			finalTags = append(finalTags, tag.Raw {Type: tag.Type(tagType), Filename: fileName, Line: tagLine, Value: tagValue})
 			taggys = nil
 			
 			}
