@@ -21,6 +21,10 @@ import "io"
 //   Tags out of them. It may also clean comment-chars and spaces and combine some tags.
 // * `Generator` is responsible for postprocessing the tags and output the final file.
 //   which it just writes to the passed `Writer`.
+//
+// So the workflow is:
+// Loader -> TagFinder = tagList []tag.Raw
+// tagList -> TagProcessor -> Generator -> Writer
 type CrazyDoc struct {
 	Loader    Loader
 	Finder    TagFinder
