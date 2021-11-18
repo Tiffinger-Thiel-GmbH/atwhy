@@ -67,7 +67,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string, inpu
 	}
 	var processor TagProcessor = Processor{
 		cleaners: []Cleaner{
-			SlashStarCleaner{},
+			SpacePrefixCleaner{},
 		},
 		tagFactories: []tag.Factory{
 			tag.Why,
