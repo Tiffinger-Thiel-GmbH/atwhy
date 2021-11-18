@@ -32,16 +32,6 @@ func (f *Finder) finishTag(res []tag.Raw) []tag.Raw {
 	return res
 }
 
-/** @README
-  *
-
-/* fthzfhgfth
-
-dgf
-dfg
-df
-g
-dsgfdg*/
 func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 	var res []tag.Raw
 	var scan = bufio.NewScanner(reader)
@@ -149,88 +139,4 @@ func (f *Finder) findTag() *tag.Raw {
 	}
 
 	return nil
-}
-
-// func (f Finder) findTags(fileName string, text []string) []tag.Raw {
-// 	var foundTagLine bool
-// 	var taggys []string
-// 	var tagLine int
-// 	var tagValue string
-// 	var tagType string
-// 	var finalTags []tag.Raw
-
-// 	for index, eachLn := range text {
-
-// 		if f.findTagLines(eachLn) != "" {
-// 			foundTagLine = true
-// 			tagType = f.findTagLines(eachLn)
-// 			tagLine = index + 1
-// 		}
-
-// 		if foundTagLine {
-
-// 			if len(strings.TrimSpace(eachLn)) == 0 {
-
-// 				tagValue = strings.Join(taggys, " \n ")
-// 				finalTags = append(finalTags, tag.Raw{Type: tag.Type(tagType), Filename: fileName, Line: tagLine, Value: tagValue})
-// 				taggys = nil
-// 				foundTagLine = false
-
-// 			} else {
-
-// 				taggys = append(taggys, eachLn)
-// 			}
-
-// 		}
-// 	}
-// 	return finalTags
-// }
-
-// /*
-// @README
-// hallo
-// reame
-// test
-// */
-
-// // @FILELINK
-// // hallo
-
-// TODO: pass if we are currently inside a block comment (as they go over several lines)
-func (f Finder) findTagInLine(line string) string {
-	// TODO: remember if it is currently a comment
-
-	var foundPossibleTag bool
-	var tagName string
-
-	// TODO: If we are not in a comment:
-	// Check if the line starts with a LineComment - ignore spaces
-
-	for charIndex, char := range line {
-		// TODO: If not already in comment.
-		// Check if the current position opens one (note: it may be multi-char)
-
-		// If you are now in a comment, continue:
-
-		// TODO: If not already in comment.
-		// Check if the current position closes a comment (note: it may be multi-char)
-
-		// If you are still in a comment, continue:
-
-		if foundPossibleTag {
-			if char == ' ' || charIndex == len(line) {
-				return tagName
-			}
-
-			tagName += string(char)
-			continue
-		}
-
-		if char == '@' {
-			foundPossibleTag = true
-			continue
-		}
-	}
-
-	return ""
 }
