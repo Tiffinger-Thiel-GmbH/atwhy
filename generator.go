@@ -14,6 +14,7 @@ func MarkdownMapper(t tag.Tag) string {
 }
 
 type MarkdownGenerator struct {
+	TagsToExport []string
 }
 
 func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
@@ -23,6 +24,17 @@ func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 	}
 
 	for tagType, tagGroup := range groupedTags {
+		foundTagsToExport := false
+
+		for _, tagToExport := range mG.TagsToExport {
+			if strings.Contains(tagToExport, string(tagType)) {
+				foundTagsToExport = true
+			}
+		}
+
+		if !foundTagsToExport {
+			continue
+		}
 
 		sort.Slice(tagGroup, func(i, j int) bool {
 			return tagGroup[i].Position() < tagGroup[j].Position()
