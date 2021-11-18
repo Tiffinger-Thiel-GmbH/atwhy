@@ -1,11 +1,21 @@
-/* @README
-
-fsdsdf
-
-fds*/
-
 package main
 
+/*
+
+hallo
+
+@README
+this is readme
+
+
+
+*/
+
+//@FILELINK hasdkldsakjfjlk
+// @README
+// hallo
+// hallo das ist en test
+//
 import (
 	"strings"
 )
