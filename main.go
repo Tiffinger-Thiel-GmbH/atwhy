@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/afero"
@@ -63,7 +64,7 @@ func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile stri
 	}
 	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "comma separated list of file extensions to search for")
 	tagTypes := flag.String("tags", "WHY,README", "comma separated list tag types that should be exported")
-	outputFileVar := flag.String("out", "", "ouptut file \nshould be a .md file")
+	outputFileVar := flag.String("out", "", "ouptut file \nshould be a .md or .html file")
 	flag.Parse()
 
 	inputPath = flag.Arg(0)
@@ -98,8 +99,22 @@ func main() {
 			tag.FileLink,
 		},
 	}
-	var generator Generator = MarkdownGenerator{
-		TagsToExport: tagsToExport,
+
+	var generator Generator
+
+	outputFileExtension := filepath.Ext(outputFile)
+
+	switch outputFileExtension {
+	case ".md", "":
+		generator = MarkdownGenerator{
+			TagsToExport: tagsToExport,
+		}
+	case ".html":
+		generator = HTMLGenerator{
+			MarkdownGenerator{
+				TagsToExport: tagsToExport,
+			},
+		}
 	}
 
 	writer := os.Stdout

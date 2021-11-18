@@ -2,3 +2,4 @@ crazydoc
 *.exe
 *.md
 !README.md
+*.html

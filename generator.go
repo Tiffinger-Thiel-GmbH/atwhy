@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/yuin/goldmark"
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
@@ -17,7 +18,7 @@ type MarkdownGenerator struct {
 	TagsToExport []string
 }
 
-func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
+func (mg MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 	groupedTags := make(map[tag.Type][]tag.Tag)
 	for _, t := range tags {
 		groupedTags[t.Type()] = append(groupedTags[t.Type()], t)
@@ -26,7 +27,7 @@ func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 	for tagType, tagGroup := range groupedTags {
 		foundTagsToExport := false
 
-		for _, tagToExport := range mG.TagsToExport {
+		for _, tagToExport := range mg.TagsToExport {
 			if strings.Contains(tagToExport, string(tagType)) {
 				foundTagsToExport = true
 			}
@@ -49,5 +50,19 @@ func (mG MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 	return nil
 }
 
-// check if really implements everything from Generator interface
-var _ Generator = (*MarkdownGenerator)(nil)
+type HTMLGenerator struct {
+	MarkdownGenerator
+}
+
+func (hg HTMLGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
+	res := strings.Builder{}
+	err := hg.MarkdownGenerator.Generate(tags, &res)
+	if err != nil {
+		return err
+	}
+
+	gm := goldmark.New()
+
+	err = gm.Convert([]byte(res.String()), writer)
+	return err
+}
