@@ -49,29 +49,6 @@ type Generator interface {
 	Generate(tags []tag.Tag, writer io.Writer) error
 }
 
-type FakeFinder struct {
-}
-
-func (ff FakeFinder) Find(filename string, reader io.Reader) (tags []tag.Raw, err error) {
-	return []tag.Raw{
-		{Type: "FILELINK", Filename: filename, Line: 5, Value: `// @FILELINK`},
-		{Type: "README", Filename: filename, Line: 6, Value: ` /* @README 10
-** Headeeeeeer
-* Ich bin Grün`},
-		{Type: "README", Filename: filename, Line: 7, Value: ` * @README 5
-Irgend n Header
- - irgend n Blödsin
-  - Blöd`},
-		{Type: "README", Filename: filename, Line: 7, Value: ` * @README 20
- LOOOOL
- * gdgds
- * gdsfg
-  * dfsg
-  * gsdg
-This is another line`},
-	}, nil
-}
-
 func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
 	// @README 20
 	// Usage
@@ -98,13 +75,13 @@ func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
 func main() {
 	fileExtensions, outputFile, inputPath := ParseCmd()
 
-	var finder TagFinder = FakeFinder{}
-	currentDir, err := os.Getwd()
-	if err != nil {
-		panic(err)
+	var finder TagFinder = Finder{
+		BlockCommentStarts: []string{"/*"},
+		BlockCommentEnds:   []string{"*/"},
+		LineCommentStarts:  []string{"//"},
 	}
 	var loader Loader = FileLoader{
-		FS:             os.DirFS(currentDir),
+		FS:             os.DirFS(""),
 		FileExtensions: fileExtensions,
 	}
 	var processor TagProcessor = Processor{
