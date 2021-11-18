@@ -20,11 +20,26 @@ func (t Text) String() string {
 		markdown = "# " + t.header
 	}
 
+	var currentBody = strings.Split(t.value, "\n")
+	var newBody []string
 	for _, child := range t.children {
 		markdown += child.String() + NewLine
 	}
 
-	return markdown + t.value
+	for _, line := range currentBody {
+		if len(line) <= 0 {
+			continue
+		}
+		var newLine = line
+
+		if line[0:1] == "#" {
+			newLine = "#" + line
+		}
+
+		newBody = append(newBody, newLine)
+	}
+
+	return markdown + strings.Join(newBody, "\n")
 }
 
 func (t Text) IsParent() bool {
