@@ -36,7 +36,7 @@ func (t Text) String() string {
 			newLine = "#" + line
 		}
 
-		newBody = append(newBody, newLine)
+		newBody = append(newBody, newLine+"  ")
 	}
 
 	return markdown + strings.Join(newBody, "\n")

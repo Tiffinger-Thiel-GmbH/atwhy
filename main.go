@@ -166,7 +166,6 @@ func main() {
 		if err := crazyDoc.Run(inputPath); err != nil {
 			fmt.Println(err)
 		}
-		w.WriteHeader(200)
 	})
 
 	fmt.Println("Starting server")
