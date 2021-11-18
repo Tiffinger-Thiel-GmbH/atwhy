@@ -94,15 +94,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string, inpu
 	}
 
 	writer := os.Stdout
-	if outputFile != "" {
-		file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0755)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-
-		writer = file
-	}
+	
 
 	crazyDoc := CrazyDoc{
 		Finder:    finder,
@@ -145,6 +137,16 @@ func main() {
 
 	if host == "" {
 		crazyDoc := New(fileExtensions, tagsToExport, outputFile, inputPath)
+
+		if outputFile != "" {
+			file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0755)
+			if err != nil {
+				panic(err)
+			}
+			defer file.Close()
+	
+			crazyDoc.Writer = file
+		}
 
 		if err := crazyDoc.Run(inputPath); err != nil {
 			panic(err)
