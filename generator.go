@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"sort"
 	"strings"
@@ -13,7 +12,6 @@ import (
 func MarkdownMapper(t tag.Tag) string {
 	// TODO Regex !
 
-	fmt.Println("hallo")
 	return strings.ReplaceAll(t.String(), "# ", "## ")
 }
 
