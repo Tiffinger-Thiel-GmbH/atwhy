@@ -4,6 +4,7 @@ import "io"
 
 // CrazyDoc combines all parts of the application.
 //
+// @FILELINK
 // @WHY 10
 // Architecture
 // The idea behind CrazyDoc is to have several interfaces,

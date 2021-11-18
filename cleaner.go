@@ -4,13 +4,12 @@ import (
 	"strings"
 )
 
-type SlashStarCleaner struct{}
+type SpacePrefixCleaner struct{}
 
-func (s SlashStarCleaner) Clean(in string) (string, error) {
+func (s SpacePrefixCleaner) Clean(in string) (string, error) {
 	lines := strings.Split(in, "\n")
 
-	for i, line := range lines {
-		lines[i] = strings.TrimLeft(strings.TrimLeft(line, " "), "*/")
+	for i := range lines {
 
 		// Delete the first space after the special chars (if there is one)
 		lines[i] = strings.TrimPrefix(lines[i], " ")

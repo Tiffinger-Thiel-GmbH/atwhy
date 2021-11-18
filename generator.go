@@ -25,7 +25,17 @@ func (mg MarkdownGenerator) Generate(tags []tag.Tag, writer io.Writer) error {
 		groupedTags[t.Type()] = append(groupedTags[t.Type()], t)
 	}
 
-	for tagType, tagGroup := range groupedTags {
+	var sorted []tag.Type
+	for tagType := range groupedTags {
+		sorted = append(sorted, tagType)
+	}
+
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i] < sorted[j]
+	})
+
+	for _, tagType := range sorted {
+		tagGroup := groupedTags[tagType]
 		foundTagsToExport := false
 
 		for _, tagToExport := range mg.TagsToExport {
