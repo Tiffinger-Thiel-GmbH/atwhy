@@ -4,7 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/afero"
@@ -51,33 +54,7 @@ type Generator interface {
 	Generate(tags []tag.Tag, writer io.Writer) error
 }
 
-func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string) {
-	// @README 20
-	// Usage
-	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
-	// To get all possible file extensions just run `crazydoc -help`
-
-	flag.Usage = func() {
-		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS]... [PROJECT_ROOT]\n", os.Args[0])
-		flag.PrintDefaults()
-	}
-	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "comma separated list of file extensions to search for")
-	tagTypes := flag.String("tags", "WHY,README", "comma separated list tag types that should be exported")
-	outputFileVar := flag.String("out", "", "ouptut file \nshould be a .md file")
-	flag.Parse()
-
-	inputPath = flag.Arg(0)
-	fileExtensions = strings.Split(*extVar, ",")
-	tagsToExport = strings.Split(*tagTypes, ",")
-	if inputPath == "" {
-		inputPath = "."
-	}
-
-	return fileExtensions, tagsToExport, *outputFileVar, inputPath
-}
-
-func main() {
-	fileExtensions, tagsToExport, outputFile, inputPath := ParseCmd()
+func New(fileExtensions []string, tagsToExport []string, outputFile string, inputPath string) CrazyDoc {
 
 	var finder TagFinder = &Finder{
 		BlockCommentStarts: []string{"/*"},
@@ -98,8 +75,22 @@ func main() {
 			tag.FileLink,
 		},
 	}
-	var generator Generator = MarkdownGenerator{
-		TagsToExport: tagsToExport,
+
+	var generator Generator
+
+	outputFileExtension := filepath.Ext(outputFile)
+
+	switch outputFileExtension {
+	case ".md", "":
+		generator = MarkdownGenerator{
+			TagsToExport: tagsToExport,
+		}
+	case ".html":
+		generator = HTMLGenerator{
+			MarkdownGenerator{
+				TagsToExport: tagsToExport,
+			},
+		}
 	}
 
 	writer := os.Stdout
@@ -120,8 +111,67 @@ func main() {
 		Generator: generator,
 		Writer:    writer,
 	}
+	return crazyDoc
+}
 
-	if err := crazyDoc.Run(inputPath); err != nil {
-		panic(err)
+func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string, host string) {
+	// @README 20
+	// Usage
+	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
+	// To get all possible file extensions just run `crazydoc -help`
+
+	flag.Usage = func() {
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS]... [PROJECT_ROOT]\n", os.Args[0])
+		flag.PrintDefaults()
 	}
+	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "comma separated list of file extensions to search for")
+	tagTypes := flag.String("tags", "WHY,README", "comma separated list tag types that should be exported")
+	hostVar := flag.String("host", "", "serves generated html file to given host (e.g. localhost:4000) \n-out param will be ignored")
+	outputFileVar := flag.String("out", "", "ouptut file \nshould be a .md or .html file")
+	flag.Parse()
+
+	inputPath = flag.Arg(0)
+	fileExtensions = strings.Split(*extVar, ",")
+	tagsToExport = strings.Split(*tagTypes, ",")
+	if inputPath == "" {
+		inputPath = "."
+	}
+
+	return fileExtensions, tagsToExport, *outputFileVar, inputPath, *hostVar
+}
+
+func main() {
+	fileExtensions, tagsToExport, outputFile, inputPath, host := ParseCmd()
+
+	if host == "" {
+		crazyDoc := New(fileExtensions, tagsToExport, outputFile, inputPath)
+
+		if err := crazyDoc.Run(inputPath); err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+
+		crazyDoc := New(fileExtensions, tagsToExport, outputFile, inputPath)
+		crazyDoc.Generator = HTMLGenerator{
+			MarkdownGenerator{
+				TagsToExport: tagsToExport,
+			},
+		}
+		crazyDoc.Writer = w
+
+		if err := crazyDoc.Run(inputPath); err != nil {
+			fmt.Println(err)
+		}
+		w.WriteHeader(200)
+	})
+
+	fmt.Println("Starting server")
+	if err := http.ListenAndServe(host, nil); err != nil {
+		log.Fatal(err)
+	}
+
 }
