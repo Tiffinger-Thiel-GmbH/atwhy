@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/spf13/afero"
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
@@ -78,13 +79,13 @@ func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile stri
 func main() {
 	fileExtensions, tagsToExport, outputFile, inputPath := ParseCmd()
 
-	var finder TagFinder = Finder{
+	var finder TagFinder = &Finder{
 		BlockCommentStarts: []string{"/*"},
 		BlockCommentEnds:   []string{"*/"},
 		LineCommentStarts:  []string{"//"},
 	}
 	var loader Loader = FileLoader{
-		FS:             os.DirFS(""),
+		FS:             afero.NewOsFs(),
 		FileExtensions: fileExtensions,
 	}
 	var processor TagProcessor = Processor{
