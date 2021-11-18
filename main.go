@@ -82,7 +82,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string, inpu
 
 	switch outputFileExtension {
 	case ".md", "":
-		generator = MarkdownGenerator{
+		generator = &MarkdownGenerator{
 			TagsToExport: tagsToExport,
 		}
 	case ".html":
@@ -125,7 +125,7 @@ func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile stri
 		flag.PrintDefaults()
 	}
 	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "comma separated list of file extensions to search for")
-	tagTypes := flag.String("tags", "WHY,README", "comma separated list tag types that should be exported")
+	tagTypes := flag.String("tags", "README,WHY", "comma separated list tag types that should be exported")
 	hostVar := flag.String("host", "", "serves generated html file to given host (e.g. localhost:4000) \n-out param will be ignored")
 	outputFileVar := flag.String("out", "", "ouptut file \nshould be a .md or .html file")
 	flag.Parse()
