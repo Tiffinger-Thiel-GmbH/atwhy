@@ -152,7 +152,14 @@ func main() {
 		return
 	}
 
+	fs := http.FileServer(http.Dir(inputPath))
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			fs.ServeHTTP(w, r)
+			return
+		}
+
 		w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 
 		crazyDoc := New(fileExtensions, tagsToExport, outputFile, inputPath)
