@@ -3,3 +3,4 @@ crazydoc
 *.md
 !README.md
 *.html
+tools/install-dir

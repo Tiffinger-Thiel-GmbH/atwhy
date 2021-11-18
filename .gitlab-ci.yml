@@ -11,6 +11,7 @@ cache:
 stages:
   - test
   - build
+  - deploy
 
 before_script:
   - apt-get update -y
@@ -58,14 +59,38 @@ build:
 
     - GOOS=windows GOARCH=amd64 make dist
     - GOOS=windows GOARCH=arm64 make dist
+    - GOOS=windows GOARCH=386 make dist
+    - mkdir installer_deps
+    - cp crazydoc.exe installer_deps
 
     - GOOS=darwin GOARCH=amd64 make dist
     - GOOS=darwin GOARCH=arm64 make dist
 
-    - mkdir artifacts
-    - mv *.zip artifacts
+    - mkdir dist
+    - mv *.zip dist
   artifacts:
     paths:
-      - artifacts/*
+      - dist/*
+      - installer_deps/*
   only:
   - main
+
+build_win_installer:
+  image:
+    name: amake/innosetup
+    entrypoint: [""]
+  stage: deploy
+  when: manual
+  before_script: []
+  script:
+    - mkdir tools/install-dir
+    - mv installer_deps/crazydoc.exe tools/install-dir
+    - rmdir installer_deps
+    - cd tools
+    - iscc crazydoc.iss
+    - cp install-dir/installer/CrazyDocSetup.exe ../dist
+  artifacts:
+    paths:
+      - dist/*
+  only:
+    - main
