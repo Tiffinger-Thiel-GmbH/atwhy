@@ -51,7 +51,7 @@ type Generator interface {
 	Generate(tags []tag.Tag, writer io.Writer) error
 }
 
-func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
+func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string) {
 	// @README 20
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
@@ -62,20 +62,22 @@ func ParseCmd() (fileExtensions []string, outputFile string, inputPath string) {
 		flag.PrintDefaults()
 	}
 	extVar := flag.String("ext", ".go,.js,.ts,.jsx,.tsx", "comma separated list of file extensions to search for")
+	tagTypes := flag.String("tags", "WHY,README", "comma separated list tag types that should be exported")
 	outputFileVar := flag.String("out", "", "ouptut file \nshould be a .md file")
 	flag.Parse()
 
 	inputPath = flag.Arg(0)
 	fileExtensions = strings.Split(*extVar, ",")
+	tagsToExport = strings.Split(*tagTypes, ",")
 	if inputPath == "" {
 		inputPath = "."
 	}
 
-	return fileExtensions, *outputFileVar, inputPath
+	return fileExtensions, tagsToExport, *outputFileVar, inputPath
 }
 
 func main() {
-	fileExtensions, outputFile, inputPath := ParseCmd()
+	fileExtensions, tagsToExport, outputFile, inputPath := ParseCmd()
 
 	var finder TagFinder = &Finder{
 		BlockCommentStarts: []string{"/*"},
@@ -96,7 +98,9 @@ func main() {
 			tag.FileLink,
 		},
 	}
-	var generator Generator = MarkdownGenerator{}
+	var generator Generator = MarkdownGenerator{
+		TagsToExport: tagsToExport,
+	}
 
 	writer := os.Stdout
 	if outputFile != "" {
