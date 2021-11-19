@@ -1,4 +1,4 @@
-package main
+package finder
 
 import (
 	"bufio"
@@ -81,6 +81,11 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 }
 
 func (f *Finder) findComment(line string) {
+	defer func() {
+		// Always cut the first space because usually comments have a space after the comment sign.
+		f.currentCommentLine = strings.TrimPrefix(f.currentCommentLine, " ")
+	}()
+
 	f.currentCommentLine = ""
 	f.currentLineIsLineComment = false
 

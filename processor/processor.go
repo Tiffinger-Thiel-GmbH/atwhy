@@ -1,8 +1,6 @@
-package main
+package processor
 
 import (
-	"fmt"
-
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
@@ -11,22 +9,7 @@ type Cleaner interface {
 }
 
 type Processor struct {
-	cleaners     []Cleaner
-	tagFactories []tag.Factory
-}
-
-func (p Processor) clean(input string) string {
-	for _, cleaner := range p.cleaners {
-		cleaned, err := cleaner.Clean(input)
-		if err != nil {
-			// Just log out and continue with the other cleaners.
-			fmt.Println(err)
-			continue
-		}
-		input = cleaned
-	}
-
-	return input
+	TagFactories []tag.Factory
 }
 
 func (p Processor) Process(tags []tag.Raw) ([]tag.Tag, error) {
@@ -37,14 +20,13 @@ func (p Processor) Process(tags []tag.Raw) ([]tag.Tag, error) {
 
 	for i := range tags {
 		t := tags[i]
-		t.Value = p.clean(t.Value)
 
 		if currentFile != t.Filename {
 			lastChildren = nil
 		}
 		currentFile = t.Filename
 
-		for _, factory := range p.tagFactories {
+		for _, factory := range p.TagFactories {
 			newTag, err := factory(t, lastChildren)
 			if err != nil {
 				return nil, err
