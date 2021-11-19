@@ -85,7 +85,7 @@ func (f *Finder) findComment(line string) {
 	f.currentLineIsLineComment = false
 
 	var commentStartedInThisLine bool
-	trimmedLine := strings.TrimLeft(line, " ")
+	trimmedLine := strings.TrimLeft(line, " \t")
 	if !f.currentlyInBlockComment {
 
 		for _, lineCommentStart := range f.LineCommentStarts {

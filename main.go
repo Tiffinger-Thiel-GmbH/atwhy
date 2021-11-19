@@ -1,5 +1,6 @@
 package main
 
+//go:generate go run . -out README.md -tags README
 import (
 	"flag"
 	"fmt"
@@ -25,7 +26,7 @@ import (
 // actually done.
 // --> __Single source of truth__ also for documentation!
 
-// @README 20
+// @README 30
 // Distribute
 // # Prerequisites
 // * Go 1.17
@@ -94,7 +95,6 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string, inpu
 	}
 
 	writer := os.Stdout
-	
 
 	crazyDoc := CrazyDoc{
 		Finder:    finder,
@@ -144,7 +144,7 @@ func main() {
 				panic(err)
 			}
 			defer file.Close()
-	
+
 			crazyDoc.Writer = file
 		}
 
