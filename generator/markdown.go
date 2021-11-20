@@ -52,7 +52,7 @@ func (m *Markdown) Generate(tags []tag.Tag, writer io.Writer) error {
 
 		writer.Write([]byte("# " + string(tagType) + "\n"))
 		for _, tag := range tagGroup {
-			writer.Write([]byte(MarkdownMapper(tag) + "\n\n"))
+			writer.Write([]byte(MarkdownMapper(tag) + "\n"))
 		}
 	}
 

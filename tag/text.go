@@ -28,6 +28,7 @@ func (t Text) String() string {
 
 	for _, line := range currentBody {
 		if len(line) <= 0 {
+			newBody = append(newBody, line+"  ")
 			continue
 		}
 		var newLine = line

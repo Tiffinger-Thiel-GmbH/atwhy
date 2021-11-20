@@ -1,8 +1,12 @@
 package loader
 
 import (
+	"fmt"
+	ignore "github.com/sabhiram/go-gitignore"
 	"io"
 	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/afero"
@@ -18,16 +22,46 @@ type File struct {
 	FileExtensions []string
 }
 
+// @README 20
+// Ignore
+// If you want to ignore files, just add a `.crazydocignore`
+// to the root of your project. It follows the syntax of a `.gitignore`.
+//
+// __NOTE:__ Currently only the file in the root directory is checked, no
+// deeper nested file, like with `.gitignore`.
+
+func loadIgnores(path string) (*ignore.GitIgnore, error) {
+	// Ignore .git always.
+	rules := ignore.CompileIgnoreLines(".git")
+
+	ignoreFile := filepath.Join(path, ".crazydocignore")
+	if _, err := os.Stat(ignoreFile); err != nil {
+		if os.IsNotExist(err) {
+			return rules, nil
+		}
+		return rules, err
+	}
+
+	fmt.Println(ignoreFile)
+	ignores, err := ignore.CompileIgnoreFileAndLines(ignoreFile)
+	return ignores, err
+}
+
 func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 	filesystem := fl.FS
 	allTags := make([]tag.Raw, 0)
 
-	err := afero.Walk(fl.FS, dir, func(path string, info fs.FileInfo, err error) error {
+	ignores, err := loadIgnores(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	err = afero.Walk(fl.FS, dir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if info.IsDir() {
+		if ignores.MatchesPath(path) {
 			return nil
 		}
 

@@ -1,6 +1,5 @@
 crazydoc
 *.exe
 *.md
-!README.md
 *.html
 tools/install-dir

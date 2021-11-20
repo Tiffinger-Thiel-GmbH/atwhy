@@ -29,16 +29,14 @@ import (
 // The same applies to architectural decisions, which can be documented, where its
 // actually done.
 // --> __Single source of truth__ also for documentation!
-//
 
-// @README 30
+// @README 40
 // Distribute
 // # Prerequisites
 // * Go 1.17
 //
 // # Build
 // Run `go build .`
-//
 
 type Loader interface {
 	Load(dir string, finder loader.TagFinder) (allTags []tag.Raw, err error)
@@ -96,7 +94,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string) Craz
 }
 
 func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string, host string) {
-	// @README 20
+	// @README 30
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
 	// To get all possible file extensions just run `crazydoc -help`
