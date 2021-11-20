@@ -63,7 +63,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string) Craz
 			TagsToExport: tagsToExport,
 		}
 	case ".html":
-		gen = generator.HTML{
+		gen = &generator.HTML{
 			Markdown: generator.Markdown{
 				TagsToExport: tagsToExport,
 			},
@@ -100,6 +100,8 @@ func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile stri
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
 	// To get all possible file extensions just run `crazydoc -help`
+	//
+	// In development, use `go run . [OPTIONS]... [PROJECT_ROOT]` instead.
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS]... [PROJECT_ROOT]\n", os.Args[0])
@@ -154,7 +156,7 @@ func main() {
 		w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 
 		crazyDoc := New(fileExtensions, tagsToExport, outputFile)
-		crazyDoc.Generator = generator.HTML{
+		crazyDoc.Generator = &generator.HTML{
 			Markdown: generator.Markdown{
 				TagsToExport: tagsToExport,
 			},
