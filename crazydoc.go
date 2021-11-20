@@ -1,6 +1,9 @@
 package main
 
-import "io"
+import (
+	"gitlab.com/tiffinger-thiel/crazydoc/loader"
+	"io"
+)
 
 // CrazyDoc combines all parts of the application.
 //
@@ -28,7 +31,7 @@ import "io"
 // tagList -> TagProcessor -> Generator -> Writer
 type CrazyDoc struct {
 	Loader    Loader
-	Finder    TagFinder
+	Finder    loader.TagFinder
 	Processor TagProcessor
 	Generator Generator
 	Writer    io.Writer

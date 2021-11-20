@@ -36,10 +36,13 @@ ShowTasksTreeLines=YES
 [Files]
 Source: "crazydoc.exe"; DestDir: "{app}"
 
+[Tasks]
+Name: envPath; Description: "Add to PATH variable"
+
 [Code]
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-    if CurStep = ssPostInstall
+    if (CurStep = ssPostInstall) and WizardIsTaskSelected('envPath')
      then EnvAddPath(ExpandConstant('{app}'));
 end;
 

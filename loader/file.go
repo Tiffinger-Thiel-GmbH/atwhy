@@ -1,6 +1,7 @@
-package main
+package loader
 
 import (
+	"io"
 	"io/fs"
 	"strings"
 
@@ -8,12 +9,16 @@ import (
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
-type FileLoader struct {
+type TagFinder interface {
+	Find(filename string, reader io.Reader) (tags []tag.Raw, err error)
+}
+
+type File struct {
 	FS             afero.Fs
 	FileExtensions []string
 }
 
-func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
+func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 	filesystem := fl.FS
 	allTags := make([]tag.Raw, 0)
 
