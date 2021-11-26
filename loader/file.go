@@ -39,6 +39,10 @@ func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 			return err
 		}
 
+		if info.IsDir() {
+			return nil
+		}
+
 		hasFoundExtension := false
 
 		for _, e := range fl.FileExtensions {
