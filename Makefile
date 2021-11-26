@@ -38,7 +38,8 @@ dist: build
 ifeq ($(GOOS),windows)
 	@zip ${GOOS}-${GOARCH}-crazydoc.zip ${PROJECT_NAME}.exe
 else
-	@zip ${GOOS}-${GOARCH}-crazydoc.zip ${PROJECT_NAME}
+	@chmod +x ${PROJECT_NAME}
+	@tar -czf ${GOOS}-${GOARCH}-crazydoc.tar.gz ${PROJECT_NAME}
 endif
 	
 clean: ## Remove previous build
