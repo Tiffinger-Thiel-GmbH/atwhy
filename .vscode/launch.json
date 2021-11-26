@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": ".",
-            "args": ["-ext", ".go,.html", "-host", "localhost:4000", "./"]
+            "args": ["-ext", ".go", "-host", "localhost:4000", "./"]
         }
     ]
 }

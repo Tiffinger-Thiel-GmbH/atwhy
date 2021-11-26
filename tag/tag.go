@@ -2,10 +2,21 @@ package tag
 
 type Type string
 
+// @README 35
+// Tags
+// * Text
+//   * `\@README`
+//   * `\@WHY`
+// * Modifiers (use them just before the text-tags)
+//   * `\@FILELINK`
+//   * `\@CODE` (use `\@CODE_END` after the code-block you want to include)
+
 var (
 	TypeWhy      Type = "WHY"
 	TypeReadme   Type = "README"
 	TypeFileLink Type = "FILELINK"
+	TypeCode     Type = "CODE"
+	TypeCodeEnd  Type = "CODE_END"
 )
 
 const (
@@ -18,6 +29,7 @@ type Raw struct {
 	Filename string
 	Line     int
 	Value    string
+	Code     string
 }
 
 // Tag which was parsed from the code.

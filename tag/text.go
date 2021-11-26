@@ -1,6 +1,7 @@
 package tag
 
 import (
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,6 +12,8 @@ type Text struct {
 	header   string
 	children []Tag
 	position int
+	code     string
+	codeType string
 }
 
 func (t Text) String() string {
@@ -40,7 +43,13 @@ func (t Text) String() string {
 		newBody = append(newBody, newLine+"  ")
 	}
 
-	return markdown + strings.Join(newBody, "\n")
+	markdown = markdown + strings.Join(newBody, "\n")
+
+	if t.code != "" {
+		markdown = markdown + "```" + t.codeType + "\n" + t.code + "```\n"
+	}
+
+	return markdown
 }
 
 func (t Text) IsParent() bool {
@@ -90,6 +99,8 @@ func textFactory(input Raw, children []Tag) (Tag, error) {
 			value:   input.Value,
 		},
 		header:   header,
+		code:     input.Code,
+		codeType: filepath.Ext(input.Filename)[1:],
 		children: children,
 		position: position,
 	}, nil

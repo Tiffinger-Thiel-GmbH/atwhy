@@ -19,12 +19,16 @@ type Finder struct {
 	currentCommentLine       string
 	currentBlockIndex        int
 
-	currentTag *tag.Raw
+	currentTag  *tag.Raw
+	includeCode bool
 }
 
 func (f *Finder) finishTag(res []tag.Raw) []tag.Raw {
 	if f.currentTag != nil {
 		f.currentTag.Value = f.currentTag.Value + f.currentCommentLine + "\n"
+
+		// Unescape \@ to @
+		f.currentTag.Value = strings.ReplaceAll(f.currentTag.Value, "\\@", "@")
 		res = append(res, *f.currentTag)
 		f.currentTag = nil
 	}
@@ -44,7 +48,8 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		f.findComment(line)
 
 		if !f.currentlyInBlockComment &&
-			!f.currentLineIsLineComment {
+			!f.currentLineIsLineComment &&
+			!f.includeCode {
 			res = f.finishTag(res)
 			continue
 		}
@@ -52,11 +57,24 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		if f.currentCommentLine != "" {
 			newTag := f.findTag()
 			if newTag != nil {
+				// Special tag CODE
+				if newTag.Type == tag.TypeCode {
+					f.includeCode = true
+					continue
+				}
+
+				// Special tag CODE_END
+				if newTag.Type == tag.TypeCodeEnd {
+					f.includeCode = false
+					continue
+				}
+
 				f.currentCommentLine = ""
 				res = f.finishTag(res)
 				newTag.Filename = filename
 				newTag.Line = lineNum
 				f.currentTag = newTag
+
 				continue
 			}
 
@@ -68,6 +86,11 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 
 		if f.currentTag != nil && f.currentCommentLine == "" && (f.currentlyInBlockComment || f.currentLineIsLineComment) {
 			f.currentTag.Value = f.currentTag.Value + "\n"
+			continue
+		}
+
+		if f.currentTag != nil && f.includeCode {
+			f.currentTag.Code = f.currentTag.Code + line + "\n"
 			continue
 		}
 
@@ -133,10 +156,10 @@ func (f *Finder) findComment(line string) {
 	}
 }
 
-var anyTagRegex = regexp.MustCompile("@[A-Za-z]+")
+var anyTagRegex = regexp.MustCompile(`[\\]?@[A-Za-z_]+`)
 
 func (f *Finder) findTag() *tag.Raw {
-	if tagType := anyTagRegex.FindString(f.currentCommentLine); tagType != "" {
+	if tagType := anyTagRegex.FindString(f.currentCommentLine); tagType != "" && tagType[0] != '\\' {
 		return &tag.Raw{
 			Type:  tag.Type(tagType[1:]),
 			Value: f.currentCommentLine + "\n",
