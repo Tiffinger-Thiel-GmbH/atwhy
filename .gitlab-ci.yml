@@ -67,6 +67,7 @@ build:
     - GOOS=darwin GOARCH=arm64 make dist
 
     - mkdir dist
+    - mv *.tar.gz dist
     - mv *.zip dist
   artifacts:
     paths:
