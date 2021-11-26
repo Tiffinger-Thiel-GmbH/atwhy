@@ -1,23 +1,40 @@
-package main
+package loader
 
 import (
+	"io"
 	"io/fs"
+	"path/filepath"
 	"strings"
 
+	"github.com/aligator/nogo"
 	"github.com/spf13/afero"
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
-type FileLoader struct {
+type TagFinder interface {
+	Find(filename string, reader io.Reader) (tags []tag.Raw, err error)
+}
+
+type File struct {
 	FS             afero.Fs
 	FileExtensions []string
 }
 
-func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
-	filesystem := fl.FS
+// @README 30
+// Ignore
+// If you want to ignore files, just add a `.crazydocignore` to the root of your project.
+// It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` files to subfolders.
+
+func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
+	abs, err := filepath.Abs(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	filesystem := afero.NewBasePathFs(fl.FS, abs)
 	allTags := make([]tag.Raw, 0)
 
-	err := afero.Walk(fl.FS, dir, func(path string, info fs.FileInfo, err error) error {
+	err = nogo.AferoWalk([]string{".crazydocignore"}, filesystem, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -51,7 +68,7 @@ func (fl FileLoader) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 		}
 		allTags = append(allTags, tags...)
 		return nil
-	})
+	}, nogo.WithRules(nogo.GitIgnoreRule...))
 	if err != nil {
 		return nil, err
 	}

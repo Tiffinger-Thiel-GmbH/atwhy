@@ -11,6 +11,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"gitlab.com/tiffinger-thiel/crazydoc/finder"
+	"gitlab.com/tiffinger-thiel/crazydoc/generator"
+	"gitlab.com/tiffinger-thiel/crazydoc/loader"
+	"gitlab.com/tiffinger-thiel/crazydoc/processor"
+
 	"github.com/spf13/afero"
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
@@ -26,25 +31,16 @@ import (
 // actually done.
 // --> __Single source of truth__ also for documentation!
 
-// @README 30
+// @README 40
 // Distribute
 // # Prerequisites
 // * Go 1.17
 //
 // # Build
 // Run `go build .`
-//
 
 type Loader interface {
-	Load(dir string, finder TagFinder) (allTags []tag.Raw, err error)
-}
-
-type TagFinder interface {
-	Find(filename string, reader io.Reader) (tags []tag.Raw, err error)
-	// SaveByTag()
-	// scan()
-	// findTag()
-	// saveByTag()
+	Load(dir string, finder loader.TagFinder) (allTags []tag.Raw, err error)
 }
 
 type TagProcessor interface {
@@ -55,40 +51,19 @@ type Generator interface {
 	Generate(tags []tag.Tag, writer io.Writer) error
 }
 
-func New(fileExtensions []string, tagsToExport []string, outputFile string, inputPath string) CrazyDoc {
-
-	var finder TagFinder = &Finder{
-		BlockCommentStarts: []string{"/*"},
-		BlockCommentEnds:   []string{"*/"},
-		LineCommentStarts:  []string{"//"},
-	}
-	var loader Loader = FileLoader{
-		FS:             afero.NewOsFs(),
-		FileExtensions: fileExtensions,
-	}
-	var processor TagProcessor = Processor{
-		cleaners: []Cleaner{
-			SpacePrefixCleaner{},
-		},
-		tagFactories: []tag.Factory{
-			tag.Why,
-			tag.Readme,
-			tag.FileLink,
-		},
-	}
-
-	var generator Generator
+func New(fileExtensions []string, tagsToExport []string, outputFile string) CrazyDoc {
+	var gen Generator
 
 	outputFileExtension := filepath.Ext(outputFile)
 
 	switch outputFileExtension {
 	case ".md", "":
-		generator = &MarkdownGenerator{
+		gen = &generator.Markdown{
 			TagsToExport: tagsToExport,
 		}
 	case ".html":
-		generator = HTMLGenerator{
-			MarkdownGenerator{
+		gen = &generator.HTML{
+			Markdown: generator.Markdown{
 				TagsToExport: tagsToExport,
 			},
 		}
@@ -97,10 +72,23 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string, inpu
 	writer := os.Stdout
 
 	crazyDoc := CrazyDoc{
-		Finder:    finder,
-		Loader:    loader,
-		Processor: processor,
-		Generator: generator,
+		Finder: &finder.Finder{
+			BlockCommentStarts: []string{"/*"},
+			BlockCommentEnds:   []string{"*/"},
+			LineCommentStarts:  []string{"//"},
+		},
+		Loader: loader.File{
+			FS:             afero.NewOsFs(),
+			FileExtensions: fileExtensions,
+		},
+		Processor: processor.Processor{
+			TagFactories: []tag.Factory{
+				tag.Why,
+				tag.Readme,
+				tag.FileLink,
+			},
+		},
+		Generator: gen,
 		Writer:    writer,
 	}
 	return crazyDoc
@@ -110,7 +98,9 @@ func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile stri
 	// @README 20
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
-	// To get all possible file extensions just run `crazydoc -help`
+	// To get all possible options just run `crazydoc -help`
+	//
+	// In development, use `go run . [OPTIONS]... [PROJECT_ROOT]` instead.
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [OPTIONS]... [PROJECT_ROOT]\n", os.Args[0])
@@ -136,7 +126,7 @@ func main() {
 	fileExtensions, tagsToExport, outputFile, inputPath, host := ParseCmd()
 
 	if host == "" {
-		crazyDoc := New(fileExtensions, tagsToExport, outputFile, inputPath)
+		crazyDoc := New(fileExtensions, tagsToExport, outputFile)
 
 		if outputFile != "" {
 			file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0755)
@@ -164,9 +154,9 @@ func main() {
 
 		w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 
-		crazyDoc := New(fileExtensions, tagsToExport, outputFile, inputPath)
-		crazyDoc.Generator = HTMLGenerator{
-			MarkdownGenerator{
+		crazyDoc := New(fileExtensions, tagsToExport, outputFile)
+		crazyDoc.Generator = &generator.HTML{
+			Markdown: generator.Markdown{
 				TagsToExport: tagsToExport,
 			},
 		}
