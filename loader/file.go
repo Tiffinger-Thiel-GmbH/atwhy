@@ -64,7 +64,7 @@ func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 		}
 		allTags = append(allTags, tags...)
 		return nil
-	})
+	}, nogo.WithRules(nogo.GitIgnoreRule...))
 	if err != nil {
 		return nil, err
 	}

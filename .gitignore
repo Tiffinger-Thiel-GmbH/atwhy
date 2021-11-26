@@ -1,0 +1,6 @@
+/crazydoc
+*.exe
+*.md
+*.html
+tools/install-dir
+*.md
