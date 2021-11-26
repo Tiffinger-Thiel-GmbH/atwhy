@@ -73,14 +73,15 @@ build:
       - dist/*
       - installer_deps/*
   only:
-  - main
+    - tags
+  except:
+    - branches
 
 build_win_installer:
   image:
     name: amake/innosetup
     entrypoint: [""]
   stage: deploy
-  when: manual
   before_script: []
   script:
     - mkdir tools/install-dir
@@ -93,4 +94,6 @@ build_win_installer:
     paths:
       - dist/*
   only:
-    - main
+    - tags
+  except:
+    - branches
