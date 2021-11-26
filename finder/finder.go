@@ -20,11 +20,18 @@ type Finder struct {
 	currentBlockIndex        int
 
 	currentTag *tag.Raw
+
+	// includeCode saves if a \@CODE tag was found.
+	// It has to be reset at a \@CODE_END tag.
+	includeCode bool
 }
 
 func (f *Finder) finishTag(res []tag.Raw) []tag.Raw {
 	if f.currentTag != nil {
 		f.currentTag.Value = f.currentTag.Value + f.currentCommentLine + "\n"
+
+		// Unescape \@ to @
+		f.currentTag.Value = strings.ReplaceAll(f.currentTag.Value, "\\@", "@")
 		res = append(res, *f.currentTag)
 		f.currentTag = nil
 	}
@@ -43,8 +50,10 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		line := scan.Text()
 		f.findComment(line)
 
+		// Finish the current tag if there is no more comment line (or includeCode).
 		if !f.currentlyInBlockComment &&
-			!f.currentLineIsLineComment {
+			!f.currentLineIsLineComment &&
+			!f.includeCode {
 			res = f.finishTag(res)
 			continue
 		}
@@ -52,28 +61,51 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		if f.currentCommentLine != "" {
 			newTag := f.findTag()
 			if newTag != nil {
+				// Special tag CODE
+				if newTag.Type == tag.TypeCode {
+					f.includeCode = true
+					continue
+				}
+
+				// Special tag CODE_END
+				if newTag.Type == tag.TypeCodeEnd {
+					f.includeCode = false
+					continue
+				}
+
+				// Finish the previous tag and start a new one.
 				f.currentCommentLine = ""
 				res = f.finishTag(res)
 				newTag.Filename = filename
 				newTag.Line = lineNum
 				f.currentTag = newTag
+
 				continue
 			}
 
+			// Just add the current line to the value.
 			if f.currentTag != nil {
 				f.currentTag.Value = f.currentTag.Value + f.currentCommentLine + "\n"
 				continue
 			}
 		}
 
+		// For empty comment lines, just add newlines.
 		if f.currentTag != nil && f.currentCommentLine == "" && (f.currentlyInBlockComment || f.currentLineIsLineComment) {
 			f.currentTag.Value = f.currentTag.Value + "\n"
+			continue
+		}
+
+		// If no longer in comment but still includeCode, add the whole line as code.
+		if f.currentTag != nil && f.includeCode {
+			f.currentTag.Code = f.currentTag.Code + line + "\n"
 			continue
 		}
 
 		f.currentCommentLine = ""
 	}
 
+	// Finish the last tag.
 	f.currentCommentLine = ""
 	res = f.finishTag(res)
 
@@ -93,6 +125,7 @@ func (f *Finder) findComment(line string) {
 	trimmedLine := strings.TrimLeft(line, " \t")
 	if !f.currentlyInBlockComment {
 
+		// First check if it is a One-Line comment. (e.g. //)
 		for _, lineCommentStart := range f.LineCommentStarts {
 			if strings.HasPrefix(trimmedLine, lineCommentStart) {
 				f.currentLineIsLineComment = true
@@ -101,6 +134,7 @@ func (f *Finder) findComment(line string) {
 			}
 		}
 
+		// Then check if it is in a block comment.
 		for blockIndex, blockCommentStart := range f.BlockCommentStarts {
 			if strings.HasPrefix(trimmedLine, blockCommentStart) {
 				f.currentBlockIndex = blockIndex
@@ -112,6 +146,7 @@ func (f *Finder) findComment(line string) {
 		}
 	}
 
+	// Try to find the end of the block comment.
 	if f.currentlyInBlockComment {
 		linePart := trimmedLine
 		if commentStartedInThisLine {
@@ -133,10 +168,11 @@ func (f *Finder) findComment(line string) {
 	}
 }
 
-var anyTagRegex = regexp.MustCompile("@[A-Za-z]+")
+// anyTagRegex matches all tags include a possible \ which is then checked as it escapes the tag.
+var anyTagRegex = regexp.MustCompile(`[\\]?@[A-Za-z_]+`)
 
 func (f *Finder) findTag() *tag.Raw {
-	if tagType := anyTagRegex.FindString(f.currentCommentLine); tagType != "" {
+	if tagType := anyTagRegex.FindString(f.currentCommentLine); tagType != "" && tagType[0] != '\\' {
 		return &tag.Raw{
 			Type:  tag.Type(tagType[1:]),
 			Value: f.currentCommentLine + "\n",

@@ -2,12 +2,14 @@ package generator
 
 import (
 	"embed"
-	"github.com/yuin/goldmark"
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 	"html/template"
 	"io"
 	"io/fs"
 	"strings"
+
+	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting"
+	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
 //go:embed template
@@ -41,7 +43,13 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 		return err
 	}
 
-	gm := goldmark.New()
+	gm := goldmark.New(
+		goldmark.WithExtensions(
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("monokai"),
+			),
+		),
+	)
 
 	type Page struct {
 		ID   string

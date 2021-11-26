@@ -12,7 +12,7 @@ actually done.
   
 ## Usage
 Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.  
-To get all possible file extensions just run `crazydoc -help`  
+To get all possible options just run `crazydoc -help`  
   
 In development, use `go run . [OPTIONS]... [PROJECT_ROOT]` instead.  
   
@@ -22,11 +22,23 @@ If you want to ignore files, just add a `.crazydocignore` to the root of your pr
 It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` files to subfolders.  
   
   
+## Tags
+* Text  
+  * `@README`  
+  * `@WHY`  
+* Modifiers (use them just before the text-tags)  
+  * `@FILELINK`  
+  * `@CODE` (use `@CODE_END` after the code-block you want to include)  
+  
+  
 ## Distribute
 ### Prerequisites  
 * Go 1.17  
   
 ### Build  
 Run `go build .`  
+  
+  
+ 
   
   
