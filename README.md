@@ -12,7 +12,7 @@ actually done.
   
 ## Usage
 Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.  
-To get all possible file extensions just run `crazydoc -help`  
+To get all possible options just run `crazydoc -help`  
   
 In development, use `go run . [OPTIONS]... [PROJECT_ROOT]` instead.  
   
@@ -37,5 +37,8 @@ It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` f
   
 ### Build  
 Run `go build .`  
+  
+  
+ 
   
   

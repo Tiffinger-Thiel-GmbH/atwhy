@@ -98,7 +98,7 @@ func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile stri
 	// @README 20
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
-	// To get all possible file extensions just run `crazydoc -help`
+	// To get all possible options just run `crazydoc -help`
 	//
 	// In development, use `go run . [OPTIONS]... [PROJECT_ROOT]` instead.
 
