@@ -4,16 +4,17 @@ package main
 import (
 	"flag"
 	"fmt"
-	"gitlab.com/tiffinger-thiel/crazydoc/finder"
-	"gitlab.com/tiffinger-thiel/crazydoc/generator"
-	"gitlab.com/tiffinger-thiel/crazydoc/loader"
-	"gitlab.com/tiffinger-thiel/crazydoc/processor"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"gitlab.com/tiffinger-thiel/crazydoc/finder"
+	"gitlab.com/tiffinger-thiel/crazydoc/generator"
+	"gitlab.com/tiffinger-thiel/crazydoc/loader"
+	"gitlab.com/tiffinger-thiel/crazydoc/processor"
 
 	"github.com/spf13/afero"
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
@@ -94,7 +95,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string) Craz
 }
 
 func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string, host string) {
-	// @README 30
+	// @README 20
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
 	// To get all possible file extensions just run `crazydoc -help`
