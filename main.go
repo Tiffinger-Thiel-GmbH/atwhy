@@ -77,7 +77,6 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string) Craz
 
 func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string, host string) {
 	// @DOC readme.usage
-	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
 	// To get all possible options just run `crazydoc -help`
 	//

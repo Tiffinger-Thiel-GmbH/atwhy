@@ -24,7 +24,7 @@ func (b Basic) Position() int {
 }
 
 func FileLink(input Raw, _ []Tag) (Tag, error) {
-	if input.Type != TypeFileLink {
+	if input.Type != TypeLink {
 		return nil, nil
 	}
 

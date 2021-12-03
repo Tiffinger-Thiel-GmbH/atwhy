@@ -21,8 +21,8 @@ type Finder struct {
 
 	currentTag *tag.Raw
 
-	// includeCode saves if a \@CODE tag was found.
-	// It has to be reset at a \@CODE_END tag.
+	// includeCode saves if a \@DOC CODE tag was found.
+	// It has to be reset at a \@DOC CODE_END tag.
 	includeCode bool
 }
 
@@ -43,7 +43,7 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 	var res []tag.Raw
 	var scan = bufio.NewScanner(reader)
 
-	var lineNum int = -1
+	var lineNum = -1
 	for scan.Scan() {
 		lineNum++
 
@@ -64,12 +64,13 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 				// Special tag CODE
 				if newTag.Type == tag.TypeCode {
 					f.includeCode = true
-					continue
 				}
 
 				// Special tag CODE_END
 				if newTag.Type == tag.TypeCodeEnd {
 					f.includeCode = false
+					f.currentCommentLine = ""
+					res = f.finishTag(res)
 					continue
 				}
 
@@ -98,7 +99,7 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 
 		// If no longer in comment but still includeCode, add the whole line as code.
 		if f.currentTag != nil && f.includeCode {
-			f.currentTag.Code = f.currentTag.Code + line + "\n"
+			f.currentTag.Value = f.currentTag.Value + line + "\n"
 			continue
 		}
 
@@ -169,15 +170,37 @@ func (f *Finder) findComment(line string) {
 }
 
 // anyTagRegex matches all tags include a possible \ which is then checked as it escapes the tag.
-var anyTagRegex = regexp.MustCompile(`[\\]?@[A-Za-z_]+`)
+// Matches @ or \@ with any following postfix:
+//  DOC any_name
+//  DOC CODE any_name
+//  DOC CODE_END
+//  DOC LINK any_name
+var anyTagRegex = regexp.MustCompile(`([\\]?)@DOC( ([A-Z_]+))?( ([a-z._]+))?`)
 
 func (f *Finder) findTag() *tag.Raw {
-	if tagType := anyTagRegex.FindString(f.currentCommentLine); tagType != "" && tagType[0] != '\\' {
-		return &tag.Raw{
-			Type:  tag.Type(tagType[1:]),
-			Value: f.currentCommentLine + "\n",
-		}
+	matches := anyTagRegex.FindAllStringSubmatch(f.currentCommentLine, 1)
+	if matches == nil {
+		return nil
 	}
 
-	return nil
+	// Per line, we only need one match.
+	match := matches[0]
+
+	// Ignore escaped \@DOC
+	if match[1] != "" {
+		return nil
+	}
+
+	newTag := tag.Raw{
+		Type:        tag.Type(match[3]),
+		Placeholder: match[5],
+		Value:       f.currentCommentLine + "\n",
+	}
+
+	// If none was given, it is a DOC.
+	if newTag.Type == "" {
+		newTag.Type = "DOC"
+	}
+
+	return &newTag
 }

@@ -21,7 +21,6 @@ type File struct {
 }
 
 // @DOC readme.ignore
-// Ignore
 // If you want to ignore files, just add a `.crazydocignore` to the root of your project.
 // It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` files to subfolders.
 

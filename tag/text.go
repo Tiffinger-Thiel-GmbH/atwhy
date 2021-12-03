@@ -99,7 +99,6 @@ func textFactory(input Raw, children []Tag) (Tag, error) {
 			value:   input.Value,
 		},
 		header:   header,
-		code:     input.Code,
 		codeType: filepath.Ext(input.Filename)[1:],
 		children: children,
 		position: position,
@@ -107,7 +106,7 @@ func textFactory(input Raw, children []Tag) (Tag, error) {
 }
 
 func Why(input Raw, children []Tag) (Tag, error) {
-	if input.Type != TypeWhy {
+	if input.Type != "" {
 		return nil, nil
 	}
 
@@ -115,7 +114,7 @@ func Why(input Raw, children []Tag) (Tag, error) {
 }
 
 func Readme(input Raw, children []Tag) (Tag, error) {
-	if input.Type != TypeReadme {
+	if input.Type != "" {
 		return nil, nil
 	}
 

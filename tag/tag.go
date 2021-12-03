@@ -3,19 +3,17 @@ package tag
 type Type string
 
 // @DOC readme.tags
-// * Text
-//   * `\@README`
-//   * `\@WHY`
-// * Modifiers (use them just before the text-tags)
-//   * `\@FILELINK`
-//   * `\@CODE` (use `\@CODE_END` after the code-block you want to include)
+// You can use `\@DOC <placeholder_name>` and then use that placeholder in any template.
+// There are also some special tags:
+// * `\@DOC LINK <placeholder_name>` can be used to just add a link to the file where the tag is in.
+// * `\@DOC CODE <placeholder_name>` can be used to reference any code.
+//   It has to be closed by `\@DOC CODE_END`
 
 var (
-	TypeWhy      Type = "WHY"
-	TypeReadme   Type = "README"
-	TypeFileLink Type = "FILELINK"
-	TypeCode     Type = "CODE"
-	TypeCodeEnd  Type = "CODE_END"
+	TypeDoc     Type = "DOC"
+	TypeLink    Type = "LINK"
+	TypeCode    Type = "CODE"
+	TypeCodeEnd Type = "CODE_END"
 )
 
 const (
@@ -24,11 +22,11 @@ const (
 
 // Raw represents a not yet processed tag.
 type Raw struct {
-	Type     Type
-	Filename string
-	Line     int
-	Value    string
-	Code     string
+	Type        Type
+	Placeholder string
+	Filename    string
+	Line        int
+	Value       string
 }
 
 // Tag which was parsed from the code.
