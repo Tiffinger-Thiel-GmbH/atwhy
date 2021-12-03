@@ -64,9 +64,9 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string) Craz
 		},
 		Processor: processor.Processor{
 			TagFactories: []tag.Factory{
-				tag.Why,
-				tag.Readme,
-				tag.FileLink,
+				tag.Doc,
+				tag.Code,
+				tag.Link,
 			},
 		},
 		Generator: gen,

@@ -1,10 +1,11 @@
 package generator
 
 import (
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 	"io"
 	"sort"
 	"strings"
+
+	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
 func MarkdownMapper(t tag.Tag) string {
@@ -46,13 +47,16 @@ func (m *Markdown) Generate(tags []tag.Tag, writer io.Writer) error {
 			continue
 		}
 
-		sort.Slice(tagGroup, func(i, j int) bool {
-			return tagGroup[i].Position() < tagGroup[j].Position()
-		})
+		_, err := writer.Write([]byte("# " + string(tagType) + "\n"))
+		if err != nil {
+			return err
+		}
 
-		writer.Write([]byte("# " + string(tagType) + "\n"))
-		for _, tag := range tagGroup {
-			writer.Write([]byte(MarkdownMapper(tag) + "\n"))
+		for _, t := range tagGroup {
+			_, err := writer.Write([]byte(MarkdownMapper(t) + "\n"))
+			if err != nil {
+				return err
+			}
 		}
 	}
 
