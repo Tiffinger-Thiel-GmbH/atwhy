@@ -1,7 +1,7 @@
 /crazydoc
 *.exe
 *.md
+!*.tpl.md
 *.html
 tools/install-dir
-*.md
 *.tar.gz

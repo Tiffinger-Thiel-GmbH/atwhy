@@ -20,25 +20,6 @@ import (
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
-// @README 10
-// What is CrazyDoc
-// CrazyDoc can be used to generate a documentation out of comments in the code.
-// That way you can for example describe all available options in the same file
-// where they are coded. A developer therefore doesn't have to know exactly where
-// the information has to be documented because it is just in the same file.
-//
-// The same applies to architectural decisions, which can be documented, where its
-// actually done.
-// --> __Single source of truth__ also for documentation!
-
-// @README 40
-// Distribute
-// # Prerequisites
-// * Go 1.17
-//
-// # Build
-// Run `go build .`
-
 type Loader interface {
 	Load(dir string, finder loader.TagFinder) (allTags []tag.Raw, err error)
 }
@@ -95,7 +76,7 @@ func New(fileExtensions []string, tagsToExport []string, outputFile string) Craz
 }
 
 func ParseCmd() (fileExtensions []string, tagsToExport []string, outputFile string, inputPath string, host string) {
-	// @README 20
+	// @DOC readme.usage
 	// Usage
 	// Just run `crazydoc [OPTIONS]... [PROJECT_ROOT]`.
 	// To get all possible options just run `crazydoc -help`

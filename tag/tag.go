@@ -2,8 +2,7 @@ package tag
 
 type Type string
 
-// @README 35
-// Tags
+// @DOC readme.tags
 // * Text
 //   * `\@README`
 //   * `\@WHY`

@@ -20,7 +20,7 @@ type File struct {
 	FileExtensions []string
 }
 
-// @README 30
+// @DOC readme.ignore
 // Ignore
 // If you want to ignore files, just add a `.crazydocignore` to the root of your project.
 // It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` files to subfolders.
@@ -34,8 +34,10 @@ func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 	filesystem := afero.NewBasePathFs(fl.FS, abs)
 	allTags := make([]tag.Raw, 0)
 
-	err = nogo.AferoWalk([]string{".crazydocignore"}, filesystem, func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
+	n := nogo.New(nogo.DotGitRule)
+
+	err = afero.Walk(filesystem, ".", func(path string, info fs.FileInfo, err error) error {
+		if ok, err := n.WalkFunc(afero.NewIOFS(filesystem), ".crazydocignore", path, info.IsDir(), err); !ok {
 			return err
 		}
 
@@ -68,7 +70,7 @@ func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 		}
 		allTags = append(allTags, tags...)
 		return nil
-	}, nogo.WithRules(nogo.GitIgnoreRule...))
+	})
 	if err != nil {
 		return nil, err
 	}
