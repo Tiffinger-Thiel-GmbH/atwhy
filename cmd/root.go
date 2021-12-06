@@ -12,11 +12,18 @@ import (
 
 // @DOC readme_usage
 // Usage:
-//  Just run `crazydoc --help`
+// Just run
+// ```
+// crazydoc --help
+// ```
+// A common usage to for example generate this README.md is:
+// ```
+// crazydoc --templates-folder docTemplates --ext .go --templates README README.md
+// ```
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "crazydoc",
+	Use:   "crazydoc [outputFile (e.g. README.md)]",
 	Short: "A documentation generator",
 	Long: `CrazyDoc can generate documentations based on templates.
 It allows you to include documentation from anywhere in the project

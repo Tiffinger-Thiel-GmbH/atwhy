@@ -12,7 +12,7 @@ import (
 
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
-	Use:   "serve",
+	Use:   "serve [HOST (e.g. localhost:3333)]",
 	Short: "With serve you can start a webserver which serves the documentation",
 	Run: func(cmd *cobra.Command, args []string) {
 		host := cmd.Flags().Arg(0)
