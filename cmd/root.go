@@ -13,11 +13,11 @@ import (
 // @DOC readme_usage
 // Usage:
 // Just run
-// ```
+// ```bash
 // crazydoc --help
 // ```
 // A common usage to for example generate this README.md is:
-// ```
+// ```bash
 // crazydoc --templates-folder docTemplates --ext .go --templates README README.md
 // ```
 

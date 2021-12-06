@@ -1,3 +1,4 @@
+Architecture
 # Architecture
 
 The idea behind CrazyDoc is to have several interfaces, each one for a small purpose. These interfaces are then

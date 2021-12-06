@@ -1,12 +1,15 @@
 package generator
 
 import (
+	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"io"
 	"io/fs"
 	"io/ioutil"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -19,6 +22,19 @@ type DocTemplate struct {
 	Name  string
 	Value string
 }
+
+// @DOC doc_template
+// The templates should be normal markdown files.
+// The first line has to be the name of the template (used for example for the navigation in the html-generator).
+//
+// You can access a tag called `\@DOC example_tag` using
+// ```text
+// # Example
+// {{ .Tag.example_tag }}
+// ```
+//
+// Note: This is basically the syntax of the Go templating engine.
+// Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 
 func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocTemplate, error) {
 	var res []DocTemplate
@@ -61,8 +77,23 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 				return err
 			}
 
+			// Windows compatibility:
+			tplData = bytes.ReplaceAll(tplData, []byte("\r\n"), []byte("\n"))
+			splitted := bytes.SplitN(tplData, []byte("\n"), 2)
+			var name string
+			var body string
+			if len(splitted) < 1 {
+				return errors.New("the template must have at least one line containing the name")
+			}
+
+			name = string(splitted[0])
+
+			if len(splitted) >= 2 {
+				body = string(splitted[1])
+			}
+
 			id := md5.Sum([]byte(filepath.ToSlash(path)))
-			name, err := filepath.Rel(abs, path)
+
 			if err != nil {
 				return err
 			}
@@ -70,8 +101,8 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 				ID: "page-" + hex.EncodeToString(id[:]),
 
 				// TODO: could be read from first line in the template...
-				Name:  strings.TrimSuffix(name, ".tpl.md"),
-				Value: string(tplData),
+				Name:  name,
+				Value: body,
 			})
 		}
 		return nil
@@ -80,6 +111,11 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 	if err != nil {
 		return nil, err
 	}
+
+	// Sort by name.
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Name < res[j].Name
+	})
 
 	return res, nil
 }

@@ -1,3 +1,5 @@
+Readme
+
 # README
 
 ## What is CrazyDoc
@@ -13,25 +15,32 @@ actually done.
 
 ## Usage
 
+### Command
+
 {{ .Tag.readme_usage }}
 
-## Ignore
+### Templates
 
-* You can pass something like `--ext ".go,.js,.ts"` to only process specific files.
-* You can create a `.crazydocignore` file which just follows the `.gitignore` syntax.  
-  (If you find an inconsistency with the git-handling, please report it [here](https://github.com/aligator/NoGo/issues).)
+{{ .Tag.doc_template }}
 
-## Tags
+### Tags
 
 {{ .Tag.readme_tags }}
 
-The tag names must follow the following rules:
 {{ .Tag.readme_tags_rules }}
 
-The tags are terminated by 
+The tags are terminated by
+
 * another tag
 * empty line
 * Exception: `@DOC CODE` is terminated by `@DOC CODE_END` and not by empty lines.
+
+### Ignore
+
+* You can pass something like `--ext ".go,.js,.ts"` to only process specific files.
+* You can create a `.crazydocignore` file which just follows the `.gitignore` syntax.  
+  (If you find an inconsistency with the git-handling, please report it [here](https://github.com/aligator/NoGo/issues)
+  .)
 
 ## Distribute
 

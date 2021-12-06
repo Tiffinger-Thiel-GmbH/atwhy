@@ -177,7 +177,7 @@ func (f *Finder) findComment(line string) {
 //  DOC LINK any_name
 //
 // @DOC readme_tags_rules
-// The tag names must follow the following rules:
+// The placeholder_names must follow these rules:
 //  * only a-z (lowercase)
 //  * `-`
 //  * `_`
