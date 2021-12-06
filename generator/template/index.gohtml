@@ -30,7 +30,7 @@
         <div class="navbar-nav">
             {{range $page := .Pages}}
                 <a class="nav-item nav-link active"
-                   onClick="show({{$page.ID}})"
+                   onClick="show('{{$page.ID}}')"
                    href="#">{{$page.Name}}</a>
             {{end}}
         </div>

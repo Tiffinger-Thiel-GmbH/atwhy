@@ -3,7 +3,6 @@ package loader
 import (
 	"io"
 	"io/fs"
-	"path/filepath"
 	"strings"
 
 	"github.com/aligator/nogo"
@@ -24,19 +23,13 @@ type File struct {
 // If you want to ignore files, just add a `.crazydocignore` to the root of your project.
 // It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` files to subfolders.
 
-func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
-	abs, err := filepath.Abs(dir)
-	if err != nil {
-		return nil, err
-	}
-
-	filesystem := afero.NewBasePathFs(fl.FS, abs)
+func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 	allTags := make([]tag.Raw, 0)
 
 	n := nogo.New(nogo.DotGitRule)
 
-	err = afero.Walk(filesystem, ".", func(path string, info fs.FileInfo, err error) error {
-		if ok, err := n.WalkFunc(afero.NewIOFS(filesystem), ".crazydocignore", path, info.IsDir(), err); !ok {
+	err := afero.Walk(fl.FS, ".", func(path string, info fs.FileInfo, err error) error {
+		if ok, err := n.WalkFunc(afero.NewIOFS(fl.FS), ".crazydocignore", path, info.IsDir(), err); !ok {
 			return err
 		}
 
@@ -44,20 +37,21 @@ func (fl File) Load(dir string, finder TagFinder) ([]tag.Raw, error) {
 			return nil
 		}
 
-		hasFoundExtension := false
+		if len(fl.FileExtensions) > 0 {
+			hasFoundExtension := false
 
-		for _, e := range fl.FileExtensions {
-			fileName := info.Name()
-			if strings.HasSuffix(fileName, e) {
-				hasFoundExtension = true
+			for _, e := range fl.FileExtensions {
+				fileName := info.Name()
+				if strings.HasSuffix(fileName, e) {
+					hasFoundExtension = true
+				}
+			}
+			if !hasFoundExtension {
+				return nil
 			}
 		}
 
-		if !hasFoundExtension {
-			return nil
-		}
-
-		file, err := filesystem.Open(path)
+		file, err := fl.FS.Open(path)
 		if err != nil {
 			return err
 		}

@@ -2,7 +2,7 @@ package tag
 
 type Type string
 
-// @DOC readme.tags
+// @DOC readme_tags
 // You can use `\@DOC <placeholder_name>` and then use that placeholder in any template.
 // There are also some special tags:
 // * `\@DOC LINK <placeholder_name>` can be used to just add a link to the file where the tag is in.

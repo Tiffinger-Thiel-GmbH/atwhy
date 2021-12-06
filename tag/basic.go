@@ -50,8 +50,10 @@ func textFactory(input Raw) Basic {
 
 	// If a body exists, use that. If not just leave the value empty.
 	if len(splitted) >= 2 {
-		body = splitted[1]
+		body = strings.ReplaceAll(splitted[1], "\n", "  \n")
 	}
+
+	body = strings.TrimRight(body, " \n")
 	return Basic{
 		tagType:     input.Type,
 		placeholder: input.Placeholder,

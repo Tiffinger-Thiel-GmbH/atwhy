@@ -175,7 +175,7 @@ func (f *Finder) findComment(line string) {
 //  DOC CODE any_name
 //  DOC CODE_END
 //  DOC LINK any_name
-var anyTagRegex = regexp.MustCompile(`([\\]?)@DOC( ([A-Z_]+))?( ([a-z._]+))?`)
+var anyTagRegex = regexp.MustCompile(`([\\]?)@DOC( ([A-Z_]+))?( ([a-z-_]+))?`)
 
 func (f *Finder) findTag() *tag.Raw {
 	matches := anyTagRegex.FindAllStringSubmatch(f.currentCommentLine, 1)

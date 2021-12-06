@@ -62,11 +62,11 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 
 	var data Data
 
-	tagTypes := h.Markdown.TagsToExport
+	templates := h.Markdown.DocTemplates
 
-	for _, tagType := range tagTypes {
+	for _, tpl := range templates {
 		resMD := strings.Builder{}
-		h.Markdown.TagsToExport = []string{tagType}
+		h.Markdown.DocTemplates = []DocTemplate{tpl}
 		err := h.Markdown.Generate(tags, &resMD)
 		if err != nil {
 			return err
@@ -79,8 +79,8 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 		}
 
 		data.Pages = append(data.Pages, Page{
-			ID:   tagType,
-			Name: tagType,
+			ID:   tpl.ID,
+			Name: tpl.Name,
 			Body: template.HTML(resHTML.String()),
 		})
 	}
