@@ -90,10 +90,6 @@ lint_code:
   artifacts:
     paths:
       - dist/*
-  only:
-    - tags
-  except:
-    - branches
 
 build:
   extends: .build
