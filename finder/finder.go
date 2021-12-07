@@ -9,6 +9,9 @@ import (
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
+// Finder implements the TagFinder interface in a language-generic way.
+// It takes into account block comments (e.g. /* .... */) and line comments (e.g. // ...).
+// You can pass alternative comment indicators to support other languages.
 type Finder struct {
 	BlockCommentStarts []string
 	BlockCommentEnds   []string
@@ -16,8 +19,14 @@ type Finder struct {
 
 	currentlyInBlockComment  bool
 	currentLineIsLineComment bool
-	currentCommentLine       string
-	currentBlockIndex        int
+
+	// currentCommentLine is the current line cleaned up from the comment-indicators
+	// It is empty if the current line is no comment.
+	currentCommentLine string
+
+	// currentBlockIndex of the currently used block BlockCommentStart
+	// The BlockCommentEnd with the same index closes the comment.
+	currentBlockIndex int
 
 	currentTag *tag.Raw
 
@@ -113,6 +122,9 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 	return res, nil
 }
 
+// findComment and sets the struct-variables
+//  currentCommentLine, currentLineIsLineComment, currentBlockIndex, currentlyInBlockComment
+// accordingly.
 func (f *Finder) findComment(line string) {
 	defer func() {
 		// Always cut the first space because usually comments have a space after the comment sign.
@@ -188,6 +200,8 @@ func (f *Finder) findComment(line string) {
 //  * super-tag
 var anyTagRegex = regexp.MustCompile(`([\\]?)@DOC( ([A-Z_]+))?( ([a-z-_]+))?`)
 
+// findTag using the anyTagRegex.
+// It already pre-fills the first comment line if a new one was found.
 func (f *Finder) findTag() *tag.Raw {
 	matches := anyTagRegex.FindAllStringSubmatch(f.currentCommentLine, 1)
 	if matches == nil {

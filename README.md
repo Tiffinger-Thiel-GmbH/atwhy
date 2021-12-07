@@ -1,4 +1,3 @@
-
 # README
 
 ## What is CrazyDoc
@@ -28,17 +27,17 @@ crazydoc --templates-folder docTemplates --ext .go --templates README README.md
 
 ### Templates
 
-The templates should be normal markdown files.  
-The first line has to be the name of the template (used for example for the navigation in the html-generator).  
+ The templates should be normal markdown files.  
+ The first line has to be the name of the template (used for example for the navigation in the html-generator).  
   
-You can access a tag called `@DOC example_tag` using  
-```text  
-# Example  
-{{ .Tag.example_tag }}  
-```  
+ You can access a tag called `@DOC example_tag` using  
+ ```text  
+ # Example  
+ {{ .Tag.example_tag }}  
+ ```  
   
-Note: This is basically the syntax of the Go templating engine.  
-Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
+ Note: This is basically the syntax of the Go templating engine.  
+ Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 
 ### Tags
 
@@ -80,3 +79,6 @@ The tags are terminated by
 ### Build
 
 Run `go build .`  
+
+---
+Generated: __07 Dec 21 17:56 +0100__

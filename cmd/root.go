@@ -34,7 +34,6 @@ and therefore provides a way to use "single source of truth" also for documentat
 		out := cmd.Flags().Arg(0)
 
 		if out != "" {
-
 			file, err := os.OpenFile(out, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0755)
 			if err != nil {
 				cmd.PrintErr(err)
@@ -86,6 +85,7 @@ func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
 }
 
+// init is run by Go on startup. https://tutorialedge.net/golang/the-go-init-function/
 func init() {
 	rootCmd.PersistentFlags().StringP("templates-folder", "t", "templates", "path to a folder which contains the templates relative to the project directory")
 	rootCmd.PersistentFlags().StringSliceP("templates", "T", nil, "template to generate\ngenerates all if omitted")

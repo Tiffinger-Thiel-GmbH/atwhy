@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/spf13/afero"
 	"gitlab.com/tiffinger-thiel/crazydoc/tag"
@@ -21,21 +22,25 @@ type DocTemplate struct {
 	ID    string
 	Name  string
 	Value string
+
+	template *template.Template
 }
 
-// @DOC doc_template
-// The templates should be normal markdown files.
-// The first line has to be the name of the template (used for example for the navigation in the html-generator).
+// LoadDocTemplates from the given folder.
+// If allowList is not nil, it only loads the filenames included in the allowList.
 //
-// You can access a tag called `\@DOC example_tag` using
-// ```text
-// # Example
-// {{ .Tag.example_tag }}
-// ```
+//  @DOC doc_template
+//  The templates should be normal markdown files.
+//  The first line has to be the name of the template (used for example for the navigation in the html-generator).
 //
-// Note: This is basically the syntax of the Go templating engine.
-// Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
-
+//  You can access a tag called `\@DOC example_tag` using
+//  ```text
+//  # Example
+//  {{ .Tag.example_tag }}
+//  ```
+//
+//  Note: This is basically the syntax of the Go templating engine.
+//  Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocTemplate, error) {
 	var res []DocTemplate
 	abs, err := filepath.Abs(folder)
@@ -93,16 +98,17 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 			}
 
 			id := md5.Sum([]byte(filepath.ToSlash(path)))
+			tpl, err := template.New(name).Parse(body)
 
 			if err != nil {
 				return err
 			}
-			res = append(res, DocTemplate{
-				ID: "page-" + hex.EncodeToString(id[:]),
 
-				// TODO: could be read from first line in the template...
-				Name:  name,
-				Value: body,
+			res = append(res, DocTemplate{
+				ID:       "page-" + hex.EncodeToString(id[:]),
+				Name:     name,
+				Value:    body,
+				template: tpl,
 			})
 		}
 		return nil
@@ -120,17 +126,15 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 	return res, nil
 }
 
+// Execute the template
 func (t DocTemplate) Execute(tagMap map[string]tag.Tag, writer io.Writer) error {
-	tpl, err := template.New(t.Name).Parse(t.Value)
-	if err != nil {
-		return err
-	}
-
 	data := struct {
 		Tag map[string]tag.Tag
+		Now string
 	}{
 		Tag: tagMap,
+		Now: time.Now().Format(time.RFC822Z),
 	}
 
-	return tpl.Execute(writer, data)
+	return t.template.Execute(writer, data)
 }

@@ -10,10 +10,13 @@ import (
 	"gitlab.com/tiffinger-thiel/crazydoc/generator"
 )
 
-// serveCmd represents the serve command
+// serveCmd allows to serve the documentation using a html webserver.
 var serveCmd = &cobra.Command{
 	Use:   "serve [HOST (e.g. localhost:3333)]",
-	Short: "With serve you can start a webserver which serves the documentation",
+	Short: "Serves the documentation using a webserver.",
+	Long: `Serves the documentation using a webserver.
+It serves it on the given host 
+(e.g. ":4444" to listen on all addresses, "localhost:4444" to listen only on localhost)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		host := cmd.Flags().Arg(0)
 		if host == "" {
@@ -40,7 +43,7 @@ var serveCmd = &cobra.Command{
 			// For now always generate a new doc to be able to reflect any change instantly.
 			templates, project, extensions, err := LoadCommon(cmd)
 
-			// For now the Generator is not necessarily thread save!
+			// For now the Generator is not necessarily thread save, so always create a new instance!
 			var gen core.Generator = &generator.HTML{
 				Markdown: generator.Markdown{
 					DocTemplates: templates,
@@ -61,12 +64,12 @@ var serveCmd = &cobra.Command{
 		if err := http.ListenAndServe(host, nil); err != nil {
 			log.Fatal(err)
 		}
-
 	},
 
 	Args: cobra.MaximumNArgs(1),
 }
 
+// init is run by Go on startup. https://tutorialedge.net/golang/the-go-init-function/
 func init() {
 	rootCmd.AddCommand(serveCmd)
 }

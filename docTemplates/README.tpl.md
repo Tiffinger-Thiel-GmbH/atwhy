@@ -1,5 +1,4 @@
 Readme
-
 # README
 
 ## What is CrazyDoc
@@ -51,3 +50,6 @@ The tags are terminated by
 ### Build
 
 Run `go build .`  
+
+---
+Generated: __{{ .Now }}__
