@@ -50,7 +50,7 @@ lint_code:
   script:
     - make lint
 
-build:
+.build:
   stage: build
   script:
     - GOOS=linux GOARCH=amd64 make dist
@@ -73,12 +73,8 @@ build:
     paths:
       - dist/*
       - installer_deps/*
-  only:
-    - tags
-  except:
-    - branches
 
-build_win_installer:
+.build_win_installer:
   image:
     name: amake/innosetup
     entrypoint: [""]
@@ -98,3 +94,26 @@ build_win_installer:
     - tags
   except:
     - branches
+
+build:
+  extends: .build
+  only:
+    - tags
+  except:
+    - branches
+
+build:manual:
+  extends: .build
+  when: manual
+
+build_win_installer:
+  extends: .build_win_installer
+  only:
+    - tags
+  except:
+    - branches
+
+build_win_installer:manual:
+  extends: .build_win_installer
+  when: manual
+
