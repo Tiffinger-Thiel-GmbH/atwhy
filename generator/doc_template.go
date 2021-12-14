@@ -14,7 +14,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 	"github.com/spf13/afero"
 )
 

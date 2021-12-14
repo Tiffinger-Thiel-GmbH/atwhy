@@ -1,7 +1,7 @@
 # Based on https://about.gitlab.com/blog/2017/11/27/go-tools-and-gitlab-how-to-do-continuous-integration-like-a-boss/
 
 PROJECT_NAME := "atwhy"
-PKG := "gitlab.com/tiffinger-thiel/$(PROJECT_NAME)"
+PKG := "github.com/Tiffinger-Thiel-GmbH/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 GOOS ?= linux

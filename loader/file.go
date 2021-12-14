@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"strings"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 	"github.com/aligator/nogo"
 	"github.com/spf13/afero"
 )

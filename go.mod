@@ -1,4 +1,4 @@
-module github.com/Tiffinger-Thiel-GmbH/AtWhy
+module github.com/Tiffinger-Thiel-GmbH/atwhy
 
 go 1.17
 

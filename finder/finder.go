@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 )
 
 // Finder implements the TagFinder interface in a language-generic way.

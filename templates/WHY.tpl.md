@@ -1,10 +1,10 @@
 Architecture
 # Architecture
 
-The idea behind @Why is to have several interfaces, each one for a small purpose. These interfaces are then
+The idea behind atwhy is to have several interfaces, each one for a small purpose. These interfaces are then
 implemented by concrete implementations.
 
-It is possible to replace or mock each part of the application at any time. You can use @Why as lib and just provide
+It is possible to replace or mock each part of the application at any time. You can use atwhy as lib and just provide
 your own implementations.
 
 The interfaces are:

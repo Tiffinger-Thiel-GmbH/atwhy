@@ -1,8 +1,8 @@
-# @Why
+# atwhy
 
-## What is @Why
+## What is atwhy
 
-@Why can be used to generate a documentation out of comments in the code.  
+atwhy can be used to generate a documentation out of comments in the code.  
 That way you can for example describe all available options in the same file  
 where they are coded. A developer therefore doesn't have to know exactly where  
 the information has to be documented because it is just in the same file.
@@ -81,4 +81,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __14 Dec 21 10:40 +0100__
+Generated: __14 Dec 21 11:55 +0100__

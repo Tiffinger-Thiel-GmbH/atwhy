@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/core"
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/generator"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/cobra"
 )
 
@@ -49,13 +49,13 @@ It serves it on the given host
 					DocTemplates: templates,
 				},
 			}
-			atWhy, err := core.New(w, gen, project, extensions)
+			atwhy, err := core.New(w, gen, project, extensions)
 			if err != nil {
 				cmd.PrintErr(err)
 				return
 			}
 
-			if err := atWhy.Run(); err != nil {
+			if err := atwhy.Run(); err != nil {
 				fmt.Println(err)
 			}
 		})

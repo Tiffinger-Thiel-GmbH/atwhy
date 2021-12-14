@@ -3,7 +3,7 @@ package cmd
 import (
 	"path/filepath"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/generator"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )

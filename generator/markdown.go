@@ -3,7 +3,7 @@ package generator
 import (
 	"io"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 )
 
 type Markdown struct {

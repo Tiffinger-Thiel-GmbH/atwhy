@@ -1,0 +1,63 @@
+name: release
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.17
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Get dependencies
+        run: |
+          make dep
+      - name: Build and pack for Linux
+        run: |
+          GOOS=linux GOARCH=amd64 make dist
+          tar -czf atwhy-linux-amd64.tar.gz atwhy
+      - name: Build and pack for Linux ARMv7
+        run: |
+          GOOS=linux GOARCH=arm GOARM=7 make dist
+          tar -czf atwhy-linux-armv7.tar.gz atwhy
+      - name: Build and pack for Linux ARM64
+        run: |
+          GOOS=linux GOARCH=arm64 make dist
+          tar -czf atwhy-linux-arm64.tar.gz atwhy
+      - name: Build and pack for macOS
+        run: |
+          GOOS=darwin GOARCH=amd64 make dist
+          tar -czf atwhy-macos-amd64.tar.gz atwhy
+      - name: Build and pack for macOS ARM64 (M1)
+        run: |
+          GOOS=darwin GOARCH=arm64 make dist
+          tar -czf atwhy-macos-arm64.tar.gz atwhy
+      - name: Build and pack for Windows
+        run: |
+          GOOS=windows GOARCH=amd64 make dist
+          zip atwhy-windows-amd64.zip atwhy.exe
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ steps.get_version.outputs.VERSION }}"
+          prerelease: false
+          title: "atwhy ${{ steps.get_version.outputs.VERSION }}"
+          files: |
+            atwhy-linux-amd64.tar.gz
+            atwhy-linux-armv7.tar.gz
+            atwhy-linux-arm64.tar.gz
+            atwhy-macos-amd64.tar.gz
+            atwhy-macos-arm64.tar.gz
+            atwhy-windows-amd64.zip

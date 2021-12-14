@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/core"
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/generator"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +25,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "atwhy [outputFile (e.g. README.md)]",
 	Short: "A documentation generator",
-	Long: `@Why can generate documentations based on templates.
+	Long: `atwhy can generate documentations based on templates.
 It allows you to include documentation from anywhere in the project
 and therefore provides a way to use "single source of truth" also for documentation.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -64,13 +64,13 @@ and therefore provides a way to use "single source of truth" also for documentat
 			}
 		}
 
-		atWhy, err := core.New(writer, gen, project, extensions)
+		atwhy, err := core.New(writer, gen, project, extensions)
 		if err != nil {
 			cmd.PrintErr(err)
 			return
 		}
 
-		if err := atWhy.Run(); err != nil {
+		if err := atwhy.Run(); err != nil {
 			cmd.PrintErr(err)
 			return
 		}

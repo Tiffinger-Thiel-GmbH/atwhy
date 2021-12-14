@@ -1,9 +1,9 @@
 Readme
-# @Why
+# atwhy
 
-## What is @Why
+## What is atwhy
 
-@Why can be used to generate a documentation out of comments in the code.  
+atwhy can be used to generate a documentation out of comments in the code.  
 That way you can for example describe all available options in the same file  
 where they are coded. A developer therefore doesn't have to know exactly where  
 the information has to be documented because it is just in the same file.

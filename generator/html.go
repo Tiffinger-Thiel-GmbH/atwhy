@@ -7,7 +7,7 @@ import (
 	"io/fs"
 	"strings"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 )

@@ -4,10 +4,10 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/finder"
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/loader"
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/processor"
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/loader"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/processor"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 	"github.com/spf13/afero"
 )
 
@@ -44,7 +44,7 @@ func New(writer io.Writer, gen Generator, projectPath string, extensions []strin
 
 	filesystem := afero.NewBasePathFs(afero.NewOsFs(), abs)
 
-	atWhy := AtWhy{
+	atwhy := AtWhy{
 		Finder: &finder.Finder{
 			BlockCommentStarts: []string{"/*"},
 			BlockCommentEnds:   []string{"*/"},
@@ -64,7 +64,7 @@ func New(writer io.Writer, gen Generator, projectPath string, extensions []strin
 		Generator: gen,
 		Writer:    writer,
 	}
-	return atWhy, nil
+	return atwhy, nil
 }
 
 func (c AtWhy) Run() error {

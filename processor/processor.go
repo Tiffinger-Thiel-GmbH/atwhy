@@ -1,7 +1,7 @@
 package processor
 
 import (
-	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 )
 
 type Cleaner interface {
