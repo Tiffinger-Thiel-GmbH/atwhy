@@ -22,8 +22,14 @@ atwhy --help
 ```  
 A common usage to for example generate this README.md is:  
 ```bash  
-atwhy --templates-folder docTemplates --ext .go --templates README README.md  
+atwhy --ext .go --templates README README.md  
 ```
+
+You can also serve the documentation on default host `localhost:4444` with:  
+```bash  
+atwhy serve --ext .go  
+```  
+For more information run `atwhy serve --help`
 
 ### Templates
 
@@ -81,4 +87,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __14 Dec 21 11:55 +0100__
+Generated: __14 Dec 21 16:45 +0100__

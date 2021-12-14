@@ -18,7 +18,7 @@ import (
 // ```
 // A common usage to for example generate this README.md is:
 // ```bash
-// atwhy --templates-folder docTemplates --ext .go --templates README README.md
+// atwhy --ext .go --templates README README.md
 // ```
 
 // rootCmd represents the base command when called without any subcommands
@@ -88,7 +88,7 @@ func Execute() {
 // init is run by Go on startup. https://tutorialedge.net/golang/the-go-init-function/
 func init() {
 	rootCmd.PersistentFlags().StringP("templates-folder", "t", "templates", "path to a folder which contains the templates relative to the project directory")
-	rootCmd.PersistentFlags().StringSliceP("templates", "T", nil, "template to generate\ngenerates all if omitted")
-	rootCmd.PersistentFlags().StringSliceP("ext", "e", nil, "allowed extensions, allow all if not provided")
+	rootCmd.PersistentFlags().StringSliceP("templates", "T", nil, "comma separated list of templates to generate\ngenerates all if omitted\nexample: README,WHY to generate README.tpl.md and WHY.tpl.md")
+	rootCmd.PersistentFlags().StringSliceP("ext", "e", nil, "comma separated list of allowed extensions\nallow all if not provided\nexample: .go,.js,.ts")
 	rootCmd.PersistentFlags().StringP("project", "p", "", "the project folder")
 }

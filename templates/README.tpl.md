@@ -18,6 +18,8 @@ actually done.
 
 {{ .Tag.readme_usage }}
 
+{{ .Tag.readme_usage_serve }}
+
 ### Templates
 
 {{ .Tag.doc_template }}
