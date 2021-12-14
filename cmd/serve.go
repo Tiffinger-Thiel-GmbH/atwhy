@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/core"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/generator"
 	"github.com/spf13/cobra"
-	"gitlab.com/tiffinger-thiel/crazydoc/core"
-	"gitlab.com/tiffinger-thiel/crazydoc/generator"
 )
 
 // serveCmd allows to serve the documentation using a html webserver.
@@ -49,13 +49,13 @@ It serves it on the given host
 					DocTemplates: templates,
 				},
 			}
-			crazyDoc, err := core.New(w, gen, project, extensions)
+			atWhy, err := core.New(w, gen, project, extensions)
 			if err != nil {
 				cmd.PrintErr(err)
 				return
 			}
 
-			if err := crazyDoc.Run(); err != nil {
+			if err := atWhy.Run(); err != nil {
 				fmt.Println(err)
 			}
 		})

@@ -1,4 +1,4 @@
-module gitlab.com/tiffinger-thiel/crazydoc
+module github.com/Tiffinger-Thiel-GmbH/AtWhy
 
 go 1.17
 

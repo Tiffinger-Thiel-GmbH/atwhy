@@ -17,7 +17,7 @@ before_script:
   - apt-get update -y
   - apt-get install -y zip
   - mkdir -p /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds
-  - cp -r $CI_PROJECT_DIR /go/src/gitlab.com/tiffinger-thiel/crazydoc
+  - cp -r $CI_PROJECT_DIR /go/src/github.com/Tiffinger-Thiel-GmbH/AtWhy
   - ln -s /go/src/gitlab.com/tiffinger-thiel /go/src/_/builds/tiffinger-thiel
   - make dep
 
@@ -61,7 +61,7 @@ lint_code:
     - GOOS=windows GOARCH=arm64 make dist
     - GOOS=windows GOARCH=386 make dist
     - mkdir installer_deps
-    - cp crazydoc.exe installer_deps
+    - cp atwhy.exe installer_deps
 
     - GOOS=darwin GOARCH=amd64 make dist
     - GOOS=darwin GOARCH=arm64 make dist
@@ -82,11 +82,11 @@ lint_code:
   before_script: []
   script:
     - mkdir tools/install-dir
-    - mv installer_deps/crazydoc.exe tools/install-dir
+    - mv installer_deps/atwhy.exe tools/install-dir
     - rmdir installer_deps
     - cd tools
-    - iscc crazydoc.iss
-    - cp install-dir/installer/CrazyDocSetup.exe ../dist
+    - iscc atwhy.iss
+    - cp install-dir/installer/AtWhySetup.exe ../dist
   artifacts:
     paths:
       - dist/*

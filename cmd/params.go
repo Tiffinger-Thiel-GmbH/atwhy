@@ -3,9 +3,9 @@ package cmd
 import (
 	"path/filepath"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/generator"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"gitlab.com/tiffinger-thiel/crazydoc/generator"
 )
 
 // LoadCommon loads everything which is common through the different modes.

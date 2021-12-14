@@ -1,10 +1,10 @@
 Architecture
 # Architecture
 
-The idea behind CrazyDoc is to have several interfaces, each one for a small purpose. These interfaces are then
+The idea behind @Why is to have several interfaces, each one for a small purpose. These interfaces are then
 implemented by concrete implementations.
 
-It is possible to replace or mock each part of the application at any time. You can use CrazyDoc as lib and just provide
+It is possible to replace or mock each part of the application at any time. You can use @Why as lib and just provide
 your own implementations.
 
 The interfaces are:
@@ -19,5 +19,5 @@ The interfaces are:
 So the workflow is:
 Loader -> TagFinder = tagList []tag.Raw tagList -> TagProcessor -> Generator -> Writer
 
-{{ .Tag.crazydoc_struct_link }}  
-{{ .Tag.crazydoc_struct_code }}
+{{ .Tag.atwhy_struct_link }}  
+{{ .Tag.atwhy_struct_code }}

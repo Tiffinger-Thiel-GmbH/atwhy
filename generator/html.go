@@ -7,9 +7,9 @@ import (
 	"io/fs"
 	"strings"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
 //go:embed template

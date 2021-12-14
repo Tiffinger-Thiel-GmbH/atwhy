@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
 )
 
 // Finder implements the TagFinder interface in a language-generic way.
@@ -30,8 +30,8 @@ type Finder struct {
 
 	currentTag *tag.Raw
 
-	// includeCode saves if a \@DOC CODE tag was found.
-	// It has to be reset at a \@DOC CODE_END tag.
+	// includeCode saves if a \@WHY CODE tag was found.
+	// It has to be reset at a \@WHY CODE_END tag.
 	includeCode bool
 }
 
@@ -188,7 +188,7 @@ func (f *Finder) findComment(line string) {
 //  DOC CODE_END
 //  DOC LINK any_name
 //
-// @DOC readme_tags_rules
+// @WHY readme_tags_rules
 // The placeholder_names must follow these rules:
 //  * only a-z (lowercase)
 //  * `-`
@@ -198,7 +198,7 @@ func (f *Finder) findComment(line string) {
 //  * any_tag_name
 //  * supertag
 //  * super-tag
-var anyTagRegex = regexp.MustCompile(`([\\]?)@DOC( ([A-Z_]+))?( ([a-z-_]+))?`)
+var anyTagRegex = regexp.MustCompile(`([\\]?)@WHY( ([A-Z_]+))?( ([a-z-_]+))?`)
 
 // findTag using the anyTagRegex.
 // It already pre-fills the first comment line if a new one was found.
@@ -211,7 +211,7 @@ func (f *Finder) findTag() *tag.Raw {
 	// Per line, we only need one match.
 	match := matches[0]
 
-	// Ignore escaped \@DOC
+	// Ignore escaped \@WHY
 	if match[1] != "" {
 		return nil
 	}

@@ -14,8 +14,8 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
 	"github.com/spf13/afero"
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
 type DocTemplate struct {
@@ -29,11 +29,11 @@ type DocTemplate struct {
 // LoadDocTemplates from the given folder.
 // If allowList is not nil, it only loads the filenames included in the allowList.
 //
-//  @DOC doc_template
+//  @WHY doc_template
 //  The templates should be normal markdown files.
 //  The first line has to be the name of the template (used for example for the navigation in the html-generator).
 //
-//  You can access a tag called `\@DOC example_tag` using
+//  You can access a tag called `\@WHY example_tag` using
 //  ```text
 //  # Example
 //  {{ .Tag.example_tag }}

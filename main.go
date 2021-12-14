@@ -1,8 +1,8 @@
-//go:generate go run . --templates-folder docTemplates --ext .go --templates README README.md
+//go:generate go run . --ext .go --templates README README.md
 
 package main
 
-import "gitlab.com/tiffinger-thiel/crazydoc/cmd"
+import "github.com/Tiffinger-Thiel-GmbH/AtWhy/cmd"
 
 func main() {
 	cmd.Execute()

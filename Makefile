@@ -1,6 +1,6 @@
 # Based on https://about.gitlab.com/blog/2017/11/27/go-tools-and-gitlab-how-to-do-continuous-integration-like-a-boss/
 
-PROJECT_NAME := "crazydoc"
+PROJECT_NAME := "atwhy"
 PKG := "gitlab.com/tiffinger-thiel/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
@@ -36,10 +36,10 @@ build: dep ## Build the binary file
 
 dist: build
 ifeq ($(GOOS),windows)
-	@zip ${GOOS}-${GOARCH}-crazydoc.zip ${PROJECT_NAME}.exe
+	@zip ${GOOS}-${GOARCH}-atwhy.zip ${PROJECT_NAME}.exe
 else
 	@chmod +x ${PROJECT_NAME}
-	@tar -czf ${GOOS}-${GOARCH}-crazydoc.tar.gz ${PROJECT_NAME}
+	@tar -czf ${GOOS}-${GOARCH}-atwhy.tar.gz ${PROJECT_NAME}
 endif
 	
 clean: ## Remove previous build

@@ -5,9 +5,9 @@ import (
 	"io/fs"
 	"strings"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
 	"github.com/aligator/nogo"
 	"github.com/spf13/afero"
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
 type TagFinder interface {
@@ -19,9 +19,9 @@ type File struct {
 	FileExtensions []string
 }
 
-// @DOC readme.ignore
-// If you want to ignore files, just add a `.crazydocignore` to the root of your project.
-// It follows the syntax of a `.gitignore` and you may also add `.crazydocignore` files to subfolders.
+// @WHY readme.ignore
+// If you want to ignore files, just add a `.atwhyignore` to the root of your project.
+// It follows the syntax of a `.gitignore` and you may also add `.atwhyignore` files to subfolders.
 
 func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 	allTags := make([]tag.Raw, 0)
@@ -29,7 +29,7 @@ func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 	n := nogo.New(nogo.DotGitRule)
 
 	err := afero.Walk(fl.FS, ".", func(path string, info fs.FileInfo, err error) error {
-		if ok, err := n.WalkFunc(afero.NewIOFS(fl.FS), ".crazydocignore", path, info.IsDir(), err); !ok {
+		if ok, err := n.WalkFunc(afero.NewIOFS(fl.FS), ".atwhyignore", path, info.IsDir(), err); !ok {
 			return err
 		}
 

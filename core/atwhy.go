@@ -4,11 +4,11 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/finder"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/loader"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/processor"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
 	"github.com/spf13/afero"
-	"gitlab.com/tiffinger-thiel/crazydoc/finder"
-	"gitlab.com/tiffinger-thiel/crazydoc/loader"
-	"gitlab.com/tiffinger-thiel/crazydoc/processor"
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
 )
 
 type Loader interface {
@@ -23,10 +23,10 @@ type Generator interface {
 	Generate(tags []tag.Tag, writer io.Writer) error
 }
 
-// CrazyDoc combines all parts of the application.
-// @DOC LINK crazydoc_struct_link
-// @DOC CODE crazydoc_struct_code
-type CrazyDoc struct {
+// AtWhy combines all parts of the application.
+// @WHY LINK atwhy_struct_link
+// @WHY CODE atwhy_struct_code
+type AtWhy struct {
 	Loader    Loader
 	Finder    loader.TagFinder
 	Processor TagProcessor
@@ -34,17 +34,17 @@ type CrazyDoc struct {
 	Writer    io.Writer
 }
 
-// @DOC CODE_END
+// @WHY CODE_END
 
-func New(writer io.Writer, gen Generator, projectPath string, extensions []string) (CrazyDoc, error) {
+func New(writer io.Writer, gen Generator, projectPath string, extensions []string) (AtWhy, error) {
 	abs, err := filepath.Abs(projectPath)
 	if err != nil {
-		return CrazyDoc{}, err
+		return AtWhy{}, err
 	}
 
 	filesystem := afero.NewBasePathFs(afero.NewOsFs(), abs)
 
-	crazyDoc := CrazyDoc{
+	atWhy := AtWhy{
 		Finder: &finder.Finder{
 			BlockCommentStarts: []string{"/*"},
 			BlockCommentEnds:   []string{"*/"},
@@ -64,10 +64,10 @@ func New(writer io.Writer, gen Generator, projectPath string, extensions []strin
 		Generator: gen,
 		Writer:    writer,
 	}
-	return crazyDoc, nil
+	return atWhy, nil
 }
 
-func (c CrazyDoc) Run() error {
+func (c AtWhy) Run() error {
 	tags, err := c.Loader.Load(c.Finder)
 	if err != nil {
 		return err

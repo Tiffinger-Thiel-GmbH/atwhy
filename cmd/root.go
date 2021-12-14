@@ -5,27 +5,27 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/core"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/generator"
 	"github.com/spf13/cobra"
-	"gitlab.com/tiffinger-thiel/crazydoc/core"
-	"gitlab.com/tiffinger-thiel/crazydoc/generator"
 )
 
-// @DOC readme_usage
+// @WHY readme_usage
 // Usage:
 // Just run
 // ```bash
-// crazydoc --help
+// atwhy --help
 // ```
 // A common usage to for example generate this README.md is:
 // ```bash
-// crazydoc --templates-folder docTemplates --ext .go --templates README README.md
+// atwhy --templates-folder docTemplates --ext .go --templates README README.md
 // ```
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "crazydoc [outputFile (e.g. README.md)]",
+	Use:   "atwhy [outputFile (e.g. README.md)]",
 	Short: "A documentation generator",
-	Long: `CrazyDoc can generate documentations based on templates.
+	Long: `@Why can generate documentations based on templates.
 It allows you to include documentation from anywhere in the project
 and therefore provides a way to use "single source of truth" also for documentation.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -64,13 +64,13 @@ and therefore provides a way to use "single source of truth" also for documentat
 			}
 		}
 
-		crazyDoc, err := core.New(writer, gen, project, extensions)
+		atWhy, err := core.New(writer, gen, project, extensions)
 		if err != nil {
 			cmd.PrintErr(err)
 			return
 		}
 
-		if err := crazyDoc.Run(); err != nil {
+		if err := atWhy.Run(); err != nil {
 			cmd.PrintErr(err)
 			return
 		}

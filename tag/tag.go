@@ -2,12 +2,12 @@ package tag
 
 type Type string
 
-// @DOC readme_tags
-// You can use `\@DOC <placeholder_name>` and then use that placeholder in any template.
+// @WHY readme_tags
+// You can use `\@WHY <placeholder_name>` and then use that placeholder in any template.
 // There are also some special tags:
-// * `\@DOC LINK <placeholder_name>` can be used to just add a link to the file where the tag is in.
-// * `\@DOC CODE <placeholder_name>` can be used to reference any code.
-//   It has to be closed by `\@DOC CODE_END`
+// * `\@WHY LINK <placeholder_name>` can be used to just add a link to the file where the tag is in.
+// * `\@WHY CODE <placeholder_name>` can be used to reference any code.
+//   It has to be closed by `\@WHY CODE_END`
 
 var (
 	TypeDoc     Type = "DOC"

@@ -4,37 +4,37 @@
 ChangesEnvironment=true
 Compression=bzip/9
 OutPutDir=installer
-OutputBaseFilename=CrazyDocSetup
+OutputBaseFilename=AtWhySetup
 SourceDir=install-dir
 UseSetupLdr=YES
 PrivilegesRequired=admin
-AppName=CrazyDoc
-AppId=CrazyDoc
+AppName=AtWhy
+AppId=AtWhy
 AppVersion=0.1.0.0
-AppVerName=CrazyDoc version 0.1.0.0
-AppMutex=CrazyDoc_Mutex
+AppVerName=AtWhy version 0.1.0.0
+AppMutex=AtWhy_Mutex
 ChangesAssociations=YES
-DefaultDirName={commonpf}\CrazyDoc
-DefaultGroupName=CrazyDoc
+DefaultDirName={commonpf}\AtWhy
+DefaultGroupName=AtWhy
 DisableStartupPrompt=YES
 ;MessagesFile=C:\Inno Setup 3\Default.isl
 AppCopyright=Tiffinger & Thiel GmbH © 2021
 ;BackColor=$FCF9DC
 ;BackColor2=$B05757
 ;windowVisible=YES
-;WizardImageFile=C:\CrazyDoc\Setup\WizModernImage3.bmp
-;WizardSmallImageFile=C:\CrazyDoc\Setup\WizModernSmallImage3.bmp
+;WizardImageFile=C:\AtWhy\Setup\WizModernImage3.bmp
+;WizardSmallImageFile=C:\AtWhy\Setup\WizModernSmallImage3.bmp
 UserInfoPage=NO
 DisableDirPage=NO
 DisableReadyPage=NO
 UsePreviousAppDir=YES
-UninstallFilesDir={commonpf}\CrazyDoc\Uninstall Information
+UninstallFilesDir={commonpf}\AtWhy\Uninstall Information
 ShowTasksTreeLines=YES
 
 ; More options in setup section as well as other sections like Files, Components, Tasks...
 
 [Files]
-Source: "crazydoc.exe"; DestDir: "{app}"
+Source: "atwhy.exe"; DestDir: "{app}"
 
 [Tasks]
 Name: envPath; Description: "Add to PATH variable"

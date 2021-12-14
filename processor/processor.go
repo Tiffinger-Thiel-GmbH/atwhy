@@ -1,7 +1,7 @@
 package processor
 
 import (
-	"gitlab.com/tiffinger-thiel/crazydoc/tag"
+	"github.com/Tiffinger-Thiel-GmbH/AtWhy/tag"
 )
 
 type Cleaner interface {
