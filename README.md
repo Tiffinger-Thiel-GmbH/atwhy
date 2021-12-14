@@ -1,4 +1,4 @@
-# README
+# @Why
 
 ## What is @Why
 
@@ -81,4 +81,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __14 Dec 21 10:34 +0100__
+Generated: __14 Dec 21 10:40 +0100__
