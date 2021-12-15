@@ -42,7 +42,7 @@ For more information run `atwhy serve --help`
  {{ .Tag.example_tag }}  
  ```  
   
- Note: This is basically the syntax of the Go templating engine.  
+ Note: This uses the Go templating engine.  
  Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).  
 
 Each template can have a yaml header with the following fields:  
@@ -118,4 +118,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __15 Dec 21 11:35 +0100__
+Generated: __15 Dec 21 12:55 +0100__

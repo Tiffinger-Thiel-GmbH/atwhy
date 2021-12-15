@@ -128,7 +128,7 @@ func readTemplate(sysfs afero.Fs, path string) (DocTemplate, error) {
 //  {{ .Tag.example_tag }}
 //  ```
 //
-//  Note: This is basically the syntax of the Go templating engine.
+//  Note: This uses the Go templating engine.
 //  Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocTemplate, error) {
 	var res []DocTemplate
