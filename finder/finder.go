@@ -93,22 +93,22 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 				continue
 			}
 
-			// Just add the current line to the value.
-			if f.currentTag != nil {
+			// If includeCode == false just add the current line to the value.
+			if f.currentTag != nil && !f.includeCode {
 				f.currentTag.Value = f.currentTag.Value + f.currentCommentLine + "\n"
 				continue
 			}
 		}
 
-		// For empty comment lines, just add newlines.
-		if f.currentTag != nil && f.currentCommentLine == "" && (f.currentlyInBlockComment || f.currentLineIsLineComment) {
-			f.currentTag.Value = f.currentTag.Value + "\n"
+		// If includeCode == true, add the whole line without trimming.
+		if f.currentTag != nil && f.includeCode {
+			f.currentTag.Value = f.currentTag.Value + line + "\n"
 			continue
 		}
 
-		// If no longer in comment but still includeCode, add the whole line as code.
-		if f.currentTag != nil && f.includeCode {
-			f.currentTag.Value = f.currentTag.Value + line + "\n"
+		// For empty comment lines, just add newlines.
+		if f.currentTag != nil && f.currentCommentLine == "" && (f.currentlyInBlockComment || f.currentLineIsLineComment) {
+			f.currentTag.Value = f.currentTag.Value + "\n"
 			continue
 		}
 
@@ -190,15 +190,18 @@ func (f *Finder) findComment(line string) {
 //
 // @WHY readme_tags_rules
 // The placeholder_names must follow these rules:
+// First char: only a-z (lowercase)
+// Rest:
 //  * only a-z (lowercase)
 //  * `-`
 //  * `_`
+//  * 0-9
 //
 // Examles:
 //  * any_tag_name
 //  * supertag
 //  * super-tag
-var anyTagRegex = regexp.MustCompile(`([\\]?)@WHY( ([A-Z_]+))?( ([a-z-_]+))?`)
+var anyTagRegex = regexp.MustCompile(`([\\]?)@WHY( ([A-Z_]+))?( ([a-z]+[a-z-_0-9]*))?`)
 
 // findTag using the anyTagRegex.
 // It already pre-fills the first comment line if a new one was found.

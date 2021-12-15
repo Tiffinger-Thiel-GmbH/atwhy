@@ -40,7 +40,7 @@ func Link(input Raw) (Tag, error) {
 	}, nil
 }
 
-func textFactory(input Raw) Basic {
+func textFactory(input Raw, isMarkdown bool) Basic {
 	// First remove windows line endings.
 	input.Value = strings.ReplaceAll(input.Value, "\r\n", "\r")
 
@@ -49,8 +49,10 @@ func textFactory(input Raw) Basic {
 	var body string
 
 	// If a body exists, use that. If not just leave the value empty.
-	if len(splitted) >= 2 {
+	if isMarkdown && len(splitted) >= 2 {
 		body = strings.ReplaceAll(splitted[1], "\n", "  \n")
+	} else if !isMarkdown {
+		body = splitted[1]
 	}
 
 	body = strings.TrimRight(body, " \n")
@@ -66,7 +68,7 @@ func Doc(input Raw) (Tag, error) {
 		return nil, nil
 	}
 
-	newTag := textFactory(input)
+	newTag := textFactory(input, true)
 
 	// Inject hard newlines, as the linter in many languages strips away empty spaces.
 	newTag.value = strings.ReplaceAll(newTag.value, "\r", HardNewLine)
@@ -79,10 +81,10 @@ func Code(input Raw) (Tag, error) {
 		return nil, nil
 	}
 
-	newTag := textFactory(input)
+	newTag := textFactory(input, false)
 
 	codeType := filepath.Ext(input.Filename)[1:]
-	newTag.value = "```" + codeType + "\n" + newTag.value + "```\n"
+	newTag.value = "```" + codeType + "\n" + newTag.value + "\n```\n"
 
 	return newTag, nil
 }

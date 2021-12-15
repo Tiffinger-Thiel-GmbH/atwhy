@@ -43,7 +43,35 @@ For more information run `atwhy serve --help`
  ```  
   
  Note: This is basically the syntax of the Go templating engine.  
- Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
+ Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).  
+
+Each template can have a yaml header with the following fields:  
+```go
+type TemplateHeader struct {
+	// Meta contains additional data which can be used by the generators.
+	// It is also available inside the template for example with
+	//  {{ .Meta.Title }}
+	Meta MetaData `yaml:"meta"`
+}
+
+type MetaData struct {
+	// Title is for example used in the html generator to create the navigation buttons.
+	// If not set, it will default to the template file-name (excluding .tpl.md)
+	Title string `yaml:"title"`
+}
+```
+  
+The header is separated from the markdown by using a line with three `-` and a newline.  
+Example:  
+```md  
+meta:  
+ title: Readme  
+---  
+# Your Markdown  
+  
+## Foo  
+bar  
+```  
 
 ### Tags
 
@@ -54,9 +82,12 @@ There are also some special tags:
   It has to be closed by `@WHY CODE_END`
 
 The placeholder_names must follow these rules:  
+First char: only a-z (lowercase)  
+Rest:  
  * only a-z (lowercase)  
  * `-`  
  * `_`  
+ * 0-9  
   
 Examles:  
  * any_tag_name  
@@ -87,4 +118,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __14 Dec 21 16:45 +0100__
+Generated: __15 Dec 21 11:35 +0100__

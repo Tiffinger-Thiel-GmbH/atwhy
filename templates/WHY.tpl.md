@@ -1,4 +1,6 @@
-Architecture
+meta: 
+  title: Architecture
+---
 # Architecture
 
 The idea behind atwhy is to have several interfaces, each one for a small purpose. These interfaces are then

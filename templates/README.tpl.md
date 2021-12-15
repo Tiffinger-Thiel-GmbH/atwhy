@@ -1,4 +1,6 @@
-Readme
+meta: 
+  title: Readme
+---
 # atwhy
 
 ## What is atwhy
@@ -22,7 +24,11 @@ actually done.
 
 ### Templates
 
-{{ .Tag.doc_template }}
+{{ .Tag.doc_template }}  
+
+{{ .Tag.doc_template_header_1 }}  
+{{ .Tag.doc_template_header_struct }}  
+{{ .Tag.doc_template_header_2 }}  
 
 ### Tags
 

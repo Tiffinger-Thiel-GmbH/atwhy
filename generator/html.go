@@ -52,9 +52,9 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 	)
 
 	type Page struct {
-		ID   string
-		Name string
-		Body template.HTML
+		ID    string
+		Title string
+		Body  template.HTML
 	}
 	type Data struct {
 		Pages []Page
@@ -79,9 +79,9 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 		}
 
 		data.Pages = append(data.Pages, Page{
-			ID:   tpl.ID,
-			Name: tpl.Name,
-			Body: template.HTML(resHTML.String()),
+			ID:    tpl.ID,
+			Title: tpl.Header.Meta.Title,
+			Body:  template.HTML(resHTML.String()),
 		})
 	}
 
