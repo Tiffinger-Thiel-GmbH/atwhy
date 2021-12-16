@@ -30,7 +30,7 @@ It serves it on the given host
 			host = "localhost:4444"
 		}
 
-		_, project, _, err := LoadCommon(cmd)
+		_, project, _, _, err := LoadCommon(cmd)
 		if err != nil {
 			cmd.PrintErrln(err)
 			return
@@ -48,7 +48,7 @@ It serves it on the given host
 			w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 
 			// For now always generate a new doc to be able to reflect any change instantly.
-			templates, project, extensions, err := LoadCommon(cmd)
+			templates, project, extensions, htmlTemplate, err := LoadCommon(cmd)
 			if err != nil {
 				cmd.PrintErr(err)
 				return
@@ -56,6 +56,7 @@ It serves it on the given host
 
 			// For now the Generator is not necessarily thread save, so always create a new instance!
 			var gen core.Generator = &generator.HTML{
+				HTMLTemplate: htmlTemplate,
 				Markdown: generator.Markdown{
 					DocTemplates: templates,
 				},

@@ -44,7 +44,7 @@ and therefore provides a way to use "single source of truth" also for documentat
 			writer = file
 		}
 
-		templates, project, extensions, err := LoadCommon(cmd)
+		templates, project, extensions, htmlTemplate, err := LoadCommon(cmd)
 		if err != nil {
 			cmd.PrintErrln(err)
 			return
@@ -58,6 +58,7 @@ and therefore provides a way to use "single source of truth" also for documentat
 			}
 		case ".html":
 			gen = &generator.HTML{
+				HTMLTemplate: htmlTemplate,
 				Markdown: generator.Markdown{
 					DocTemplates: templates,
 				},
@@ -91,4 +92,5 @@ func init() {
 	rootCmd.PersistentFlags().StringSliceP("templates", "T", nil, "comma separated list of templates to generate\ngenerates all if omitted\nexample: README,WHY to generate README.tpl.md and WHY.tpl.md")
 	rootCmd.PersistentFlags().StringSliceP("ext", "e", nil, "comma separated list of allowed extensions\nallow all if not provided\nexample: .go,.js,.ts")
 	rootCmd.PersistentFlags().StringP("project", "p", "", "the project folder")
+	rootCmd.PersistentFlags().String("html-template", "", "a .gohtml file which should be used instead of the embedded html template")
 }

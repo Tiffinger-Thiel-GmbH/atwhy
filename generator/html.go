@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io"
 	"io/fs"
+	"path/filepath"
 	"strings"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
@@ -13,22 +14,35 @@ import (
 )
 
 //go:embed template
-var TemplateFS embed.FS
+var EmbeddedTemplateFS embed.FS
 
 type HTML struct {
 	Markdown
 
+	// HTMLTemplate the path to a .gohtml template to use instead of the embedded one.
+	HTMLTemplate string
+
+	sysFS    fs.FS
 	template *template.Template
 }
 
+// loadTemplate either from the given HTMLTemplate path
+// or if that is not set, from the embedded template.
 func (h *HTML) loadTemplate() error {
 	if h.template == nil {
-		subFS, err := fs.Sub(TemplateFS, "template")
+		if h.HTMLTemplate != "" {
+			var err error
+			h.template, err = template.ParseFiles(h.HTMLTemplate)
+			return err
+		}
+
+		var err error
+		h.sysFS, err = fs.Sub(EmbeddedTemplateFS, "template")
 		if err != nil {
 			return err
 		}
 
-		h.template, err = template.ParseFS(subFS, "index.gohtml")
+		h.template, err = template.ParseFS(h.sysFS, "index.gohtml")
 		if err != nil {
 			return err
 		}
@@ -62,9 +76,7 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 
 	var data Data
 
-	templates := h.Markdown.DocTemplates
-
-	for _, tpl := range templates {
+	for _, tpl := range h.Markdown.DocTemplates {
 		resMD := strings.Builder{}
 		h.Markdown.DocTemplates = []DocTemplate{tpl}
 		err := h.Markdown.Generate(tags, &resMD)
@@ -85,5 +97,11 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 		})
 	}
 
-	return h.template.ExecuteTemplate(writer, "index.gohtml", data)
+	tplName := filepath.Base(h.HTMLTemplate)
+	if tplName == "" || tplName == "." {
+		// index.gohtml is the name of the embedded template.
+		tplName = "index.gohtml"
+	}
+
+	return h.template.ExecuteTemplate(writer, tplName, data)
 }
