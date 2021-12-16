@@ -24,6 +24,7 @@ const templateSuffix = ".tpl.md"
 // Each template can have a yaml header with the following fields:
 
 // @WHY CODE doc_template_header_struct
+
 type TemplateHeader struct {
 	// Meta contains additional data which can be used by the generators.
 	// It is also available inside the template for example with
