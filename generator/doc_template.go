@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/aligator/checkpoint"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v2"
 )
@@ -65,13 +66,13 @@ type DocTemplate struct {
 func readTemplate(sysfs afero.Fs, path string) (DocTemplate, error) {
 	file, err := sysfs.Open(path)
 	if err != nil {
-		return DocTemplate{}, err
+		return DocTemplate{}, checkpoint.From(err)
 	}
 	defer file.Close()
 
 	tplData, err := ioutil.ReadAll(file)
 	if err != nil {
-		return DocTemplate{}, err
+		return DocTemplate{}, checkpoint.From(err)
 	}
 
 	// Windows compatibility:
@@ -91,7 +92,7 @@ func readTemplate(sysfs afero.Fs, path string) (DocTemplate, error) {
 		body = string(splitted[1])
 		err = yaml.Unmarshal(splitted[0], &header)
 		if err != nil {
-			return DocTemplate{}, err
+			return DocTemplate{}, checkpoint.From(err)
 		}
 	}
 
@@ -101,7 +102,7 @@ func readTemplate(sysfs afero.Fs, path string) (DocTemplate, error) {
 	tpl, err := template.New(filename).Parse(body)
 
 	if err != nil {
-		return DocTemplate{}, err
+		return DocTemplate{}, checkpoint.From(err)
 	}
 
 	if header.Meta.Title == "" {
@@ -139,7 +140,7 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 	}
 	err = afero.Walk(sysfs, abs, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 		if info.IsDir() {
 			return nil
@@ -163,7 +164,7 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 		if strings.HasSuffix(path, ".tpl.md") {
 			newTpl, err := readTemplate(sysfs, path)
 			if err != nil {
-				return err
+				return checkpoint.From(err)
 			}
 
 			res = append(res, newTpl)
@@ -172,7 +173,7 @@ func LoadDocTemplates(sysfs afero.Fs, folder string, allowList []string) ([]DocT
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, checkpoint.From(err)
 	}
 
 	// Sort by the title.
@@ -194,5 +195,5 @@ func (t DocTemplate) Execute(tagMap map[string]tag.Tag, writer io.Writer) error 
 		Now: time.Now().Format(time.RFC822Z),
 	}
 
-	return t.template.Execute(writer, data)
+	return checkpoint.From(t.template.Execute(writer, data))
 }

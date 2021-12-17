@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/aligator/checkpoint"
 )
 
 type Markdown struct {
@@ -26,12 +27,12 @@ func (m *Markdown) Generate(tags []tag.Tag, writer io.Writer) error {
 	for _, tpl := range m.DocTemplates {
 		err := tpl.Execute(tagMap, writer)
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 
 		_, err = writer.Write([]byte("\n"))
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 	}
 

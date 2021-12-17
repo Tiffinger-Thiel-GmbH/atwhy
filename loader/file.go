@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/aligator/checkpoint"
 	"github.com/aligator/nogo"
 	"github.com/spf13/afero"
 )
@@ -30,7 +31,7 @@ func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 
 	err := afero.Walk(fl.FS, ".", func(path string, info fs.FileInfo, err error) error {
 		if ok, err := n.WalkFunc(afero.NewIOFS(fl.FS), ".atwhyignore", path, info.IsDir(), err); !ok {
-			return err
+			return checkpoint.From(err)
 		}
 
 		if info.IsDir() {
@@ -53,19 +54,19 @@ func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 
 		file, err := fl.FS.Open(path)
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 		defer file.Close()
 
 		tags, err := finder.Find(path, file)
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 		allTags = append(allTags, tags...)
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, checkpoint.From(err)
 	}
 
 	return allTags, nil

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/aligator/checkpoint"
 )
 
 // Finder implements the TagFinder interface in a language-generic way.
@@ -54,6 +55,10 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 
 	var lineNum = -1
 	for scan.Scan() {
+		if err := scan.Err(); err != nil {
+			return nil, checkpoint.From(err)
+		}
+
 		lineNum++
 
 		line := scan.Text()

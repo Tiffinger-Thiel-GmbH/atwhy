@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/aligator/checkpoint"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 )
@@ -33,18 +34,18 @@ func (h *HTML) loadTemplate() error {
 		if h.HTMLTemplate != "" {
 			var err error
 			h.template, err = template.ParseFiles(h.HTMLTemplate)
-			return err
+			return checkpoint.From(err)
 		}
 
 		var err error
 		h.sysFS, err = fs.Sub(EmbeddedTemplateFS, "template")
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 
 		h.template, err = template.ParseFS(h.sysFS, "index.gohtml")
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 	}
 
@@ -54,7 +55,7 @@ func (h *HTML) loadTemplate() error {
 func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 	err := h.loadTemplate()
 	if err != nil {
-		return err
+		return checkpoint.From(err)
 	}
 
 	gm := goldmark.New(
@@ -81,13 +82,13 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 		h.Markdown.DocTemplates = []DocTemplate{tpl}
 		err := h.Markdown.Generate(tags, &resMD)
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 
 		resHTML := strings.Builder{}
 		err = gm.Convert([]byte(resMD.String()), &resHTML)
 		if err != nil {
-			return err
+			return checkpoint.From(err)
 		}
 
 		data.Pages = append(data.Pages, Page{
@@ -103,5 +104,5 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 		tplName = "index.gohtml"
 	}
 
-	return h.template.ExecuteTemplate(writer, tplName, data)
+	return checkpoint.From(h.template.ExecuteTemplate(writer, tplName, data))
 }

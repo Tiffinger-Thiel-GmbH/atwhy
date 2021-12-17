@@ -2,6 +2,7 @@ package processor
 
 import (
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/aligator/checkpoint"
 )
 
 type Cleaner interface {
@@ -21,7 +22,7 @@ func (p Processor) Process(tags []tag.Raw) ([]tag.Tag, error) {
 		for _, factory := range p.TagFactories {
 			newTag, err := factory(t)
 			if err != nil {
-				return nil, err
+				return nil, checkpoint.From(err)
 			}
 			if newTag == nil {
 				continue
