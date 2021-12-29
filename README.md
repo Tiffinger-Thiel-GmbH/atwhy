@@ -47,6 +47,7 @@ For more information run `atwhy serve --help`
 
 Each template can have a yaml header with the following fields:  
 ```go
+
 type TemplateHeader struct {
 	// Meta contains additional data which can be used by the generators.
 	// It is also available inside the template for example with
@@ -111,11 +112,11 @@ The tags are terminated by
 
 ### Prerequisites
 
-* Go 1.17
+* Go 1.16
 
 ### Build
 
 Run `go build .`  
 
 ---
-Generated: __15 Dec 21 12:55 +0100__
+Generated: __29 Dec 21 16:19 +0100__
