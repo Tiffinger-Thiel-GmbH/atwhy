@@ -1,7 +1,6 @@
 module github.com/Tiffinger-Thiel-GmbH/atwhy
 
-go 1.17
-
+go 1.16
 require (
 	github.com/aligator/nogo v0.2.2
 	github.com/spf13/afero v1.7.1
