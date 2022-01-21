@@ -14,7 +14,7 @@ FROM gcr.io/distroless/base-debian11 AS final
 
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.name="atwhy"
-LABEL org.label-schema.description="A simple CLI for tracking your working time."
+LABEL org.label-schema.description="Single source of truth also for documentation."
 LABEL org.label-schema.url="https://github.com/Tiffinger-Thiel-GmbH/atwhy"
 LABEL org.label-schema.vcs-url="https://github.com/Tiffinger-Thiel-GmbH/atwhy"
 LABEL org.opencontainers.image.source = "https://github.com/Tiffinger-Thiel-GmbH/atwhy"
