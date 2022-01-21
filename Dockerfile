@@ -17,6 +17,7 @@ LABEL org.label-schema.name="atwhy"
 LABEL org.label-schema.description="A simple CLI for tracking your working time."
 LABEL org.label-schema.url="https://github.com/Tiffinger-Thiel-GmbH/atwhy"
 LABEL org.label-schema.vcs-url="https://github.com/Tiffinger-Thiel-GmbH/atwhy"
+LABEL org.opencontainers.image.source = "https://github.com/Tiffinger-Thiel-GmbH/atwhy"
 
 COPY --from=builder /app/atwhy /bin
 

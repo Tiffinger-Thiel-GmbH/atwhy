@@ -61,6 +61,7 @@ jobs:
             atwhy-macos-amd64.tar.gz
             atwhy-macos-arm64.tar.gz
             atwhy-windows-amd64.zip
+            
   ghr_push:
     name: Publish docker image
     runs-on: ubuntu-latest
