@@ -3,7 +3,7 @@ module github.com/Tiffinger-Thiel-GmbH/atwhy
 go 1.16
 
 require (
-	github.com/aligator/nogo v0.2.2
+	github.com/aligator/nogo v0.3.0
 	github.com/spf13/afero v1.8.0
 	github.com/spf13/cobra v1.3.0
 	github.com/yuin/goldmark v1.4.4
@@ -11,4 +11,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require github.com/alecthomas/chroma v0.9.4 // indirect
+require github.com/alecthomas/chroma v0.10.0 // indirect

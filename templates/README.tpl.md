@@ -14,6 +14,15 @@ The same applies to architectural decisions, which can be documented, where its
 actually done.  
 --> __Single source of truth__ also for documentation!
 
+## Installation
+
+You have several options to install atwhy:
+* [Install Go](https://go.dev/dl/) and run `go install github.com/Tiffinger-Thiel-GmbH/atwhy@latest`.  
+  You may need to restart after installing Go to have the PATH setup correctly.
+* [Download a matching binary from the releases](https://github.com/Tiffinger-Thiel-GmbH/atwhy/releases)
+  and put somewhere in your PATH.  
+  Note that they are currently not signed -> MacOS and Windows may not like that...
+
 ## Usage
 
 ### Command

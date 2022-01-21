@@ -26,10 +26,14 @@ type File struct {
 func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 	allTags := make([]tag.Raw, 0)
 
+	sysfs := afero.NewIOFS(fl.FS)
 	n := nogo.New(nogo.DotGitRule)
+	if err := n.AddFromFS(sysfs, ".atwhyignore"); err != nil {
+		return nil, err
+	}
 
 	err := afero.Walk(fl.FS, ".", func(path string, info fs.FileInfo, err error) error {
-		if ok, err := n.WalkFunc(afero.NewIOFS(fl.FS), ".atwhyignore", path, info.IsDir(), err); !ok {
+		if ok, err := n.WalkFunc(sysfs, path, info.IsDir(), err); !ok {
 			return err
 		}
 
