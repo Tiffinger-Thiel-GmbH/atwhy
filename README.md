@@ -14,14 +14,14 @@ actually done.
 ## Installation
 
 You have several options to install atwhy:
+* Just use docker to run a minimal image (It is multi-arch so it works on x64 and arm):  
+  `docker run --rm -i -p 4444:4444 -v $PWD:/project ghcr.io/tiffinger-thiel-gmbh/atwhy atwhy`  
+  You may add an alias to your shell for this.
 * [Install Go](https://go.dev/dl/) and run `go install github.com/Tiffinger-Thiel-GmbH/atwhy@latest`.  
   You may need to restart after installing Go to have the PATH setup correctly.
 * [Download a matching binary from the releases](https://github.com/Tiffinger-Thiel-GmbH/atwhy/releases)
   and put somewhere in your PATH.  
   Note that they are currently not signed -> MacOS and Windows may not like that...
-* Just use docker to run a minimal image (It is multi-arch so it works on x64 and arm):  
-  `docker run --rm -i -p 4444:4444 -v $PWD:/project ghcr.io/tiffinger-thiel-gmbh/atwhy atwhy`  
-  You may add a alias to your shell for this.
 
 ## Usage
 
@@ -131,4 +131,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __21 Jan 22 20:50 +0100__
+Generated: __21 Jan 22 22:06 +0100__
