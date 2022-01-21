@@ -19,6 +19,9 @@ You have several options to install atwhy:
 * [Download a matching binary from the releases](https://github.com/Tiffinger-Thiel-GmbH/atwhy/releases)
   and put somewhere in your PATH.  
   Note that they are currently not signed -> MacOS and Windows may not like that...
+* Just use docker to run a minimal image:  
+  `docker run --rm -i -p 4444:4444 -v $PWD:/project atwhy atwhy`  
+  You may add a alias to your shell for this.
 
 ## Usage
 
