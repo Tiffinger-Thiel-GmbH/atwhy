@@ -2,7 +2,6 @@ package tag
 
 import (
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -28,16 +27,8 @@ func (b Basic) Placeholder() string {
 	return b.placeholder
 }
 
-func Link(input Raw) (Tag, error) {
-	if input.Type != TypeLink {
-		return nil, nil
-	}
-
-	return Basic{
-		tagType:     input.Type,
-		placeholder: input.Placeholder,
-		value:       "[" + input.Filename + ":" + strconv.Itoa(input.Line) + "](" + input.Filename + ")",
-	}, nil
+func (b Basic) WithContext(_ Context) Tag {
+	return b
 }
 
 func textFactory(input Raw, isMarkdown bool) Basic {

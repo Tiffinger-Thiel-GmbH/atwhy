@@ -1,15 +1,10 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
-	"log"
-	"net/http"
-	"path/filepath"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"log"
 )
 
 // @WHY readme_usage_serve
@@ -47,45 +42,7 @@ It serves it on the given host
 			return
 		}
 
-		// Serve the files.
-		fs := http.FileServer(http.Dir(projectPath))
-
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			// Fast path: no need to generate everything if no html is requested.
-			if !strings.HasSuffix(r.URL.Path, atwhy.Generator.Ext()) {
-				fs.ServeHTTP(w, r)
-				return
-			}
-
-			// For now always load the templates and tags to be able to reflect any change instantly.
-			// Maybe later a fs watcher could be used...
-			templates, err := atwhy.Load()
-			if err != nil {
-				cmd.PrintErr(err)
-				return
-			}
-
-			// Only generate the requested file.
-			for _, t := range templates {
-				if filepath.Join(t.Path, t.Name+atwhy.Generator.Ext()) == r.URL.Path[1:] {
-					// Found something
-					w.Header().Set("Content-Type", "text/html; charset=UTF-8")
-
-					err = atwhy.Generate(t, w)
-					if err != nil {
-						cmd.PrintErr(err)
-						return
-					}
-					return
-				}
-			}
-
-			// If still nothing is served use the file server.
-			fs.ServeHTTP(w, r)
-		})
-
-		fmt.Printf("Starting server on %s\n", host)
-		if err := http.ListenAndServe(host, nil); err != nil {
+		if err := atwhy.ListenAndServe(host); err != nil {
 			log.Fatal(err)
 		}
 	},

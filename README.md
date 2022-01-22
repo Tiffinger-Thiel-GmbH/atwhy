@@ -77,12 +77,20 @@ type Header struct {
 // It is also available inside the template for example with
 //  {{ .Meta.Title }}
 Meta MetaData `yaml:"meta"`
+
+Server ServerData `yaml:"server"`
 }
 
 type MetaData struct {
 // Title is for example used in the html generator to create the navigation buttons.
 // If not set, it will default to the template file-name (excluding .tpl.md)
 Title string `yaml:"title"`
+}
+
+type ServerData struct {
+// Index defines if this template should be used as "index.html".
+// Note that there can only be one page in each folder which is the index.
+Index bool `yaml:"index"`
 }
 ```
   
@@ -140,7 +148,7 @@ The tags are terminated by
 
 ### Build
 
-Run `go build .`  
+Run `go build .`
 
 ---
-Generated: __22 Jan 22 15:55 +0100__
+Generated: __22 Jan 22 19:10 +0100__

@@ -38,6 +38,8 @@ type AtWhy struct {
 	Processor      TagProcessor
 	Generator      Generator
 	TemplateLoader TemplateLoader
+
+	projectPath string
 }
 
 // @WHY CODE_END
@@ -67,24 +69,26 @@ func New(gen Generator, projectPath string, templateFolder string, extensions []
 		TemplateLoader: template.Loader{
 			FS: templateFS,
 		},
+
+		projectPath: projectPath,
 	}
 	return atwhy, nil
 }
 
-func (c *AtWhy) Load() ([]template.MarkdownTemplate, error) {
-	tags, err := c.Loader.Load(c.Finder)
+func (a *AtWhy) Load() ([]template.MarkdownTemplate, error) {
+	tags, err := a.Loader.Load(a.Finder)
 	if err != nil {
 		return nil, err
 	}
 
-	processedTags, err := c.Processor.Process(tags)
+	processedTags, err := a.Processor.Process(tags)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.TemplateLoader.Load(processedTags)
+	return a.TemplateLoader.Load(processedTags)
 }
 
-func (c *AtWhy) Generate(template template.MarkdownTemplate, writer io.Writer) error {
-	return c.Generator.Generate(template, writer)
+func (a *AtWhy) Generate(template template.MarkdownTemplate, writer io.Writer) error {
+	return a.Generator.Generate(template, writer)
 }

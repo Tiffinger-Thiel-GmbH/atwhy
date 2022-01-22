@@ -28,12 +28,20 @@ type Header struct {
 	// It is also available inside the template for example with
 	//  {{ .Meta.Title }}
 	Meta MetaData `yaml:"meta"`
+
+	Server ServerData `yaml:"server"`
 }
 
 type MetaData struct {
 	// Title is for example used in the html generator to create the navigation buttons.
 	// If not set, it will default to the template file-name (excluding .tpl.md)
 	Title string `yaml:"title"`
+}
+
+type ServerData struct {
+	// Index defines if this template should be used as "index.html".
+	// Note that there can only be one page in each folder which is the index.
+	Index bool `yaml:"index"`
 }
 
 // @WHY CODE_END
@@ -76,7 +84,11 @@ type MarkdownTemplate struct {
 	tagMap   map[string]tag.Tag
 }
 
-func readTemplate(sysfs afero.Fs, path string, tagMap map[string]tag.Tag) (MarkdownTemplate, error) {
+func (t MarkdownTemplate) TemplatePath() string {
+	return t.Path
+}
+
+func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (MarkdownTemplate, error) {
 	file, err := sysfs.Open(path)
 	if err != nil {
 		return MarkdownTemplate{}, err
@@ -122,7 +134,7 @@ func readTemplate(sysfs afero.Fs, path string, tagMap map[string]tag.Tag) (Markd
 		header.Meta.Title = strings.TrimSuffix(filename, templateSuffix)
 	}
 
-	return MarkdownTemplate{
+	markdownTemplate := MarkdownTemplate{
 		ID:    "page-" + hex.EncodeToString(id[:]),
 		Name:  strings.TrimSuffix(filepath.Base(path), templateSuffix),
 		Path:  filepath.Dir(path),
@@ -130,8 +142,11 @@ func readTemplate(sysfs afero.Fs, path string, tagMap map[string]tag.Tag) (Markd
 
 		Header:   header,
 		template: tpl,
-		tagMap:   tagMap,
-	}, nil
+	}
+
+	markdownTemplate.tagMap = createTagMap(tags, markdownTemplate)
+
+	return markdownTemplate, nil
 }
 
 // Execute the template

@@ -1,5 +1,6 @@
-meta: 
-  title: Architecture
+meta:
+title: Architecture server:
+index: true
 ---
 # Architecture
 

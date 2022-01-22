@@ -20,7 +20,7 @@ So the workflow is:
 Loader -> TagFinder = tagList []tag.Raw tagList -> TagProcessor -> Generator ->
 Writer
 
-[core/atwhy.go:32](core/atwhy.go)
+[../core/atwhy.go:32](../core/atwhy.go)
 
 ```go
 type AtWhy struct {
@@ -29,5 +29,8 @@ Finder         loader.TagFinder
 Processor      TagProcessor
 Generator      Generator
 TemplateLoader TemplateLoader
+
+projectPath string
 }
 ```
+
