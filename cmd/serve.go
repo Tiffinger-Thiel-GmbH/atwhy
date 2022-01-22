@@ -2,8 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"log"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -28,44 +32,56 @@ It serves it on the given host
 			host = "localhost:4444"
 		}
 
-		_, project, _, err := LoadCommonArgs(cmd)
+		templateFolder, projectPath, extensions, err := LoadCommonArgs(cmd)
 		if err != nil {
 			cmd.PrintErrln(err)
 			return
 		}
 
+		var gen core.Generator = &generator.HTML{
+			Markdown: generator.Markdown{},
+		}
+		atwhy, err := core.New(gen, projectPath, templateFolder, extensions)
+		if err != nil {
+			cmd.PrintErr(err)
+			return
+		}
+
 		// Serve the files.
-		fs := http.FileServer(http.Dir(project))
+		fs := http.FileServer(http.Dir(projectPath))
 
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path != "/" {
+			// Fast path: no need to generate everything if no html is requested.
+			if !strings.HasSuffix(r.URL.Path, atwhy.Generator.Ext()) {
 				fs.ServeHTTP(w, r)
 				return
 			}
 
-			w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+			// For now always load the templates and tags to be able to reflect any change instantly.
+			// Maybe later a fs watcher could be used...
+			templates, err := atwhy.Load()
+			if err != nil {
+				cmd.PrintErr(err)
+				return
+			}
 
-			/*	// For now always generate a new doc to be able to reflect any change instantly.
-				templates, project, extensions, err := LoadCommonArgs(cmd)
-				if err != nil {
-					cmd.PrintErr(err)
+			// Only generate the requested file.
+			for _, t := range templates {
+				if filepath.Join(t.Path, t.Name+atwhy.Generator.Ext()) == r.URL.Path[1:] {
+					// Found something
+					w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+
+					err = atwhy.Generate(t, w)
+					if err != nil {
+						cmd.PrintErr(err)
+						return
+					}
 					return
 				}
+			}
 
-				// For now the Generator is not necessarily thread save, so always create a new instance!
-				var gen core.Generator = &generator.HTML{
-					Markdown: generator.Markdown{},
-				}
-				atwhy, err := core.New(w, gen, project, extensions)
-				if err != nil {
-					cmd.PrintErr(err)
-					return
-				}
-
-				if err := atwhy.Run(); err != nil {
-					cmd.PrintErr(err)
-					return
-				}*/
+			// If still nothing is served use the file server.
+			fs.ServeHTTP(w, r)
 		})
 
 		fmt.Printf("Starting server on %s\n", host)

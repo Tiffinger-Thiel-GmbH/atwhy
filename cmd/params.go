@@ -6,7 +6,7 @@ import (
 )
 
 // LoadCommonArgs loads everything which is common through the different modes.
-func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath string, extentions []string, err error) {
+func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath string, extensions []string, err error) {
 	templatesFolder, err = cmd.Flags().GetString("templates-folder")
 	if err != nil {
 		return "", "", nil, err
@@ -23,10 +23,10 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 		return "", "", nil, err
 	}
 
-	extentions, err = cmd.Flags().GetStringSlice("ext")
+	extensions, err = cmd.Flags().GetStringSlice("ext")
 	if err != nil {
 		return "", "", nil, err
 	}
 
-	return templatesFolder, projectPath, extentions, nil
+	return templatesFolder, projectPath, extensions, nil
 }
