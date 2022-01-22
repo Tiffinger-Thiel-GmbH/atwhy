@@ -1,14 +1,13 @@
 package core
 
 import (
-	"io"
-	"path/filepath"
-
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/loader"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/processor"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 	"github.com/spf13/afero"
+	"io"
 )
 
 type Loader interface {
@@ -20,29 +19,29 @@ type TagProcessor interface {
 }
 
 type Generator interface {
-	Generate(tags []tag.Tag, writer io.Writer) error
+	Generate(markdownTemplate template.MarkdownTemplate, writer io.Writer) error
+}
+
+type TemplateLoader interface {
+	Load(tags []tag.Tag) ([]template.MarkdownTemplate, error)
 }
 
 // AtWhy combines all parts of the application.
 // @WHY LINK atwhy_struct_link
 // @WHY CODE atwhy_struct_code
 type AtWhy struct {
-	Loader    Loader
-	Finder    loader.TagFinder
-	Processor TagProcessor
-	Generator Generator
-	Writer    io.Writer
+	Loader         Loader
+	Finder         loader.TagFinder
+	Processor      TagProcessor
+	Generator      Generator
+	TemplateLoader TemplateLoader
 }
 
 // @WHY CODE_END
 
-func New(writer io.Writer, gen Generator, projectPath string, extensions []string) (AtWhy, error) {
-	abs, err := filepath.Abs(projectPath)
-	if err != nil {
-		return AtWhy{}, err
-	}
-
-	filesystem := afero.NewBasePathFs(afero.NewOsFs(), abs)
+func New(gen Generator, projectPath string, templateFolder string, extensions []string) (AtWhy, error) {
+	filesystem := afero.NewBasePathFs(afero.NewOsFs(), projectPath)
+	templateFS := afero.NewBasePathFs(filesystem, templateFolder)
 
 	atwhy := AtWhy{
 		Finder: &finder.Finder{
@@ -62,21 +61,23 @@ func New(writer io.Writer, gen Generator, projectPath string, extensions []strin
 			},
 		},
 		Generator: gen,
-		Writer:    writer,
+		TemplateLoader: template.Loader{
+			FS: templateFS,
+		},
 	}
 	return atwhy, nil
 }
 
-func (c AtWhy) Run() error {
+func (c *AtWhy) Load() ([]template.MarkdownTemplate, error) {
 	tags, err := c.Loader.Load(c.Finder)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	processed, err := c.Processor.Process(tags)
+	processedTags, err := c.Processor.Process(tags)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return c.Generator.Generate(processed, c.Writer)
+	return c.TemplateLoader.Load(processedTags)
 }

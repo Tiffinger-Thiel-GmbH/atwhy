@@ -36,11 +36,15 @@ You have several options to install atwhy:
 
 ### Templates
 
-{{ .Tag.doc_template }}  
+{{ .Tag.doc_template }}
+
+{{ .Tag.doc_template_possible_tags }}
+
+#### Header
 
 {{ .Tag.doc_template_header_1 }}  
 {{ .Tag.doc_template_header_struct }}  
-{{ .Tag.doc_template_header_2 }}  
+{{ .Tag.doc_template_header_2 }}
 
 ### Tags
 

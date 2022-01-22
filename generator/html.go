@@ -2,12 +2,12 @@ package generator
 
 import (
 	"embed"
+	template2 "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 	"html/template"
 	"io"
 	"io/fs"
 	"strings"
 
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 )
@@ -37,7 +37,7 @@ func (h *HTML) loadTemplate() error {
 	return nil
 }
 
-func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
+func (h *HTML) Generate(markdownTemplate template2.MarkdownTemplate, writer io.Writer) error {
 	err := h.loadTemplate()
 	if err != nil {
 		return err
@@ -62,28 +62,24 @@ func (h *HTML) Generate(tags []tag.Tag, writer io.Writer) error {
 
 	var data Data
 
-	templates := h.Markdown.DocTemplates
+	resMD := strings.Builder{}
 
-	for _, tpl := range templates {
-		resMD := strings.Builder{}
-		h.Markdown.DocTemplates = []DocTemplate{tpl}
-		err := h.Markdown.Generate(tags, &resMD)
-		if err != nil {
-			return err
-		}
-
-		resHTML := strings.Builder{}
-		err = gm.Convert([]byte(resMD.String()), &resHTML)
-		if err != nil {
-			return err
-		}
-
-		data.Pages = append(data.Pages, Page{
-			ID:    tpl.ID,
-			Title: tpl.Header.Meta.Title,
-			Body:  template.HTML(resHTML.String()),
-		})
+	err = h.Markdown.Generate(markdownTemplate, &resMD)
+	if err != nil {
+		return err
 	}
+
+	resHTML := strings.Builder{}
+	err = gm.Convert([]byte(resMD.String()), &resHTML)
+	if err != nil {
+		return err
+	}
+
+	data.Pages = append(data.Pages, Page{
+		ID:    markdownTemplate.ID,
+		Title: markdownTemplate.Header.Meta.Title,
+		Body:  template.HTML(resHTML.String()),
+	})
 
 	return h.template.ExecuteTemplate(writer, "index.gohtml", data)
 }

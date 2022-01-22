@@ -1,11 +1,11 @@
 package loader
 
 import (
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"io"
 	"io/fs"
 	"strings"
 
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 	"github.com/aligator/nogo"
 	"github.com/spf13/afero"
 )

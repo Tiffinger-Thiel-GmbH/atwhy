@@ -5,3 +5,4 @@
 *.html
 tools/install-dir
 *.tar.gz
+/templates

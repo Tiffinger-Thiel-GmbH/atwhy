@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +28,7 @@ It serves it on the given host
 			host = "localhost:4444"
 		}
 
-		_, project, _, err := LoadCommon(cmd)
+		_, project, _, err := LoadCommonArgs(cmd)
 		if err != nil {
 			cmd.PrintErrln(err)
 			return
@@ -47,29 +45,27 @@ It serves it on the given host
 
 			w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 
-			// For now always generate a new doc to be able to reflect any change instantly.
-			templates, project, extensions, err := LoadCommon(cmd)
-			if err != nil {
-				cmd.PrintErr(err)
-				return
-			}
+			/*	// For now always generate a new doc to be able to reflect any change instantly.
+				templates, project, extensions, err := LoadCommonArgs(cmd)
+				if err != nil {
+					cmd.PrintErr(err)
+					return
+				}
 
-			// For now the Generator is not necessarily thread save, so always create a new instance!
-			var gen core.Generator = &generator.HTML{
-				Markdown: generator.Markdown{
-					DocTemplates: templates,
-				},
-			}
-			atwhy, err := core.New(w, gen, project, extensions)
-			if err != nil {
-				cmd.PrintErr(err)
-				return
-			}
+				// For now the Generator is not necessarily thread save, so always create a new instance!
+				var gen core.Generator = &generator.HTML{
+					Markdown: generator.Markdown{},
+				}
+				atwhy, err := core.New(w, gen, project, extensions)
+				if err != nil {
+					cmd.PrintErr(err)
+					return
+				}
 
-			if err := atwhy.Run(); err != nil {
-				cmd.PrintErr(err)
-				return
-			}
+				if err := atwhy.Run(); err != nil {
+					cmd.PrintErr(err)
+					return
+				}*/
 		})
 
 		fmt.Printf("Starting server on %s\n", host)

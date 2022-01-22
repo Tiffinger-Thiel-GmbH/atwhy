@@ -34,37 +34,49 @@ atwhy --help
 ```  
 A common usage to for example generate this README.md is:  
 ```bash  
-atwhy --ext .go --templates README README.md  
+atwhy --ext .go --templates README  
 ```
 
-You can also serve the documentation on default host `localhost:4444` with:  
+You can also serve the documentation on default host `localhost:4444` with:
+
 ```bash  
 atwhy serve --ext .go  
 ```  
+
 For more information run `atwhy serve --help`
 
 ### Templates
 
- The templates should be normal markdown files.  
- The first line has to be the name of the template (used for example for the navigation in the html-generator).  
-  
- You can access a tag called `@WHY example_tag` using  
+The templates should be markdown files with a yaml header for metadata.
+
+You can access a tag called `@WHY example_tag` using
+
  ```text  
  # Example  
  {{ .Tag.example_tag }}  
  ```  
-  
- Note: This uses the Go templating engine.  
- Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).  
 
-Each template can have a yaml header with the following fields:  
+Note: This uses the Go templating engine.  
+Therefor you can use
+the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates)
+.
+
+Possible template values are:
+
+* Any Tag from the project: `{{ .Tag.example_tag }}`
+* Current Datetime: `{{ .Now }}`
+
+#### Header
+
+Each template has a yaml Header with the following fields:
+
 ```go
 
-type TemplateHeader struct {
-	// Meta contains additional data which can be used by the generators.
-	// It is also available inside the template for example with
-	//  {{ .Meta.Title }}
-	Meta MetaData `yaml:"meta"`
+type Header struct {
+// Meta contains additional data which can be used by the generators.
+// It is also available inside the template for example with
+//  {{ .Meta.Title }}
+Meta MetaData `yaml:"meta"`
 }
 
 type MetaData struct {
@@ -84,7 +96,7 @@ meta:
   
 ## Foo  
 bar  
-```  
+```
 
 ### Tags
 
@@ -131,4 +143,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __21 Jan 22 22:06 +0100__
+Generated: __22 Jan 22 15:36 +0100__
