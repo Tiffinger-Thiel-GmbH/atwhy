@@ -12,7 +12,7 @@ type Loader struct {
 	FS afero.Fs
 }
 
-func createTagMap(tags []tag.Tag, tpl MarkdownTemplate) map[string]tag.Tag {
+func createTagMap(tags []tag.Tag, tpl Markdown) map[string]tag.Tag {
 	tagMap := make(map[string]tag.Tag)
 
 	for _, t := range tags {
@@ -23,8 +23,8 @@ func createTagMap(tags []tag.Tag, tpl MarkdownTemplate) map[string]tag.Tag {
 }
 
 // Load templates from the Loader.FS.
-func (l Loader) Load(tags []tag.Tag) ([]MarkdownTemplate, error) {
-	var res []MarkdownTemplate
+func (l Loader) Load(tags []tag.Tag) ([]Markdown, error) {
+	var res []Markdown
 
 	err := afero.Walk(l.FS, "", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {

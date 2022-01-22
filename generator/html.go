@@ -16,7 +16,7 @@ func (h HTML) Ext() string {
 	return ".html"
 }
 
-func (h HTML) Generate(markdownTemplate mdTemplate.MarkdownTemplate, writer io.Writer) error {
+func (h HTML) Generate(markdownTemplate mdTemplate.Markdown, writer io.Writer) error {
 	gm := goldmark.New(
 		goldmark.WithExtensions(
 			highlighting.NewHighlighting(

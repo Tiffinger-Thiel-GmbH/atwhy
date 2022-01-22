@@ -60,7 +60,7 @@ type ServerData struct {
 // ```
 //
 
-// MarkdownTemplate
+// Markdown
 //
 // @WHY doc_template
 // The templates should be markdown files with a yaml header for metadata.
@@ -73,7 +73,7 @@ type ServerData struct {
 //
 // Note: This uses the Go templating engine.
 // Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
-type MarkdownTemplate struct {
+type Markdown struct {
 	ID     string
 	Name   string
 	Path   string
@@ -84,20 +84,20 @@ type MarkdownTemplate struct {
 	tagMap   map[string]tag.Tag
 }
 
-func (t MarkdownTemplate) TemplatePath() string {
+func (t Markdown) TemplatePath() string {
 	return t.Path
 }
 
-func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (MarkdownTemplate, error) {
+func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (Markdown, error) {
 	file, err := sysfs.Open(path)
 	if err != nil {
-		return MarkdownTemplate{}, err
+		return Markdown{}, err
 	}
 	defer file.Close()
 
 	tplData, err := ioutil.ReadAll(file)
 	if err != nil {
-		return MarkdownTemplate{}, err
+		return Markdown{}, err
 	}
 
 	// Windows compatibility:
@@ -117,7 +117,7 @@ func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (MarkdownTemplate
 		body = string(splitted[1])
 		err = yaml.Unmarshal(splitted[0], &header)
 		if err != nil {
-			return MarkdownTemplate{}, err
+			return Markdown{}, err
 		}
 	}
 
@@ -127,14 +127,14 @@ func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (MarkdownTemplate
 	tpl, err := template.New(filename).Parse(body)
 
 	if err != nil {
-		return MarkdownTemplate{}, err
+		return Markdown{}, err
 	}
 
 	if header.Meta.Title == "" {
 		header.Meta.Title = strings.TrimSuffix(filename, templateSuffix)
 	}
 
-	markdownTemplate := MarkdownTemplate{
+	markdownTemplate := Markdown{
 		ID:    "page-" + hex.EncodeToString(id[:]),
 		Name:  strings.TrimSuffix(filepath.Base(path), templateSuffix),
 		Path:  filepath.Dir(path),
@@ -150,7 +150,7 @@ func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (MarkdownTemplate
 }
 
 // Execute the template
-func (t MarkdownTemplate) Execute(writer io.Writer) error {
+func (t Markdown) Execute(writer io.Writer) error {
 
 	data := struct {
 		Tag  map[string]tag.Tag

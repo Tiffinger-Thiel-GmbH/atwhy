@@ -19,14 +19,14 @@ type TagProcessor interface {
 }
 
 type Generator interface {
-	Generate(markdownTemplate template.MarkdownTemplate, writer io.Writer) error
+	Generate(markdownTemplate template.Markdown, writer io.Writer) error
 
 	// Ext returns the file extension which should be used for the generated files.
 	Ext() string
 }
 
 type TemplateLoader interface {
-	Load(tags []tag.Tag) ([]template.MarkdownTemplate, error)
+	Load(tags []tag.Tag) ([]template.Markdown, error)
 }
 
 // AtWhy combines all parts of the application.
@@ -75,7 +75,7 @@ func New(gen Generator, projectPath string, templateFolder string, extensions []
 	return atwhy, nil
 }
 
-func (a *AtWhy) Load() ([]template.MarkdownTemplate, error) {
+func (a *AtWhy) Load() ([]template.Markdown, error) {
 	tags, err := a.Loader.Load(a.Finder)
 	if err != nil {
 		return nil, err
@@ -89,6 +89,6 @@ func (a *AtWhy) Load() ([]template.MarkdownTemplate, error) {
 	return a.TemplateLoader.Load(processedTags)
 }
 
-func (a *AtWhy) Generate(template template.MarkdownTemplate, writer io.Writer) error {
+func (a *AtWhy) Generate(template template.Markdown, writer io.Writer) error {
 	return a.Generator.Generate(template, writer)
 }

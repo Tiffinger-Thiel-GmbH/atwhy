@@ -7,7 +7,7 @@ import (
 
 type Markdown struct{}
 
-func (m Markdown) Generate(template template.MarkdownTemplate, writer io.Writer) error {
+func (m Markdown) Generate(template template.Markdown, writer io.Writer) error {
 	err := template.Execute(writer)
 	if err != nil {
 		return err
