@@ -80,9 +80,9 @@ Meta MetaData `yaml:"meta"`
 }
 
 type MetaData struct {
-	// Title is for example used in the html generator to create the navigation buttons.
-	// If not set, it will default to the template file-name (excluding .tpl.md)
-	Title string `yaml:"title"`
+// Title is for example used in the html generator to create the navigation buttons.
+// If not set, it will default to the template file-name (excluding .tpl.md)
+Title string `yaml:"title"`
 }
 ```
   
@@ -143,4 +143,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __22 Jan 22 15:36 +0100__
+Generated: __22 Jan 22 15:55 +0100__

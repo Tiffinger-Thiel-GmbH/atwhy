@@ -2,7 +2,7 @@ package generator
 
 import (
 	"embed"
-	template2 "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
+	mdTemplate "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 	"html/template"
 	"io"
 	"io/fs"
@@ -21,6 +21,10 @@ type HTML struct {
 	template *template.Template
 }
 
+func (h HTML) Ext() string {
+	return ".html"
+}
+
 func (h *HTML) loadTemplate() error {
 	if h.template == nil {
 		subFS, err := fs.Sub(TemplateFS, "template")
@@ -37,7 +41,7 @@ func (h *HTML) loadTemplate() error {
 	return nil
 }
 
-func (h *HTML) Generate(markdownTemplate template2.MarkdownTemplate, writer io.Writer) error {
+func (h *HTML) Generate(markdownTemplate mdTemplate.MarkdownTemplate, writer io.Writer) error {
 	err := h.loadTemplate()
 	if err != nil {
 		return err

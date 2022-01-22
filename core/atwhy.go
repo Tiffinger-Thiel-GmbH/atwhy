@@ -20,6 +20,9 @@ type TagProcessor interface {
 
 type Generator interface {
 	Generate(markdownTemplate template.MarkdownTemplate, writer io.Writer) error
+
+	// Ext returns the file extension which should be used for the generated files.
+	Ext() string
 }
 
 type TemplateLoader interface {
@@ -80,4 +83,8 @@ func (c *AtWhy) Load() ([]template.MarkdownTemplate, error) {
 	}
 
 	return c.TemplateLoader.Load(processedTags)
+}
+
+func (c *AtWhy) Generate(template template.MarkdownTemplate, writer io.Writer) error {
+	return c.Generator.Generate(template, writer)
 }

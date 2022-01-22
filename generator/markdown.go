@@ -20,3 +20,7 @@ func (m Markdown) Generate(template template.MarkdownTemplate, writer io.Writer)
 
 	return nil
 }
+
+func (m Markdown) Ext() string {
+	return ".md"
+}

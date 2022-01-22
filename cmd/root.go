@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/afero"
 	"path/filepath"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/cobra"
 )
 
@@ -37,11 +37,16 @@ Templates define how to combine the documentation annotations from all over the 
 		}
 
 		var gen core.Generator
-		// TODO: for now it generates always md. Add cli param to change that.
-		switch filepath.Ext("dummy.md") {
-		case ".md", "":
+		generatorType, err := cmd.Flags().GetString("generator")
+		if err != nil {
+			cmd.PrintErrln(err)
+			return
+		}
+
+		switch generatorType {
+		case "md":
 			gen = generator.Markdown{}
-		case ".html":
+		case "html":
 			gen = &generator.HTML{
 				Markdown: generator.Markdown{},
 			}
@@ -67,14 +72,14 @@ Templates define how to combine the documentation annotations from all over the 
 				cmd.PrintErr(err)
 				return
 			}
-			filename := filepath.Join(t.Path, t.Name+".md")
+			filename := filepath.Join(t.Path, t.Name+atwhy.Generator.Ext())
 			file, err := projectFS.Create(filename)
 			if err != nil {
 				cmd.PrintErr(err)
 				return
 			}
 
-			err = t.Execute(file)
+			err = atwhy.Generate(t, file)
 			if err != nil {
 				cmd.PrintErr(err)
 				return
@@ -91,8 +96,11 @@ func Execute() {
 
 // init is run by Go on startup. https://tutorialedge.net/golang/the-go-init-function/
 func init() {
+	// Global flags.
 	rootCmd.PersistentFlags().StringP("templates-folder", "t", "templates", "path to a folder which contains the templates relative to the project directory")
 	rootCmd.PersistentFlags().StringSliceP("ext", "e", nil, "comma separated list of allowed extensions\nallow all if not provided\nexample: .go,.js,.ts")
 	rootCmd.PersistentFlags().StringP("project", "p", "", "the project folder")
-	// TODO: add an option to specify html file generation instead of markdown.
+
+	// Flags only for the root cmd.
+	rootCmd.Flags().StringP("generator", "g", "md", "the generator to use\npossible values are: 'md', 'html'")
 }
