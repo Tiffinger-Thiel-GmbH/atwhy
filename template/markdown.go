@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
+	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -13,15 +14,29 @@ import (
 	"time"
 
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v2"
 )
 
 const templateSuffix = ".tpl.md"
 
 // @WHY doc_template_header_1
-// Each template has a yaml Header with the following fields:
-
-// @WHY CODE doc_template_header_struct
+// Each template may have a yaml Header with the following fields:
+// ```
+// ---
+// # Some metadata which may be used for the generation.
+// meta:
+//   # The title is used for the served html to e.g. generate a menu and add page titles.
+//   title: Readme # default: the template filename
+//
+// # Additional configuration for the `atwhy serve` command.
+// server:
+//   index: true # default: false
+// ---
+// # Your Markdown starts here
+//
+// ## Foo
+// bar
+// ```
+// (Note: VSCode supports this syntax.)
 
 type Header struct {
 	// Meta contains additional data which can be used by the generators.
@@ -43,22 +58,6 @@ type ServerData struct {
 	// Note that there can only be one page in each folder which is the index.
 	Index bool `yaml:"index"`
 }
-
-// @WHY CODE_END
-
-// @WHY doc_template_header_2
-// The header is separated from the markdown by using a line with three `-` and a newline.
-// Example:
-// ```md
-// meta:
-//  title: Readme
-// ---
-// # Your Markdown
-//
-// ## Foo
-// bar
-// ```
-//
 
 // Markdown
 //
@@ -104,18 +103,17 @@ func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (Markdown, error)
 	tplData = bytes.ReplaceAll(tplData, []byte("\r\n"), []byte("\n"))
 
 	// Extract the Header:
-	splitted := bytes.SplitN(tplData, []byte("---\n"), 2)
+	splitted := bytes.SplitN(tplData, []byte("---\n"), 3)
 	header := Header{}
 	var body string
 
-	// No Header exists:
-	if len(splitted) == 1 {
-		body = string(splitted[0])
-	}
+	// No Header exists because the first line was no "---"
+	if len(splitted[0]) != 0 {
+		body = string(tplData)
+	} else if len(splitted) == 3 {
+		body = string(splitted[2])
 
-	if len(splitted) >= 2 {
-		body = string(splitted[1])
-		err = yaml.Unmarshal(splitted[0], &header)
+		err = yaml.Unmarshal(splitted[1], &header)
 		if err != nil {
 			return Markdown{}, err
 		}

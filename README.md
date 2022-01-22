@@ -64,42 +64,24 @@ Possible template values are:
 
 #### Header
 
-Each template has a yaml Header with the following fields:  
-```go
-
-type Header struct {
-	// Meta contains additional data which can be used by the generators.
-	// It is also available inside the template for example with
-	//  {{ .Meta.Title }}
-	Meta MetaData `yaml:"meta"`
-
-	Server ServerData `yaml:"server"`
-}
-
-type MetaData struct {
-	// Title is for example used in the html generator to create the navigation buttons.
-	// If not set, it will default to the template file-name (excluding .tpl.md)
-	Title string `yaml:"title"`
-}
-
-type ServerData struct {
-	// Index defines if this template should be used as "index.html".
-	// Note that there can only be one page in each folder which is the index.
-	Index bool `yaml:"index"`
-}
-```
-  
-The header is separated from the markdown by using a line with three `-` and a newline.  
-Example:  
-```md  
-meta:  
- title: Readme  
+Each template may have a yaml Header with the following fields:  
+```  
 ---  
-# Your Markdown  
+# Some metadata which may be used for the generation.  
+meta:  
+  # The title is used for the served html to e.g. generate a menu and add page titles.  
+  title: Readme # default: the template filename  
+  
+# Additional configuration for the `atwhy serve` command.  
+server:  
+  index: true # default: false  
+---  
+# Your Markdown starts here  
   
 ## Foo  
 bar  
-```
+```  
+(Note: VSCode supports this syntax.)  
 
 ### Tags
 
@@ -146,4 +128,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __22 Jan 22 19:22 +0100__
+Generated: __22 Jan 22 19:50 +0100__

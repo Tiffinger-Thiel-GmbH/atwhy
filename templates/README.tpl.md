@@ -1,3 +1,4 @@
+---
 meta:
   title: Readme 
 server:
@@ -45,8 +46,6 @@ You have several options to install atwhy:
 #### Header
 
 {{ .Tag.doc_template_header_1 }}  
-{{ .Tag.doc_template_header_struct }}  
-{{ .Tag.doc_template_header_2 }}
 
 ### Tags
 
