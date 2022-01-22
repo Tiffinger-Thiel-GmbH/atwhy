@@ -32,65 +32,60 @@ Just run
 ```bash  
 atwhy --help  
 ```  
-A common usage to for example generate this README.md is:  
+If nothing special is needed, just run the command without any arguments:  
 ```bash  
-atwhy --ext .go --templates README  
-```
+atwhy  
+```  
+It will use the default values and just work if a `templates` folder with some  
+templates (e.g. `templates/README.tpl.md`) exists.
 
-You can also serve the documentation on default host `localhost:4444` with:
-
+You can also serve the documentation on default host `localhost:4444` with:  
 ```bash  
 atwhy serve --ext .go  
 ```  
-
 For more information run `atwhy serve --help`
 
 ### Templates
 
-The templates should be markdown files with a yaml header for metadata.
-
-You can access a tag called `@WHY example_tag` using
-
+The templates should be markdown files with a yaml header for metadata.  
+  
+You can access a tag called `@WHY example_tag` using  
  ```text  
  # Example  
  {{ .Tag.example_tag }}  
  ```  
-
+  
 Note: This uses the Go templating engine.  
-Therefor you can use
-the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates)
-.
+Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 
-Possible template values are:
-
-* Any Tag from the project: `{{ .Tag.example_tag }}`
+Possible template values are:  
+* Any Tag from the project: `{{ .Tag.example_tag }}`  
 * Current Datetime: `{{ .Now }}`
 
 #### Header
 
-Each template has a yaml Header with the following fields:
-
+Each template has a yaml Header with the following fields:  
 ```go
 
 type Header struct {
-// Meta contains additional data which can be used by the generators.
-// It is also available inside the template for example with
-//  {{ .Meta.Title }}
-Meta MetaData `yaml:"meta"`
+	// Meta contains additional data which can be used by the generators.
+	// It is also available inside the template for example with
+	//  {{ .Meta.Title }}
+	Meta MetaData `yaml:"meta"`
 
-Server ServerData `yaml:"server"`
+	Server ServerData `yaml:"server"`
 }
 
 type MetaData struct {
-// Title is for example used in the html generator to create the navigation buttons.
-// If not set, it will default to the template file-name (excluding .tpl.md)
-Title string `yaml:"title"`
+	// Title is for example used in the html generator to create the navigation buttons.
+	// If not set, it will default to the template file-name (excluding .tpl.md)
+	Title string `yaml:"title"`
 }
 
 type ServerData struct {
-// Index defines if this template should be used as "index.html".
-// Note that there can only be one page in each folder which is the index.
-Index bool `yaml:"index"`
+	// Index defines if this template should be used as "index.html".
+	// Note that there can only be one page in each folder which is the index.
+	Index bool `yaml:"index"`
 }
 ```
   
@@ -148,7 +143,7 @@ The tags are terminated by
 
 ### Build
 
-Run `go build .`
+Run `go build .`  
 
 ---
-Generated: __22 Jan 22 19:10 +0100__
+Generated: __22 Jan 22 19:22 +0100__

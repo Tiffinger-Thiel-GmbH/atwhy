@@ -15,10 +15,12 @@ import (
 // ```bash
 // atwhy --help
 // ```
-// A common usage to for example generate this README.md is:
+// If nothing special is needed, just run the command without any arguments:
 // ```bash
-// atwhy --ext .go --templates README
+// atwhy
 // ```
+// It will use the default values and just work if a `templates` folder with some
+// templates (e.g. `templates/README.tpl.md`) exists.
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

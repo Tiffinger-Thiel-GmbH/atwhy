@@ -1,6 +1,7 @@
 meta:
-title: Readme server:
-index: true
+  title: Readme 
+server:
+  index: true
 ---
 # atwhy
 
