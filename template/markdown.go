@@ -37,7 +37,7 @@ const templateSuffix = ".tpl.md"
 // ## Foo
 // bar
 // ```
-// (Note: VSCode supports this syntax.)
+// (Note: VSCode supports the header automatically.)
 
 type Header struct {
 	// Meta contains additional data which can be used by the generators.

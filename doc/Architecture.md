@@ -18,7 +18,7 @@ The interfaces are:
 So the workflow is:
 Loader -> TagFinder = tagList []tag.Raw tagList -> TagProcessor -> Generator -> Writer
 
-[../core/atwhy.go:32](../core/atwhy.go)  
+[../core/atwhy.go:34](../core/atwhy.go)  
 ```go
 type AtWhy struct {
 	Loader         Loader
@@ -27,7 +27,8 @@ type AtWhy struct {
 	Generator      Generator
 	TemplateLoader TemplateLoader
 
-	projectPath string
+	projectPath  string
+	pageTemplate *template.Template
 }
 ```
 

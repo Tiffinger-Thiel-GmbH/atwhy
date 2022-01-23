@@ -1,26 +1,28 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 // @WHY readme_usage_serve
 // You can also serve the documentation on default host `localhost:4444` with:
 // ```bash
-// atwhy serve --ext .go
+// atwhy serve
 // ```
 // For more information run `atwhy serve --help`
 
 // serveCmd allows to serve the documentation using a html webserver.
 var serveCmd = &cobra.Command{
-	Use:   "serve [HOST (e.g. localhost:3333)]",
+	Use:   "serve [HOST (e.g. localhost:4444)]",
 	Short: "Serves the documentation using a webserver.",
 	Long: `Serves the documentation using a webserver.
-It serves it on the given host 
-(e.g. ":4444" to listen on all addresses, "localhost:4444" to listen only on localhost)`,
+It serves it on the given host. 
+(e.g. ":4444" to listen on all addresses, "localhost:4444" to listen only on localhost)
+Default is: "localhost:4444"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		host := cmd.Flags().Arg(0)
 		if host == "" {

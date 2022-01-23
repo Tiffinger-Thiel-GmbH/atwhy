@@ -41,7 +41,7 @@ templates (e.g. `templates/README.tpl.md`) exists.
 
 You can also serve the documentation on default host `localhost:4444` with:  
 ```bash  
-atwhy serve --ext .go  
+atwhy serve  
 ```  
 For more information run `atwhy serve --help`
 
@@ -81,7 +81,7 @@ server:
 ## Foo  
 bar  
 ```  
-(Note: VSCode supports this syntax.)  
+(Note: VSCode supports the header automatically.)  
 
 ### Tags
 
@@ -121,11 +121,11 @@ The tags are terminated by
 
 ### Prerequisites
 
-* Go 1.16
+* \>= Go 1.16
 
 ### Build
 
 Run `go build .`  
 
 ---
-Generated: __22 Jan 22 19:50 +0100__
+Generated: __23 Jan 22 21:16 +0100__

@@ -70,7 +70,7 @@ The tags are terminated by
 
 ### Prerequisites
 
-* Go 1.16
+* \>= Go 1.16
 
 ### Build
 
