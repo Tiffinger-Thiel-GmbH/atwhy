@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
-	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
+	"gopkg.in/yaml.v2"
 
 	"github.com/spf13/afero"
 )
@@ -142,6 +143,9 @@ func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (Markdown, error)
 		template: tpl,
 	}
 
+	// Include the tags specifically modified for this template.
+	// TODO: later maybe only dinamic tags should be re-generated. And static
+	//       tags should be created one time globally to save RAM usage.
 	markdownTemplate.tagMap = createTagMap(tags, markdownTemplate)
 
 	return markdownTemplate, nil

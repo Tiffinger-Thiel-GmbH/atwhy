@@ -1,11 +1,62 @@
 package core
 
 import (
+	"bytes"
+	"embed"
 	"fmt"
+	"html/template"
+	"io"
+	"io/fs"
 	"net/http"
 	"path/filepath"
 	"strings"
+
+	mdTemplate "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 )
+
+// Page currently just consists of a markdown template.
+// So all information included can be used in the html template.
+type Page = mdTemplate.Markdown
+
+//go:embed html
+var TemplateFS embed.FS
+
+const templateFile = "page.gohtml"
+
+func (a *AtWhy) initPageTemplate() error {
+	subFS, err := fs.Sub(TemplateFS, "html")
+	if err != nil {
+		return err
+	}
+
+	a.pageTemplate, err = template.ParseFS(subFS, templateFile)
+	return err
+}
+
+func (a *AtWhy) buildPage(writer io.Writer, pageID string, pages []Page) error {
+	data := struct {
+		ID    string
+		Title string
+		Body  template.HTML
+
+		Pages []Page
+	}{
+		ID:    pageID,
+		Pages: pages,
+	}
+
+	for _, page := range pages {
+		if page.ID == pageID {
+			buf := bytes.NewBufferString("")
+			a.Generate(page, buf)
+			data.Body = template.HTML(buf.String())
+			data.Title = page.Header.Meta.Title
+		}
+	}
+
+	return a.pageTemplate.ExecuteTemplate(writer, templateFile, data)
+
+}
 
 func (a *AtWhy) ListenAndServe(host string) error {
 	fs := http.FileServer(http.Dir(a.projectPath))
@@ -38,7 +89,7 @@ func (a *AtWhy) ListenAndServe(host string) error {
 				// Found something
 				w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 
-				err = a.Generate(t, w)
+				err = a.buildPage(w, t.ID, templates)
 				if err != nil {
 					// TODO use a logger
 					fmt.Println(err)

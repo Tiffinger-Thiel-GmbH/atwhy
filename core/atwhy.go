@@ -1,13 +1,15 @@
 package core
 
 import (
+	"html/template"
+	"io"
+
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/loader"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/processor"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/template"
+	mdTemplate "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 	"github.com/spf13/afero"
-	"io"
 )
 
 type Loader interface {
@@ -19,14 +21,14 @@ type TagProcessor interface {
 }
 
 type Generator interface {
-	Generate(markdownTemplate template.Markdown, writer io.Writer) error
+	Generate(markdownTemplate mdTemplate.Markdown, writer io.Writer) error
 
 	// Ext returns the file extension which should be used for the generated files.
 	Ext() string
 }
 
 type TemplateLoader interface {
-	Load(tags []tag.Tag) ([]template.Markdown, error)
+	Load(tags []tag.Tag) ([]mdTemplate.Markdown, error)
 }
 
 // AtWhy combines all parts of the application.
@@ -39,7 +41,8 @@ type AtWhy struct {
 	Generator      Generator
 	TemplateLoader TemplateLoader
 
-	projectPath string
+	projectPath  string
+	pageTemplate *template.Template
 }
 
 // @WHY CODE_END
@@ -66,16 +69,22 @@ func New(gen Generator, projectPath string, templateFolder string, extensions []
 			},
 		},
 		Generator: gen,
-		TemplateLoader: template.Loader{
+		TemplateLoader: mdTemplate.Loader{
 			FS: templateFS,
 		},
 
 		projectPath: projectPath,
 	}
+
+	err := atwhy.initPageTemplate()
+	if err != nil {
+		return AtWhy{}, err
+	}
+
 	return atwhy, nil
 }
 
-func (a *AtWhy) Load() ([]template.Markdown, error) {
+func (a *AtWhy) Load() ([]mdTemplate.Markdown, error) {
 	tags, err := a.Loader.Load(a.Finder)
 	if err != nil {
 		return nil, err
@@ -89,6 +98,6 @@ func (a *AtWhy) Load() ([]template.Markdown, error) {
 	return a.TemplateLoader.Load(processedTags)
 }
 
-func (a *AtWhy) Generate(template template.Markdown, writer io.Writer) error {
+func (a *AtWhy) Generate(template mdTemplate.Markdown, writer io.Writer) error {
 	return a.Generator.Generate(template, writer)
 }

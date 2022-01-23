@@ -1,11 +1,12 @@
 package template
 
 import (
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
-	"github.com/spf13/afero"
 	"io/fs"
 	"sort"
 	"strings"
+
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
+	"github.com/spf13/afero"
 )
 
 type Loader struct {
@@ -51,6 +52,11 @@ func (l Loader) Load(tags []tag.Tag) ([]Markdown, error) {
 
 	// Sort by the title.
 	sort.Slice(res, func(i, j int) bool {
+		// Sort based on index-files, path depth
+		if res[i].Header.Server.Index && !strings.HasPrefix(res[i].Path, res[j].Path) {
+			return false
+		}
+		// and name
 		return res[i].Header.Meta.Title < res[j].Header.Meta.Title
 	})
 
