@@ -48,7 +48,18 @@ func (f *Finder) finishTag(res []tag.Raw) []tag.Raw {
 	return res
 }
 
+func (f *Finder) reset() {
+	f.currentlyInBlockComment = false
+	f.currentLineIsLineComment = false
+	f.currentCommentLine = ""
+	f.currentBlockIndex = -1
+	f.currentTag = nil
+	f.includeCode = false
+}
+
 func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
+	f.reset()
+
 	var res []tag.Raw
 	var scan = bufio.NewScanner(reader)
 
@@ -140,7 +151,7 @@ func (f *Finder) findComment(line string) {
 
 		// First check if it is a One-Line comment. (e.g. //)
 		for _, lineCommentStart := range f.LineCommentStarts {
-			if strings.HasPrefix(trimmedLine, lineCommentStart) {
+			if !f.currentlyInBlockComment && strings.HasPrefix(trimmedLine, lineCommentStart) {
 				f.currentLineIsLineComment = true
 				f.currentCommentLine = strings.TrimLeft(trimmedLine, lineCommentStart)
 				return
