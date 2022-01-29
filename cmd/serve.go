@@ -38,7 +38,7 @@ Default is: "localhost:4444"`,
 		var gen core.Generator = &generator.HTML{
 			Markdown: generator.Markdown{},
 		}
-		atwhy, err := core.New(gen, projectPath, templateFolder, extensions)
+		atwhy, err := core.New(gen, projectPath, "/project/", templateFolder, extensions)
 		if err != nil {
 			cmd.PrintErr(err)
 			return

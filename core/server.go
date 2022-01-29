@@ -48,7 +48,10 @@ func (a *AtWhy) buildPage(writer io.Writer, pageID string, pages []Page) error {
 	for _, page := range pages {
 		if page.ID == pageID {
 			buf := bytes.NewBufferString("")
-			a.Generate(page, buf)
+			err := a.Generate(page, buf)
+			if err != nil {
+				return err
+			}
 			data.Body = template.HTML(buf.String())
 			data.Title = page.Header.Meta.Title
 		}
@@ -59,12 +62,12 @@ func (a *AtWhy) buildPage(writer io.Writer, pageID string, pages []Page) error {
 }
 
 func (a *AtWhy) ListenAndServe(host string) error {
-	fs := http.FileServer(http.Dir(a.projectPath))
+	fileServer := http.StripPrefix(a.projectPathPrefix, http.FileServer(http.Dir(a.projectPath)))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Fast path: no need to generate everything if no html is requested.
-		if !strings.HasSuffix(r.URL.Path, "/") && !strings.HasSuffix(r.URL.Path, a.Generator.Ext()) {
-			fs.ServeHTTP(w, r)
+		if strings.HasPrefix(r.URL.Path, a.projectPathPrefix) {
+			fileServer.ServeHTTP(w, r)
 			return
 		}
 
@@ -99,8 +102,7 @@ func (a *AtWhy) ListenAndServe(host string) error {
 			}
 		}
 
-		// If still nothing is served use the file server.
-		fs.ServeHTTP(w, r)
+		w.WriteHeader(404)
 	})
 
 	fmt.Printf("Starting server on %s\n", host)

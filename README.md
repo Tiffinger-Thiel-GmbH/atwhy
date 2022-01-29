@@ -11,6 +11,12 @@ The same applies to architectural decisions, which can be documented, where its
 actually done.  
 --> __Single source of truth__ also for documentation!
 
+## Example
+
+As __atwhy__ itself uses __atwhy__, you can just 
+* look at the [templates](templates) folder of this project.
+* and search for `@WHY` in the whole project.
+
 ## Installation
 
 You have several options to install atwhy:
@@ -52,7 +58,7 @@ The templates should be markdown files with a yaml header for metadata.
 You can access a tag called `@WHY example_tag` using  
  ```text  
  # Example  
- {{ .Tag.example_tag }}  
+ <no value>  
  ```  
   
 Note: This uses the Go templating engine.  
@@ -60,7 +66,14 @@ Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tuto
 
 Possible template values are:  
 * Any Tag from the project: `{{ .Tag.example_tag }}`  
-* Current Datetime: `{{ .Now }}`
+* Current Datetime: `{{ .Now }}`  
+* Metadata from the yaml header: `{{ .Meta.Title }}`  
+* Conversion of links to project-files: `{{ .Project "my/file/in/the/project" }}`  
+  You need to use that if you want to generate links to actual files in your project.  
+  
+__What if `{{` or `}}` is needed in the documentation?__  
+You can wrap them like this: `{{"her you can write \"{{\" and \"}}\" :-) "}}`  
+You need to escape `"` with `\\"`.
 
 #### Header
 
@@ -128,4 +141,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __23 Jan 22 21:16 +0100__
+Generated: __29 Jan 22 14:59 +0100__

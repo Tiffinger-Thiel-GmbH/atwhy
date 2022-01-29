@@ -55,7 +55,7 @@ Templates define how to combine the documentation annotations from all over the 
 			}
 		}
 
-		atwhy, err := core.New(gen, projectPath, templateFolder, extensions)
+		atwhy, err := core.New(gen, projectPath, "", templateFolder, extensions)
 		if err != nil {
 			cmd.PrintErr(err)
 			return

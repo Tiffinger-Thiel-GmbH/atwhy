@@ -74,11 +74,12 @@ type ServerData struct {
 // Note: This uses the Go templating engine.
 // Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 type Markdown struct {
-	ID     string
-	Name   string
-	Path   string
-	Value  string
-	Header Header
+	ID                string
+	ProjectPathPrefix string
+	Name              string
+	Path              string
+	Value             string
+	Header            Header
 
 	template *template.Template
 	tagMap   map[string]tag.Tag
@@ -88,7 +89,7 @@ func (t Markdown) TemplatePath() string {
 	return t.Path
 }
 
-func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (Markdown, error) {
+func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags mappedTags) (Markdown, error) {
 	file, err := sysfs.Open(path)
 	if err != nil {
 		return Markdown{}, err
@@ -134,40 +135,71 @@ func readTemplate(sysfs afero.Fs, path string, tags []tag.Tag) (Markdown, error)
 	}
 
 	markdownTemplate := Markdown{
-		ID:    "page-" + hex.EncodeToString(id[:]),
-		Name:  strings.TrimSuffix(filepath.Base(path), templateSuffix),
-		Path:  filepath.Dir(path),
-		Value: body,
+		ID:                "page-" + hex.EncodeToString(id[:]),
+		ProjectPathPrefix: projectPathPrefix,
+		Name:              strings.TrimSuffix(filepath.Base(path), templateSuffix),
+		Path:              filepath.Dir(path),
+		Value:             body,
 
 		Header:   header,
 		template: tpl,
+		tagMap:   tags,
 	}
 
-	// Include the tags specifically modified for this template.
-	// TODO: later maybe only dinamic tags should be re-generated. And static
-	//       tags should be created one time globally to save RAM usage.
-	markdownTemplate.tagMap = createTagMap(tags, markdownTemplate)
-
 	return markdownTemplate, nil
+}
+
+type data struct {
+	Tag           map[string]tag.Tag
+	Meta          MetaData
+	Now           string
+	projectPrefix string
+}
+
+func (d data) Project(file string) string {
+	return filepath.Join(d.projectPrefix, file)
 }
 
 // Execute the template
 func (t Markdown) Execute(writer io.Writer) error {
 
-	data := struct {
-		Tag  map[string]tag.Tag
-		Meta MetaData
-		Now  string
-	}{
-		Tag: t.tagMap,
+	// @WHY doc_template_possible_tags
+	// Possible template values are:
+	// * Any Tag from the project: `{{"{{ .Tag.example_tag }}"}}`
+	// * Current Datetime: `{{"{{ .Now }}"}}`
+	// * Metadata from the yaml header: `{{"{{ .Meta.Title }}"}}`
+	// * Conversion of links to project-files: `{{"{{ .Project \"my/file/in/the/project\" }}"}}`
+	//   You need to use that if you want to generate links to actual files in your project.
+	//
+	// __What if `{{"{{"}}` or `{{"}}"}}` is needed in the documentation?__
+	// You can wrap them like this: `{{"{{\"her you can write \\\"{{\\\" and \\\"}}\\\" :-) \"}}"}}`
+	// You need to escape `"` with `\\"`.
 
-		// @WHY doc_template_possible_tags
-		// Possible template values are:
-		// * Any Tag from the project: `{{ .Tag.example_tag }}`
-		// * Current Datetime: `{{ .Now }}`
+	d := data{
+		Tag:  t.tagMap,
+		Now:  time.Now().Format(time.RFC822Z),
+		Meta: t.Header.Meta,
 
-		Now: time.Now().Format(time.RFC822Z),
+		projectPrefix: t.ProjectPathPrefix,
 	}
 
-	return t.template.Execute(writer, data)
+	buf := bytes.NewBufferString("")
+
+	// First just execute the template.
+	err := t.template.Execute(buf, d)
+	if err != nil {
+		return err
+	}
+
+	// And then execute the postprocessing template.
+	// E.g. it can process the {{ .Project }} even if the links are inside the tags.
+	postProcessTemplate, err := template.New("postProcessing.md").Parse(buf.String())
+	if err != nil {
+		return err
+	}
+	// Do not allow tags in this step as it would create bad edge cases.
+	d.Tag = map[string]tag.Tag{}
+	err = postProcessTemplate.Execute(writer, d)
+
+	return err
 }

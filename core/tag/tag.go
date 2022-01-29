@@ -25,10 +25,6 @@ type Raw struct {
 	Value       string
 }
 
-type Context interface {
-	TemplatePath() string
-}
-
 // Tag which was parsed from the code.
 type Tag interface {
 	Type() Type
@@ -39,11 +35,6 @@ type Tag interface {
 	String() string
 
 	Placeholder() string
-
-	// WithContext allows injecting a context at runtime.
-	// Not all tag implementations need to support that.
-	// If they do not support it, they should just return itself.
-	WithContext(ctx Context) Tag
 }
 
 // Factory describes a function which can convert a Raw tag into a normal Tag.

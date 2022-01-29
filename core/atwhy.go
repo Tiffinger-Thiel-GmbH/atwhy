@@ -31,6 +31,18 @@ type TemplateLoader interface {
 	Load(tags []tag.Tag) ([]mdTemplate.Markdown, error)
 }
 
+// @WHY atwhy_interfaces
+// * `Loader` loads files from a given path.
+// * `loader.TagFinder` reads the file and returns all lines which are part of a found tag. It Does not process the raw lines.
+// * `TagProcessor` processes the raw data from the `TagFinder` and generates Tags out of them. It may also clean
+// comment-chars and spaces and combine some tags.
+// * TemplateLoader loads the templates from the `template` folder to pass them the generator.
+// * `Generator` is responsible for postprocessing the tags and output the final file. which it just writes to the
+// passed `Writer`.
+//
+// So the workflow is:
+// Loader -> TagFinder = tagList []tag.Raw tagList -> TagProcessor -> TemplateLoader -> Generator -> Writer
+
 // AtWhy combines all parts of the application.
 // @WHY LINK atwhy_struct_link
 // @WHY CODE atwhy_struct_code
@@ -41,13 +53,14 @@ type AtWhy struct {
 	Generator      Generator
 	TemplateLoader TemplateLoader
 
-	projectPath  string
-	pageTemplate *template.Template
+	projectPath       string
+	projectPathPrefix string
+	pageTemplate      *template.Template
 }
 
 // @WHY CODE_END
 
-func New(gen Generator, projectPath string, templateFolder string, extensions []string) (AtWhy, error) {
+func New(gen Generator, projectPath string, projectPathPrefix string, templateFolder string, extensions []string) (AtWhy, error) {
 	filesystem := afero.NewBasePathFs(afero.NewOsFs(), projectPath)
 	templateFS := afero.NewBasePathFs(filesystem, templateFolder)
 
@@ -65,15 +78,17 @@ func New(gen Generator, projectPath string, templateFolder string, extensions []
 			TagFactories: []tag.Factory{
 				tag.Doc,
 				tag.Code,
-				tag.Link,
+				tag.ProjectLink,
 			},
 		},
 		Generator: gen,
 		TemplateLoader: mdTemplate.Loader{
-			FS: templateFS,
+			FS:                templateFS,
+			ProjectPathPrefix: projectPathPrefix,
 		},
 
-		projectPath: projectPath,
+		projectPath:       projectPath,
+		projectPathPrefix: projectPathPrefix,
 	}
 
 	err := atwhy.initPageTemplate()

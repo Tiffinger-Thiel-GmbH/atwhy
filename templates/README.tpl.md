@@ -17,6 +17,12 @@ The same applies to architectural decisions, which can be documented, where its
 actually done.  
 --> __Single source of truth__ also for documentation!
 
+## Example
+
+As __atwhy__ itself uses __atwhy__, you can just 
+* look at the [templates]({{ .Project "templates" }}) folder of this project.
+* and search for `@WHY` in the whole project.
+
 ## Installation
 
 You have several options to install atwhy:
