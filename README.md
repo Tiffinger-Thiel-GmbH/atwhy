@@ -85,13 +85,13 @@ __Possible template values are:__
   This can also be used for pictures: `![aPicture]({{ .Project "path/to/the/picture.jpg" }})`  
 
 __What if `{{` or `}}` is needed in the documentation?__  
-You can wrap them with `{{.Project "..."}}`.  
-E.g.: `{{ .Project "\"{{\"  and  \"}}\"" }}`  
+You can wrap them with `{{.Escape "..."}}`.  
+E.g.: `{{ .Escape "\"{{\"  and  \"}}\"" }}`  
 Results in this markdown text: `"{{" and "}}"`  
   
 __Note:__ You need to escape `"` with `\"`.  
   
-(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Project` works always.)
+(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)
 
 #### Header
 
@@ -165,4 +165,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __29 Jan 22 17:23 +0100__
+Generated: __30 Jan 22 00:49 +0100__
