@@ -9,13 +9,8 @@ the information has to be documented because it is just in the same file.
 
 --> __Single source of truth__ also for documentation!
 
-With atwhy the only source for special documentation is inside comments 
-right above the code it describes.  
-Markdown templates are then used to just group the tags together into files and 
+Markdown templates are used to just group the tags together into files and 
 add some non-code specific docu.
-
-This way, when changing logic which needs updates in the docu, it can be updated at 
-the same place where the change was done.
 
 The idea of athwy was born during a company-hackathon and since then evolved to a first fully usable 
 preview version.
@@ -165,4 +160,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __29 Jan 22 17:04 +0100__
+Generated: __29 Jan 22 17:10 +0100__
