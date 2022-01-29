@@ -64,8 +64,6 @@ github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuy
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
-github.com/aligator/nogo v0.3.0 h1:AWWLDU0y2EAkeMw1lP8zynqF3MPwrWjSNbSYJqKHvuo=
-github.com/aligator/nogo v0.3.0/go.mod h1:yI8hSSIjnrFSDNXypY38NX8V+rAR+mzPHdh+6FzGVW8=
 github.com/aligator/nogo v0.3.1 h1:/g4/AkP6/UjFhOwXiRKdtFrwGOfMqW067xtivK4p0wU=
 github.com/aligator/nogo v0.3.1/go.mod h1:yI8hSSIjnrFSDNXypY38NX8V+rAR+mzPHdh+6FzGVW8=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=

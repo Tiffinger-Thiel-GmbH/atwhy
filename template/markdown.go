@@ -70,7 +70,7 @@ type ServerData struct {
 // You can access a tag called `\@WHY example_tag` using
 //  ```text
 //  # Example
-//  {{ .Tag.example_tag }}
+//  {{ .Project "{{ .Tag.example_tag }}" }}
 //  ```
 //
 // Note: This uses the Go templating engine.

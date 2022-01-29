@@ -65,7 +65,7 @@ The templates should be markdown files with a yaml header for metadata.
 You can access a tag called `@WHY example_tag` using  
  ```text  
  # Example  
- <no value>  
+ {{ .Tag.example_tag }}  
  ```  
   
 Note: This uses the Go templating engine.  
@@ -160,4 +160,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __29 Jan 22 17:10 +0100__
+Generated: __29 Jan 22 17:15 +0100__
