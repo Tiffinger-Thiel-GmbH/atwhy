@@ -13,9 +13,21 @@ That way you can for example describe all available options in the same file
 where they are coded. A developer therefore doesn't have to know exactly where  
 the information has to be documented because it is just in the same file.
 
-The same applies to architectural decisions, which can be documented, where its  
-actually done.  
 --> __Single source of truth__ also for documentation!
+
+With atwhy the only source for special documentation is inside comments 
+right above the code it describes.  
+Markdown templates are then used to just group the tags together into files and 
+add some non-code specific docu.
+
+This way, when changing logic which needs updates in the docu, it can be updated at 
+the same place where the change was done.
+
+The idea of athwy was born during a company-hackathon and since then evolved to a first fully usable 
+preview version.
+
+__Although most things are in a stable state, there may be small breaking changes until
+awhy reaches v1.0.0.__
 
 ## Example
 
@@ -56,6 +68,11 @@ You have several options to install atwhy:
 {{ .Tag.doc_template_header_1 }}  
 
 ### Tags
+
+Tags are the heart of __atwhy__.  
+Basically you can add them in any comment of any file and then reference them
+in any of the templates.
+(Currently only `//` and `/*  */` comments are supported, but this will change.)
 
 {{ .Tag.readme_tags }}
 
