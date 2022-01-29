@@ -1,4 +1,4 @@
-//go:generate go run . --ext .go --templates README README.md
+//go:generate go run . --ext .go
 
 package main
 

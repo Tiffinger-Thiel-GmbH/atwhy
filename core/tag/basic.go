@@ -28,18 +28,6 @@ func (b Basic) Placeholder() string {
 	return b.placeholder
 }
 
-func Link(input Raw) (Tag, error) {
-	if input.Type != TypeLink {
-		return nil, nil
-	}
-
-	return Basic{
-		tagType:     input.Type,
-		placeholder: input.Placeholder,
-		value:       "[" + input.Filename + ":" + strconv.Itoa(input.Line) + "](" + input.Filename + ")",
-	}, nil
-}
-
 func textFactory(input Raw, isMarkdown bool) Basic {
 	// First remove windows line endings.
 	input.Value = strings.ReplaceAll(input.Value, "\r\n", "\r")
@@ -61,6 +49,19 @@ func textFactory(input Raw, isMarkdown bool) Basic {
 		placeholder: input.Placeholder,
 		value:       body,
 	}
+}
+
+func ProjectLink(input Raw) (Tag, error) {
+	if input.Type != TypeLink {
+		return nil, nil
+	}
+
+	return Basic{
+		tagType:     input.Type,
+		placeholder: input.Placeholder,
+		// Insert the link-path as relative to be able to replace it in the final rendering based on the template path.
+		value: "[" + input.Filename + ":" + strconv.Itoa(input.Line) + `]( {{ .Project "` + input.Filename + `" }} )`,
+	}, nil
 }
 
 func Doc(input Raw) (Tag, error) {

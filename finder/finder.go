@@ -2,11 +2,10 @@ package finder
 
 import (
 	"bufio"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"io"
 	"regexp"
 	"strings"
-
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/tag"
 )
 
 // Finder implements the TagFinder interface in a language-generic way.

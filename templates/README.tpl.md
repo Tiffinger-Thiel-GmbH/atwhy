@@ -1,7 +1,10 @@
-meta: 
-  title: Readme
 ---
-# atwhy
+meta:
+  title: Readme 
+server:
+  index: true
+---
+# atwhy [![test](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml/badge.svg)](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml)
 
 ## What is atwhy
 
@@ -13,6 +16,12 @@ the information has to be documented because it is just in the same file.
 The same applies to architectural decisions, which can be documented, where its  
 actually done.  
 --> __Single source of truth__ also for documentation!
+
+## Example
+
+As __atwhy__ itself uses __atwhy__, you can just 
+* look at the [templates]({{ .Project "templates" }}) folder of this project.
+* and search for `@WHY` in the whole project.
 
 ## Installation
 
@@ -36,11 +45,15 @@ You have several options to install atwhy:
 
 ### Templates
 
-{{ .Tag.doc_template }}  
+{{ .Tag.doc_template }}
+
+{{ .Tag.doc_template_possible_tags }}  
+
+{{ .Tag.doc_template_escape_tag }}
+
+#### Header
 
 {{ .Tag.doc_template_header_1 }}  
-{{ .Tag.doc_template_header_struct }}  
-{{ .Tag.doc_template_header_2 }}  
 
 ### Tags
 
@@ -65,7 +78,7 @@ The tags are terminated by
 
 ### Prerequisites
 
-* Go 1.16
+* \>= Go 1.16
 
 ### Build
 

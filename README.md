@@ -1,4 +1,4 @@
-# atwhy
+# atwhy [![test](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml/badge.svg)](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml)
 
 ## What is atwhy
 
@@ -10,6 +10,12 @@ the information has to be documented because it is just in the same file.
 The same applies to architectural decisions, which can be documented, where its  
 actually done.  
 --> __Single source of truth__ also for documentation!
+
+## Example
+
+As __atwhy__ itself uses __atwhy__, you can just 
+* look at the [templates](templates) folder of this project.
+* and search for `@WHY` in the whole project.
 
 ## Installation
 
@@ -32,59 +38,70 @@ Just run
 ```bash  
 atwhy --help  
 ```  
-A common usage to for example generate this README.md is:  
+If nothing special is needed, just run the command without any arguments:  
 ```bash  
-atwhy --ext .go --templates README README.md  
-```
+atwhy  
+```  
+It will use the default values and just work if a `templates` folder with some  
+templates (e.g. `templates/README.tpl.md`) exists.
 
 You can also serve the documentation on default host `localhost:4444` with:  
 ```bash  
-atwhy serve --ext .go  
+atwhy serve  
 ```  
 For more information run `atwhy serve --help`
 
 ### Templates
 
- The templates should be normal markdown files.  
- The first line has to be the name of the template (used for example for the navigation in the html-generator).  
+The templates should be markdown files with a yaml header for metadata.  
   
- You can access a tag called `@WHY example_tag` using  
+You can access a tag called `@WHY example_tag` using  
  ```text  
  # Example  
- {{ .Tag.example_tag }}  
+ <no value>  
  ```  
   
- Note: This uses the Go templating engine.  
- Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).  
+Note: This uses the Go templating engine.  
+Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 
-Each template can have a yaml header with the following fields:  
-```go
+__Possible template values are:__  
+* Any Tag from the project: `{{ .Tag.example_tag }}`  
+* Current Datetime: `{{ .Now }}`  
+* Metadata from the yaml header: `{{ .Meta.Title }}`  
+* Conversion of links to project-files (also in serve-mode): `{{ .Project "my/file/in/the/project.go" }}`  
+  You need to use that if you want to generate links to actual files in your project.  
+  This can also be used for pictures: `![aPicture]({{ .Project "path/to/the/picture.jpg" }})`  
 
-type TemplateHeader struct {
-	// Meta contains additional data which can be used by the generators.
-	// It is also available inside the template for example with
-	//  {{ .Meta.Title }}
-	Meta MetaData `yaml:"meta"`
-}
-
-type MetaData struct {
-	// Title is for example used in the html generator to create the navigation buttons.
-	// If not set, it will default to the template file-name (excluding .tpl.md)
-	Title string `yaml:"title"`
-}
-```
+__What if `{{` or `}}` is needed in the documentation?__  
+You can wrap them with `{{.Escape "..."}}`.  
+E.g.: `{{ .Escape "\"{{\"  and  \"}}\"" }}`  
+Results in this markdown text: `"{{" and "}}"`  
   
-The header is separated from the markdown by using a line with three `-` and a newline.  
-Example:  
-```md  
-meta:  
- title: Readme  
+__Note:__ You need to escape `"` with `\"`.  
+  
+(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)
+
+#### Header
+
+Each template may have a yaml Header.  
+Example with all possible fields:  
+```markdown  
 ---  
-# Your Markdown  
+# Some metadata which may be used for the generation.  
+meta:  
+  # The title is used for the served html to e.g. generate a menu and add page titles.  
+  title: Readme # default: the template filename  
+  
+# Additional configuration for the `atwhy serve` command.  
+server:  
+  index: true # default: false  
+---  
+# Your Markdown starts here  
   
 ## Foo  
 bar  
 ```  
+(Note: VSCode supports the header automatically.)  
 
 ### Tags
 
@@ -124,11 +141,11 @@ The tags are terminated by
 
 ### Prerequisites
 
-* Go 1.16
+* \>= Go 1.16
 
 ### Build
 
 Run `go build .`  
 
 ---
-Generated: __21 Jan 22 22:06 +0100__
+Generated: __29 Jan 22 16:40 +0100__
