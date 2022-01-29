@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -104,21 +105,26 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 	// Windows compatibility:
 	tplData = bytes.ReplaceAll(tplData, []byte("\r\n"), []byte("\n"))
 
-	// Extract the Header:
-	splitted := bytes.SplitN(tplData, []byte("---\n"), 3)
-	header := Header{}
 	var body string
+	header := Header{}
 
 	// No Header exists because the first line was no "---"
-	if len(splitted[0]) != 0 {
-		body = string(tplData)
-	} else if len(splitted) == 3 {
-		body = string(splitted[2])
+	if bytes.HasPrefix(tplData, []byte("---\n")) {
+		// Extract the Header:
+		splitted := bytes.SplitN(tplData, []byte("---\n"), 3)
 
-		err = yaml.Unmarshal(splitted[1], &header)
-		if err != nil {
-			return Markdown{}, err
+		if len(splitted) == 3 {
+			body = string(splitted[2])
+
+			err = yaml.Unmarshal(splitted[1], &header)
+			if err != nil {
+				return Markdown{}, err
+			}
+		} else {
+			return Markdown{}, errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
 		}
+	} else {
+		body = string(tplData)
 	}
 
 	filename := filepath.Base(path)
