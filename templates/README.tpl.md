@@ -47,7 +47,9 @@ You have several options to install atwhy:
 
 {{ .Tag.doc_template }}
 
-{{ .Tag.doc_template_possible_tags }}
+{{ .Tag.doc_template_possible_tags }}  
+
+{{ .Tag.doc_template_escape_tag }}
 
 #### Header
 

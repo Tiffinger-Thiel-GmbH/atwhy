@@ -64,21 +64,28 @@ You can access a tag called `@WHY example_tag` using
 Note: This uses the Go templating engine.  
 Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 
-Possible template values are:  
+__Possible template values are:__  
 * Any Tag from the project: `{{ .Tag.example_tag }}`  
 * Current Datetime: `{{ .Now }}`  
 * Metadata from the yaml header: `{{ .Meta.Title }}`  
-* Conversion of links to project-files: `{{ .Project "my/file/in/the/project" }}`  
+* Conversion of links to project-files (also in serve-mode): `{{ .Project "my/file/in/the/project.go" }}`  
   You need to use that if you want to generate links to actual files in your project.  
-  
+  This can also be used for pictures: `![aPicture]({{ .Project "path/to/the/picture.jpg" }})`  
+
 __What if `{{` or `}}` is needed in the documentation?__  
-You can wrap them like this: `{{"her you can write \"{{\" and \"}}\" :-) "}}`  
-You need to escape `"` with `\\"`.
+You can wrap them with `{{.Escape "..."}}`.  
+E.g.: `{{ .Escape "\"{{\"  and  \"}}\"" }}`  
+Results in this markdown text: `"{{" and "}}"`  
+  
+__Note:__ You need to escape `"` with `\"`.  
+  
+(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)
 
 #### Header
 
-Each template may have a yaml Header with the following fields:  
-```  
+Each template may have a yaml Header.  
+Example with all possible fields:  
+```markdown  
 ---  
 # Some metadata which may be used for the generation.  
 meta:  
@@ -141,4 +148,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __29 Jan 22 15:04 +0100__
+Generated: __29 Jan 22 16:40 +0100__

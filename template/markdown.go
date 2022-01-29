@@ -21,8 +21,9 @@ import (
 const templateSuffix = ".tpl.md"
 
 // @WHY doc_template_header_1
-// Each template may have a yaml Header with the following fields:
-// ```
+// Each template may have a yaml Header.
+// Example with all possible fields:
+// ```markdown
 // ---
 // # Some metadata which may be used for the generation.
 // meta:
@@ -160,26 +161,49 @@ type data struct {
 	Meta          MetaData
 	Now           string
 	projectPrefix string
+
+	isPostprocessing bool
 }
 
 func (d data) Project(file string) string {
 	return filepath.Join(d.projectPrefix, file)
 }
 
+// Escape provides escaping of {{ and }} which works in the
+// first execution and also in the post-process-execution.
+//
+// The default Go-Template way {{"{{   }}"}} works only in the
+// tags and not in the templates due to the preprocessing.
+//
+// @WHY doc_template_escape_tag
+// __What if `{{"{{"}}` or `{{"}}"}}` is needed in the documentation?__
+// You can wrap them with `{{ .Escape "{{.Escape \"...\"}}" }}`.
+// E.g.: `{{ .Escape "{{ .Escape \"\\\"{{\\\"  and  \\\"}}\\\"\" }}" }}`
+// Results in this markdown text: `{{ .Escape "\"{{\" and \"}}\"" }}`
+//
+// __Note:__ You need to escape `"` with `\"`.
+//
+// (The official Go-Template way `{{ .Escape "{{ \"{{ -- }}\" }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)
+func (d data) Escape(value string) string {
+	if !d.isPostprocessing {
+		value = strings.ReplaceAll(value, `\`, `\\`)
+		value = strings.ReplaceAll(value, `"`, `\"`)
+		value = `{{"` + value + `"}}`
+	}
+	return value
+}
+
 // Execute the template
 func (t Markdown) Execute(writer io.Writer) error {
 
 	// @WHY doc_template_possible_tags
-	// Possible template values are:
+	// __Possible template values are:__
 	// * Any Tag from the project: `{{"{{ .Tag.example_tag }}"}}`
 	// * Current Datetime: `{{"{{ .Now }}"}}`
 	// * Metadata from the yaml header: `{{"{{ .Meta.Title }}"}}`
-	// * Conversion of links to project-files: `{{"{{ .Project \"my/file/in/the/project\" }}"}}`
+	// * Conversion of links to project-files (also in serve-mode): `{{"{{ .Project \"my/file/in/the/project.go\" }}"}}`
 	//   You need to use that if you want to generate links to actual files in your project.
-	//
-	// __What if `{{"{{"}}` or `{{"}}"}}` is needed in the documentation?__
-	// You can wrap them like this: `{{"{{\"her you can write \\\"{{\\\" and \\\"}}\\\" :-) \"}}"}}`
-	// You need to escape `"` with `\\"`.
+	//   This can also be used for pictures: `{{ .Escape "![aPicture]({{ .Project \"path/to/the/picture.jpg\" }})" }}`
 
 	d := data{
 		Tag:  t.tagMap,
@@ -205,6 +229,7 @@ func (t Markdown) Execute(writer io.Writer) error {
 	}
 	// Do not allow tags in this step as it would create bad edge cases.
 	d.Tag = map[string]tag.Tag{}
+	d.isPostprocessing = true
 	err = postProcessTemplate.Execute(writer, d)
 
 	return err
