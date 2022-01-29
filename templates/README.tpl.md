@@ -52,6 +52,11 @@ You have several options to install atwhy:
 
 ### Templates
 
+The templates are by default inside the [templates]({{ .Project "templates" }}) folder of your project.  
+Each template results in one .md file.
+So if you have the file `templates/README.tpl.md` it will be generated to `README.md`.
+If you have the file `templates/doc/Usage.tpl.md` it will be generated to `doc/Usage.md`.
+
 {{ .Tag.doc_template }}
 
 {{ .Tag.doc_template_possible_tags }}  

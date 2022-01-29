@@ -60,6 +60,11 @@ For more information run `atwhy serve --help`
 
 ### Templates
 
+The templates are by default inside the [templates](templates) folder of your project.  
+Each template results in one .md file.
+So if you have the file `templates/README.tpl.md` it will be generated to `README.md`.
+If you have the file `templates/doc/Usage.tpl.md` it will be generated to `doc/Usage.md`.
+
 The templates should be markdown files with a yaml header for metadata.  
   
 You can access a tag called `@WHY example_tag` using  
@@ -80,13 +85,13 @@ __Possible template values are:__
   This can also be used for pictures: `![aPicture]({{ .Project "path/to/the/picture.jpg" }})`  
 
 __What if `{{` or `}}` is needed in the documentation?__  
-You can wrap them with `{{.Escape "..."}}`.  
-E.g.: `{{ .Escape "\"{{\"  and  \"}}\"" }}`  
+You can wrap them with `{{.Project "..."}}`.  
+E.g.: `{{ .Project "\"{{\"  and  \"}}\"" }}`  
 Results in this markdown text: `"{{" and "}}"`  
   
 __Note:__ You need to escape `"` with `\"`.  
   
-(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)
+(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Project` works always.)
 
 #### Header
 
@@ -160,4 +165,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __29 Jan 22 17:15 +0100__
+Generated: __29 Jan 22 17:23 +0100__
