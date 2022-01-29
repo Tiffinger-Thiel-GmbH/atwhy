@@ -4,7 +4,7 @@ meta:
 server:
   index: true
 ---
-# atwhy
+# atwhy [![test](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml/badge.svg)](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml)
 
 ## What is atwhy
 

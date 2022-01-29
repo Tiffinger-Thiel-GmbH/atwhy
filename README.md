@@ -1,4 +1,4 @@
-# atwhy
+# atwhy [![test](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml/badge.svg)](https://github.com/Tiffinger-Thiel-GmbH/atwhy/actions/workflows/test.yaml)
 
 ## What is atwhy
 
@@ -141,4 +141,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __29 Jan 22 14:59 +0100__
+Generated: __29 Jan 22 15:04 +0100__
