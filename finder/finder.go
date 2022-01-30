@@ -4,17 +4,22 @@ import (
 	"bufio"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"io"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
+
+type CommentConfig struct {
+	LineComment []string
+	BlockStart  []string
+	BlockEnd    []string
+}
 
 // Finder implements the TagFinder interface in a language-generic way.
 // It takes into account block comments (e.g. /* .... */) and line comments (e.g. // ...).
 // You can pass alternative comment indicators to support other languages.
 type Finder struct {
-	BlockCommentStarts []string
-	BlockCommentEnds   []string
-	LineCommentStarts  []string
+	CommentConfig map[string]CommentConfig
 
 	currentlyInBlockComment  bool
 	currentLineIsLineComment bool
@@ -67,7 +72,14 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		lineNum++
 
 		line := scan.Text()
-		f.findComment(line)
+		commentCFG, found := f.CommentConfig[filepath.Ext(filename)]
+		if !found {
+			commentCFG, found = f.CommentConfig[""]
+			if !found {
+				return res, nil
+			}
+		}
+		f.findComment(commentCFG, line)
 
 		// Finish the current tag if there is no more comment line (or includeCode).
 		if !f.currentlyInBlockComment &&
@@ -135,7 +147,7 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 // findComment and sets the struct-variables
 //  currentCommentLine, currentLineIsLineComment, currentBlockIndex, currentlyInBlockComment
 // accordingly.
-func (f *Finder) findComment(line string) {
+func (f *Finder) findComment(cfg CommentConfig, line string) {
 	defer func() {
 		// Always cut the first space because usually comments have a space after the comment sign.
 		f.currentCommentLine = strings.TrimPrefix(f.currentCommentLine, " ")
@@ -149,7 +161,7 @@ func (f *Finder) findComment(line string) {
 	if !f.currentlyInBlockComment {
 
 		// First check if it is a One-Line comment. (e.g. //)
-		for _, lineCommentStart := range f.LineCommentStarts {
+		for _, lineCommentStart := range cfg.LineComment {
 			if !f.currentlyInBlockComment && strings.HasPrefix(trimmedLine, lineCommentStart) {
 				f.currentLineIsLineComment = true
 				f.currentCommentLine = strings.TrimLeft(trimmedLine, lineCommentStart)
@@ -158,7 +170,7 @@ func (f *Finder) findComment(line string) {
 		}
 
 		// Then check if it is in a block comment.
-		for blockIndex, blockCommentStart := range f.BlockCommentStarts {
+		for blockIndex, blockCommentStart := range cfg.BlockStart {
 			if strings.HasPrefix(trimmedLine, blockCommentStart) {
 				f.currentBlockIndex = blockIndex
 				f.currentlyInBlockComment = true
@@ -176,7 +188,7 @@ func (f *Finder) findComment(line string) {
 			linePart = f.currentCommentLine
 		}
 
-		for _, blockCommentEnd := range f.BlockCommentEnds {
+		for _, blockCommentEnd := range cfg.BlockEnd {
 
 			if foundIndex := strings.Index(linePart, blockCommentEnd); foundIndex > -1 {
 				f.currentBlockIndex = -1
