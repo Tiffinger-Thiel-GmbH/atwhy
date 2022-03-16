@@ -26,6 +26,5 @@ jobs:
           export PATH=$PATH:$(go env GOPATH)/bin
           make lint
 
-# No test there, yet
-#      - name: Test
-#        run: go test ./...
+      - name: Test
+        run: go test ./...
