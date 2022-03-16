@@ -14,4 +14,5 @@ require (
 require (
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
+	github.com/stretchr/testify v1.7.1 // indirect
 )
