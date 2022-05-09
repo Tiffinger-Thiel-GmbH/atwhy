@@ -159,6 +159,7 @@ Where:
 * `blockStart` is the comment prefix for block comments start, (e.g. `/*` or `<!--`),  
 * `blockEnd` is the comment prefix for block comments end, (e.g. `*/` or `-->`).  
 * escape ',' by '\,' if needed.  
+* A catch-all (e.g. "://,/*,*/") catches all not otherwise configured extensions.  
 __`blockStart` and `blockEnd` are optional.__  
   
 Examples:  
@@ -174,7 +175,7 @@ Use `--comment=DEFAULT` if you still want to use the built-in rules.
 
 The following are the default, built-in rules:
 ```go
-	"://,/*,*/",
+	"://,/*,*/", // All other files
 	"sh:#",
 	`py:#,""","""`,
 	"cmd:REM",
@@ -205,4 +206,4 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __10 May 22 01:37 +0200__
+This README was last updated on: __10 May 22 01:42 +0200__

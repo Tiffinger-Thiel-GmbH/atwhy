@@ -10,7 +10,7 @@ import (
 
 var defaultComments = []string{
 	// @WHY CODE readme_comments_builtin
-	"://,/*,*/",
+	"://,/*,*/", // All other files
 	"sh:#",
 	`py:#,""","""`,
 	"cmd:REM",

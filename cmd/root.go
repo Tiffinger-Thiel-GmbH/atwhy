@@ -113,6 +113,7 @@ func init() {
 	// * `blockStart` is the comment prefix for block comments start, (e.g. `/*` or `<!--`),
 	// * `blockEnd` is the comment prefix for block comments end, (e.g. `*/` or `-->`).
 	// * escape ',' by '\,' if needed.
+	// * A catch-all (e.g. "://,/*,*/") catches all not otherwise configured extensions.
 	// __`blockStart` and `blockEnd` are optional.__
 	//
 	// Examples:
