@@ -1,6 +1,6 @@
 # This Dockerfile builds a lightweight distribution image.
 # It can be used to run atwhy without installing it in your system.
-FROM golang:1.17-bullseye AS builder
+FROM golang:1.18-bullseye AS builder
 
 RUN mkdir /app
 COPY . /app
