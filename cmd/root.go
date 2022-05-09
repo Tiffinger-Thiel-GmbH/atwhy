@@ -103,6 +103,29 @@ func init() {
 	rootCmd.PersistentFlags().StringP("templates-folder", "t", "templates", "path to a folder which contains the templates relative to the project directory")
 	rootCmd.PersistentFlags().StringSliceP("ext", "e", nil, "comma separated list of allowed extensions\nallow all if not provided\nexample: .go,.js,.ts")
 	rootCmd.PersistentFlags().StringP("project", "p", "", "the project folder")
+
+	// @WHY readme_comments
+	// Each `--comment` is a string with the following format:
+	// `--comment={extList}:{lineComment},{blockStart},{blockEnd}`
+	// Where:
+	// * `extList` is a comma-separated list of file extensions,
+	// * `lineComment` is the comment prefix for line comments, (e.g. `//` or `#`),
+	// * `blockStart` is the comment prefix for block comments start, (e.g. `/*` or `<!--`),
+	// * `blockEnd` is the comment prefix for block comments end, (e.g. `*/` or `-->`).
+	// * escape ',' by '\,' if needed.
+	// __`blockStart` and `blockEnd` are optional.__
+	//
+	// Examples:
+	// * set only the lineComment for sh files
+	//   "sh:#"
+	// * set only the blockComment for html,xml
+	//   "html,xml:,<!--,-->"
+	// * set c-style for all files (not caught by another rule before)
+	//   "://,/*,*/"
+	//
+	// If `--comment` is passed at least one time, all built-in rules are disabled.
+	// Use `--comment=DEFAULT` if you still want to use the built-in rules.
+
 	rootCmd.PersistentFlags().StringArray("comment", nil, `Set the comments for a specific file ending.
 Syntax: 
 {extList}:{lineComment},{blockStart},{blockEnd}

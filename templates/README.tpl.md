@@ -72,7 +72,6 @@ If you have the file `templates/doc/Usage.tpl.md` it will be generated to `doc/U
 Tags are the heart of __atwhy__.  
 Basically you can add them in any comment of any file and then reference them
 in any of the templates.
-(Currently only `//` and `/*  */` comments are supported, but this will change.)
 
 {{ .Tag.readme_tags }}
 
@@ -83,6 +82,16 @@ The tags are terminated by
 * another tag
 * empty line
 * Exception: `@WHY CODE` is terminated by `@WHY CODE_END` and not by empty lines.
+
+### Comments
+
+You can specify the type of comments for each type of file.
+For this you may use the `--comment` flag.
+
+{{ .Tag.readme_comments }}
+
+The following are the default, built-in rules:
+{{ .Tag.readme_comments_builtin }}
 
 ### Ignore
 
@@ -102,4 +111,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __{{ .Now }}__
+This README was last updated on: __{{ .Now }}__

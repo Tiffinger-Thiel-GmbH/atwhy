@@ -120,7 +120,6 @@ bar
 Tags are the heart of __atwhy__.  
 Basically you can add them in any comment of any file and then reference them
 in any of the templates.
-(Currently only `//` and `/*  */` comments are supported, but this will change.)
 
 You can use `@WHY <placeholder_name>` and then use that placeholder in any template.  
 There are also some special tags:  
@@ -147,6 +146,47 @@ The tags are terminated by
 * empty line
 * Exception: `@WHY CODE` is terminated by `@WHY CODE_END` and not by empty lines.
 
+### Comments
+
+You can specify the type of comments for each type of file.
+For this you may use the `--comment` flag.
+
+Each `--comment` is a string with the following format:  
+`--comment={extList}:{lineComment},{blockStart},{blockEnd}`  
+Where:  
+* `extList` is a comma-separated list of file extensions,  
+* `lineComment` is the comment prefix for line comments, (e.g. `//` or `#`),  
+* `blockStart` is the comment prefix for block comments start, (e.g. `/*` or `<!--`),  
+* `blockEnd` is the comment prefix for block comments end, (e.g. `*/` or `-->`).  
+* escape ',' by '\,' if needed.  
+__`blockStart` and `blockEnd` are optional.__  
+  
+Examples:  
+* set only the lineComment for sh files  
+  "sh:#"  
+* set only the blockComment for html,xml  
+  "html,xml:,<!--,-->"  
+* set c-style for all files (not caught by another rule before)  
+  "://,/*,*/"  
+  
+If `--comment` is passed at least one time, all built-in rules are disabled.  
+Use `--comment=DEFAULT` if you still want to use the built-in rules.
+
+The following are the default, built-in rules:
+```go
+	"://,/*,*/",
+	"sh:#",
+	`py:#,""","""`,
+	"cmd:REM",
+	`cmd:::`,
+	"vb:'",
+	"html,xml:,<!--,-->",
+	"lua:--,--[[,]]",
+	"sql:--",
+	"rb:#,=begin,=end",
+```
+
+
 ### Ignore
 
 * You can pass something like `--ext ".go,.js,.ts"` to only process specific files.
@@ -165,4 +205,4 @@ The tags are terminated by
 Run `go build .`  
 
 ---
-Generated: __30 Jan 22 14:43 +0100__
+This README was last updated on: __10 May 22 01:37 +0200__

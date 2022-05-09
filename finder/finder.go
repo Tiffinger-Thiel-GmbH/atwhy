@@ -74,7 +74,7 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 		line := scan.Text()
 		commentCFG, found := f.CommentConfig[filepath.Ext(filename)]
 		if !found {
-			commentCFG, found = f.CommentConfig[""]
+			commentCFG, found = f.CommentConfig["."]
 			if !found {
 				return res, nil
 			}

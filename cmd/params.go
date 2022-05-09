@@ -8,6 +8,23 @@ import (
 	"strings"
 )
 
+var defaultComments = []string{
+	// @WHY CODE readme_comments_builtin
+	"://,/*,*/",
+	"sh:#",
+	`py:#,""","""`,
+	"cmd:REM",
+	`cmd:::`,
+	"vb:'",
+	"html,xml:,<!--,-->",
+	"lua:--,--[[,]]",
+	"sql:--",
+	"rb:#,=begin,=end",
+	// @WHY CODE_END
+}
+
+var ErrInvalidCommentString = errors.New("comment configuration has to be like '{extList}:{lineComment},{blockStart},{blockEnd}' (see --help)")
+
 // LoadCommonArgs loads everything which is common through the different modes.
 func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath string, extensions []string, commentConfig map[string]finder.CommentConfig, err error) {
 	templatesFolder, err = cmd.Flags().GetString("templates-folder")
@@ -38,24 +55,26 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 
 	commentConfig = make(map[string]finder.CommentConfig)
 	if len(comments) == 0 {
-		comments = append(comments,
-			"://,/*,*/",
-			"sh:#",
-			`py:#,""","""`,
-			"cmd:REM",
-			`cmd:::`,
-			"vb:'",
-			"html,xml:,<!--,-->",
-			"lua:--,--[[,]]",
-			"sql:--",
-			"rb:#,=begin,=end",
-		)
+		comments = append(comments, "DEFAULT")
 	}
+
+	// Replace DEFAULT with the default comments.
+	extendedComments := make([]string, 0, len(comments))
+	for i, comment := range comments {
+		if comment == "DEFAULT" {
+			preComments := comments[:i]
+			extendedComments = append(preComments, defaultComments...)
+		} else {
+			extendedComments = append(extendedComments, comment)
+		}
+	}
+
+	comments = extendedComments
 
 	for _, comment := range comments {
 		split := strings.SplitN(comment, ":", 2)
 		if len(split) != 2 {
-			return "", "", nil, nil, errors.New("comment configuration has to be like '{extList}:{commentConfig} (see --help)'")
+			return "", "", nil, nil, ErrInvalidCommentString
 		}
 
 		commaPlaceholder := string([]byte{1})
@@ -64,9 +83,7 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 
 		commentExtensions := strings.Split(split[0], ",")
 		for _, ext := range commentExtensions {
-			if ext != "" {
-				ext = "." + ext
-			}
+			ext = "." + ext
 
 			if _, ok := commentConfig[ext]; !ok {
 				commentConfig[ext] = finder.CommentConfig{}
