@@ -164,11 +164,11 @@ __`blockStart` and `blockEnd` are optional.__
   
 Examples:  
 * set only the lineComment for sh files  
-  "sh:#"  
+  `"sh:#"`  
 * set only the blockComment for html,xml  
-  "html,xml:,<!--,-->"  
+  `"html,xml:,<!--,-->"`  
 * set c-style for all files (not caught by another rule before)  
-  "://,/*,*/"  
+  `"://,/*,*/"`  
   
 If `--comment` is passed at least one time, all built-in rules are disabled.  
 Use `--comment=DEFAULT` if you still want to use the built-in rules.
@@ -206,4 +206,4 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __10 May 22 01:42 +0200__
+This README was last updated on: __10 May 22 01:56 +0200__

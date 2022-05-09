@@ -118,11 +118,11 @@ func init() {
 	//
 	// Examples:
 	// * set only the lineComment for sh files
-	//   "sh:#"
+	//   `"sh:#"`
 	// * set only the blockComment for html,xml
-	//   "html,xml:,<!--,-->"
+	//   `"html,xml:,<!--,-->"`
 	// * set c-style for all files (not caught by another rule before)
-	//   "://,/*,*/"
+	//   `"://,/*,*/"`
 	//
 	// If `--comment` is passed at least one time, all built-in rules are disabled.
 	// Use `--comment=DEFAULT` if you still want to use the built-in rules.
@@ -146,6 +146,9 @@ Examples:
   "html,xml:,<!--,-->"
 * set c-style for all files (not caught by another rule before)
   "://,/*,*/" 
+
+If "--comment" is passed at least one time, all built-in rules are disabled.
+Use "--comment=DEFAULT" if you still want to use the built-in rules.
 `)
 	// Flags only for the root cmd.
 	rootCmd.Flags().StringP("generator", "g", "md", "the generator to use\npossible values are: 'md', 'html'")
