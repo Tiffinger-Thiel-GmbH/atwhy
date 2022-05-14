@@ -104,7 +104,7 @@ The following are the default, built-in rules:
 
 ### Prerequisites
 
-* \>= Go 1.16
+* \>= Go 1.18
 
 ### Build
 

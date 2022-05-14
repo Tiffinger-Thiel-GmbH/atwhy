@@ -199,11 +199,12 @@ The following are the default, built-in rules:
 
 ### Prerequisites
 
-* \>= Go 1.16
+* \>= Go 1.18
 
 ### Build
 
 Run `go build .`  
 
 ---
-This README was last updated on: __10 May 22 01:56 +0200__
+This README was last updated on: __15 May 22 00:28 +0200__
+
