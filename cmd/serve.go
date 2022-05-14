@@ -29,7 +29,7 @@ Default is: "localhost:4444"`,
 			host = "localhost:4444"
 		}
 
-		templateFolder, projectPath, extensions, err := LoadCommonArgs(cmd)
+		templateFolder, projectPath, extensions, commentConfig, err := LoadCommonArgs(cmd)
 		if err != nil {
 			cmd.PrintErrln(err)
 			return
@@ -38,7 +38,7 @@ Default is: "localhost:4444"`,
 		var gen core.Generator = &generator.HTML{
 			Markdown: generator.Markdown{},
 		}
-		atwhy, err := core.New(gen, projectPath, "/project/", templateFolder, extensions)
+		atwhy, err := core.New(gen, projectPath, "/project/", templateFolder, extensions, commentConfig)
 		if err != nil {
 			cmd.PrintErr(err)
 			return

@@ -60,15 +60,13 @@ type AtWhy struct {
 
 // @WHY CODE_END
 
-func New(gen Generator, projectPath string, projectPathPrefix string, templateFolder string, extensions []string) (AtWhy, error) {
+func New(gen Generator, projectPath string, projectPathPrefix string, templateFolder string, extensions []string, commentConfig map[string]finder.CommentConfig) (AtWhy, error) {
 	filesystem := afero.NewBasePathFs(afero.NewOsFs(), projectPath)
 	templateFS := afero.NewBasePathFs(filesystem, templateFolder)
 
 	atwhy := AtWhy{
 		Finder: &finder.Finder{
-			BlockCommentStarts: []string{"/*"},
-			BlockCommentEnds:   []string{"*/"},
-			LineCommentStarts:  []string{"//"},
+			CommentConfig: commentConfig,
 		},
 		Loader: loader.File{
 			FS:             filesystem,
