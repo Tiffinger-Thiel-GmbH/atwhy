@@ -20,6 +20,10 @@ import (
 
 const templateSuffix = ".tpl.md"
 
+var (
+	ErrMissingBody = errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
+)
+
 // @WHY doc_template_header_1
 // Each template may have a yaml Header.
 // Example with all possible fields:
@@ -87,10 +91,6 @@ type Markdown struct {
 	tagMap   map[string]tag.Tag
 }
 
-func (t Markdown) TemplatePath() string {
-	return t.Path
-}
-
 func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags mappedTags) (Markdown, error) {
 	file, err := sysfs.Open(path)
 	if err != nil {
@@ -122,7 +122,7 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 				return Markdown{}, err
 			}
 		} else {
-			return Markdown{}, errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
+			return Markdown{}, ErrMissingBody
 		}
 	} else {
 		body = string(tplData)
