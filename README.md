@@ -206,5 +206,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __15 May 22 00:28 +0200__
+This README was last updated on: __17 May 22 20:32 +0200__
 

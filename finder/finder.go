@@ -16,15 +16,17 @@ type CommentConfig struct {
 }
 
 // Finder implements the TagFinder interface in a language-generic way.
-// It takes into account block comments (e.g. /* .... */) and line comments (e.g. // ...).
-// You can pass alternative comment indicators to support other languages.
+// It takes into account block comments (e.g. /* .... */) and line comments
+// (e.g. // ...). You can pass alternative comment indicators to
+// support other languages.
 type Finder struct {
+	// CommentConfig maps the filetype (e.g. ".go") to the matching CommentConfig.
 	CommentConfig map[string]CommentConfig
 
 	currentlyInBlockComment  bool
 	currentLineIsLineComment bool
 
-	// currentCommentLine is the current line cleaned up from the comment-indicators
+	// currentCommentLine is the current line cleaned up from the comment-indicators.
 	// It is empty if the current line is no comment.
 	currentCommentLine string
 
@@ -41,7 +43,8 @@ type Finder struct {
 
 func (f *Finder) finishTag(res []tag.Raw) []tag.Raw {
 	if f.currentTag != nil {
-		f.currentTag.Value = f.currentTag.Value + f.currentCommentLine + "\n"
+
+		f.currentTag.Value = f.currentTag.Value + f.currentCommentLine
 
 		// Unescape \@ to @
 		f.currentTag.Value = strings.ReplaceAll(f.currentTag.Value, "\\@", "@")
@@ -111,6 +114,13 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 				newTag.Filename = filename
 				newTag.Line = lineNum
 				f.currentTag = newTag
+
+				// Special tag LINK doesn't need any additional lines,
+				// we can stop here.
+				if newTag.Type == tag.TypeLink {
+					res = f.finishTag(res)
+					continue
+				}
 
 				continue
 			}
@@ -249,7 +259,7 @@ func (f *Finder) findTag() *tag.Raw {
 
 	// If none was given, it is a DOC.
 	if newTag.Type == "" {
-		newTag.Type = "DOC"
+		newTag.Type = tag.TypeDoc
 	}
 
 	return &newTag

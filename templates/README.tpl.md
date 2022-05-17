@@ -22,7 +22,7 @@ The idea of athwy was born during a company-hackathon and since then evolved to 
 preview version.
 
 __Although most things are in a stable state, there may be small breaking changes until
-awhy reaches v1.0.0.__
+atwhy reaches v1.0.0.__
 
 ## Example
 
@@ -34,7 +34,7 @@ As __atwhy__ itself uses __atwhy__, you can just
 
 You have several options to install atwhy:
 * Just use docker to run a minimal image (It is multi-arch so it works on x64 and arm):  
-  `docker run --rm -i -p 4444:4444 -v $PWD:/project ghcr.io/tiffinger-thiel-gmbh/atwhy atwhy`  
+  `docker run --rm -i -p 4444:4444 -u $UID:$GID -v $PWD:/project ghcr.io/tiffinger-thiel-gmbh/atwhy atwhy`  
   You may add an alias to your shell for this.
 * [Install Go](https://go.dev/dl/) and run `go install github.com/Tiffinger-Thiel-GmbH/atwhy@latest`.  
   You may need to restart after installing Go to have the PATH setup correctly.

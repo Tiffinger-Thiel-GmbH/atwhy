@@ -18,11 +18,11 @@ var (
 
 // Raw represents a not yet processed tag.
 type Raw struct {
-	Type        Type
-	Placeholder string
-	Filename    string
-	Line        int
-	Value       string
+	Type        Type   `json:"type,omitempty"`
+	Placeholder string `json:"placeholder,omitempty"`
+	Filename    string `json:"filename,omitempty"`
+	Line        int    `json:"line,omitempty"`
+	Value       string `json:"value,omitempty"`
 }
 
 // Tag which was parsed from the code.

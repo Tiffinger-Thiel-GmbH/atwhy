@@ -14,11 +14,7 @@ func (m Markdown) Generate(template template.Markdown, writer io.Writer) error {
 	}
 
 	_, err = writer.Write([]byte("\n"))
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (m Markdown) Ext() string {

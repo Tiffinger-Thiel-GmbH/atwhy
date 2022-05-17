@@ -20,6 +20,10 @@ import (
 
 const templateSuffix = ".tpl.md"
 
+var (
+	ErrMissingBody = errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
+)
+
 // @WHY doc_template_header_1
 // Each template may have a yaml Header.
 // Example with all possible fields:
@@ -80,15 +84,10 @@ type Markdown struct {
 	ProjectPathPrefix string
 	Name              string
 	Path              string
-	Value             string
 	Header            Header
 
 	template *template.Template
 	tagMap   map[string]tag.Tag
-}
-
-func (t Markdown) TemplatePath() string {
-	return t.Path
 }
 
 func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags mappedTags) (Markdown, error) {
@@ -122,7 +121,7 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 				return Markdown{}, err
 			}
 		} else {
-			return Markdown{}, errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
+			return Markdown{}, ErrMissingBody
 		}
 	} else {
 		body = string(tplData)
@@ -146,7 +145,6 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 		ProjectPathPrefix: projectPathPrefix,
 		Name:              strings.TrimSuffix(filepath.Base(path), templateSuffix),
 		Path:              filepath.Dir(path),
-		Value:             body,
 
 		Header:   header,
 		template: tpl,
@@ -207,7 +205,7 @@ func (t Markdown) Execute(writer io.Writer) error {
 
 	d := data{
 		Tag:  t.tagMap,
-		Now:  time.Now().Format(time.RFC822Z),
+		Now:  time.Now().Format(time.RFC822Z), // TODO: add this as function instead of as value to be able to pass any format.
 		Meta: t.Header.Meta,
 
 		projectPrefix: t.ProjectPathPrefix,
