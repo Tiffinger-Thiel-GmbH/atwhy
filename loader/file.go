@@ -19,14 +19,14 @@ type File struct {
 	FileExtensions []string
 }
 
-// @WHY readme.ignore
-// If you want to ignore files, just add a `.atwhyignore` to the root of your project.
-// It follows the syntax of a `.gitignore` and you may also add `.atwhyignore` files to subfolders.
-
 func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 	allTags := make([]tag.Raw, 0)
 
 	sysfs := afero.NewIOFS(fl.FS)
+
+	// @WHY readme.ignore
+	// If you want to ignore files, just add a `.atwhyignore` to the root of your project.
+	// It follows the syntax of a `.gitignore` and you may also add `.atwhyignore` files to subfolders.
 	n := nogo.New(nogo.DotGitRule)
 	if err := n.AddFromFS(sysfs, ".atwhyignore"); err != nil {
 		return nil, err
