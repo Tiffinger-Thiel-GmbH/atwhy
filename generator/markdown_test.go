@@ -15,21 +15,10 @@ func (f fakeErrorWriter) Write(_ []byte) (n int, err error) {
 }
 
 func TestMarkdown_Ext(t *testing.T) {
-	tests := []struct {
-		name string
-		want string
-	}{
-		{
-			name: "extension matches .md",
-			want: ".md",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			m := Markdown{}
-			assert.Equal(t, tt.want, m.Ext())
-		})
-	}
+	t.Run("extension matches .md", func(t *testing.T) {
+		m := Markdown{}
+		assert.Equal(t, ".md", m.Ext())
+	})
 }
 
 func TestMarkdown_Generate(t *testing.T) {
