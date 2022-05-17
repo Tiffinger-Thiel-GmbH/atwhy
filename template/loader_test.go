@@ -133,7 +133,6 @@ func TestLoader_Load(t *testing.T) {
 					ProjectPathPrefix: prefix,
 					Name:              "Docu",
 					Path:              "docu",
-					Value:             "# Docu",
 					Header: Header{
 						Meta: MetaData{Title: "Docu"},
 					},
@@ -144,7 +143,6 @@ func TestLoader_Load(t *testing.T) {
 					ProjectPathPrefix: prefix,
 					Name:              "Docu2",
 					Path:              "docu/subdocu",
-					Value:             "# Docu2",
 					Header: Header{
 						Meta: MetaData{Title: "Docu2"},
 					},
@@ -155,7 +153,6 @@ func TestLoader_Load(t *testing.T) {
 					ProjectPathPrefix: prefix,
 					Name:              "README",
 					Path:              ".",
-					Value:             "# README",
 					Header: Header{
 						Meta: MetaData{Title: "README"},
 					},

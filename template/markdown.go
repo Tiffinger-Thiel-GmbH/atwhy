@@ -84,7 +84,6 @@ type Markdown struct {
 	ProjectPathPrefix string
 	Name              string
 	Path              string
-	Value             string
 	Header            Header
 
 	template *template.Template
@@ -146,7 +145,6 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 		ProjectPathPrefix: projectPathPrefix,
 		Name:              strings.TrimSuffix(filepath.Base(path), templateSuffix),
 		Path:              filepath.Dir(path),
-		Value:             body,
 
 		Header:   header,
 		template: tpl,
@@ -207,7 +205,7 @@ func (t Markdown) Execute(writer io.Writer) error {
 
 	d := data{
 		Tag:  t.tagMap,
-		Now:  time.Now().Format(time.RFC822Z),
+		Now:  time.Now().Format(time.RFC822Z), // TODO: add this as function instead of as value to be able to pass any format.
 		Meta: t.Header.Meta,
 
 		projectPrefix: t.ProjectPathPrefix,

@@ -1,11 +1,13 @@
 package template
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"text/template"
 )
 
 func testFileFS(name string, data []byte) afero.Fs {
@@ -41,7 +43,6 @@ func Test_readTemplate(t *testing.T) {
 				ProjectPathPrefix: prefix,
 				Name:              "README",
 				Path:              ".",
-				Value:             "# Hello",
 				Header: Header{
 					Meta: MetaData{Title: "README"},
 				},
@@ -66,7 +67,6 @@ server:
 				ProjectPathPrefix: prefix,
 				Name:              "README",
 				Path:              ".",
-				Value:             "# Hello World!",
 				Header: Header{
 					Meta:   MetaData{Title: "Test Readme"},
 					Server: ServerData{Index: true},
@@ -249,7 +249,7 @@ func Test_data_Escape(t *testing.T) {
 			want: `{{"{{ \".SomeValue\" }}"}}`,
 		},
 		{
-			name: "with postprocessing",
+			name: "with postprocessing - no actual escaping needed",
 			fields: fields{
 				isPostprocessing: true,
 			},
@@ -269,6 +269,152 @@ func Test_data_Escape(t *testing.T) {
 				isPostprocessing: tt.fields.isPostprocessing,
 			}
 			assert.Equalf(t, tt.want, d.Escape(tt.args.value), "Escape(%v)", tt.args.value)
+		})
+	}
+}
+
+func TestMarkdown_Execute(t1 *testing.T) {
+	type fields struct {
+		ID                string
+		ProjectPathPrefix string
+		Name              string
+		Path              string
+		Value             string
+		Header            Header
+		template          *template.Template
+		tagMap            map[string]tag.Tag
+	}
+	tests := []struct {
+		name       string
+		fields     fields
+		wantWriter string
+		wantErr    assert.ErrorAssertionFunc
+	}{
+		{
+			name: "Render .Meta.Title",
+			fields: fields{
+				Header: Header{
+					Meta: MetaData{Title: "Readme"},
+				},
+				template: template.Must(template.New("").Parse("Title: {{ .Meta.Title }}")),
+				tagMap:   make(map[string]tag.Tag),
+			},
+			wantWriter: "Title: Readme",
+			wantErr:    assert.NoError,
+		},
+		{
+			name: "Render .Tag.something",
+			fields: fields{
+				template: template.Must(template.New("").Parse("Tag: {{ .Tag.something }}")),
+				tagMap: map[string]tag.Tag{
+					"something": fakeTag{
+						name:  "something",
+						value: "different",
+					},
+				},
+			},
+			wantWriter: "Tag: different",
+			wantErr:    assert.NoError,
+		},
+		{
+			name: "Render .Tag with another, nested placeholder",
+			fields: fields{
+				Header: Header{
+					Meta: MetaData{Title: "Readme"},
+				},
+				template: template.Must(template.New("").Parse("Title: {{ .Tag.something }}")),
+				tagMap: map[string]tag.Tag{
+					"something": fakeTag{
+						name:  "something",
+						value: "\"{{ .Meta.Title }}\"",
+					},
+				},
+			},
+			wantWriter: "Title: \"Readme\"",
+			wantErr:    assert.NoError,
+		},
+		{
+			name: "Render .Escape",
+			fields: fields{
+				template: template.Must(template.New("").Parse(`Escape: {{ .Escape "{{ \"huhu\" }}" }}`)),
+				tagMap:   make(map[string]tag.Tag),
+			},
+			wantWriter: `Escape: {{ "huhu" }}`,
+			wantErr:    assert.NoError,
+		},
+		{
+			name: "Render .Escape in tag",
+			fields: fields{
+				template: template.Must(template.New("").Parse(`Escape: {{ .Tag.something }}`)),
+				tagMap: map[string]tag.Tag{
+					"something": fakeTag{
+						name:  "something",
+						value: `something escaped: {{ .Escape "{{ \"huhu\" }}" }}`,
+					},
+				},
+			},
+			wantWriter: `Escape: something escaped: {{ "huhu" }}`,
+			wantErr:    assert.NoError,
+		},
+		{
+			name: "non existent tag",
+			fields: fields{
+				template: template.Must(template.New("").Parse(`NOO: {{ .Tag.none }}`)),
+				tagMap: map[string]tag.Tag{
+					"something": fakeTag{
+						name:  "something",
+						value: `different`,
+					},
+				},
+			},
+			wantWriter: `NOO: <no value>`,
+			wantErr:    assert.NoError,
+		},
+		{
+			name: "tag with invalid template",
+			fields: fields{
+				template: template.Must(template.New("").Parse(`NOO: {{ .Tag.something }}`)),
+				tagMap: map[string]tag.Tag{
+					"something": fakeTag{
+						name:  "something",
+						value: `{{ .broken.`,
+					},
+				},
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "tag with invalid template - escaped",
+			fields: fields{
+				template: template.Must(template.New("").Parse(`NOO: {{ .Tag.something }}`)),
+				tagMap: map[string]tag.Tag{
+					"something": fakeTag{
+						name:  "something",
+						value: `{{ .Escape "{{ .broken." }}`,
+					},
+				},
+			},
+			wantWriter: "NOO: {{ .broken.",
+			wantErr:    assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := Markdown{
+				ID:                tt.fields.ID,
+				ProjectPathPrefix: tt.fields.ProjectPathPrefix,
+				Name:              tt.fields.Name,
+				Path:              tt.fields.Path,
+				Header:            tt.fields.Header,
+				template:          tt.fields.template,
+				tagMap:            tt.fields.tagMap,
+			}
+			writer := &bytes.Buffer{}
+			err := t.Execute(writer)
+			if !tt.wantErr(t1, err, fmt.Sprintf("Execute(%v)", writer)) {
+				return
+			}
+			assert.Equalf(t1, tt.wantWriter, writer.String(), "Execute(%v)", writer)
 		})
 	}
 }
