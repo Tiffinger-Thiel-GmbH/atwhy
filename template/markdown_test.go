@@ -2,6 +2,7 @@ package template
 
 import (
 	"fmt"
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -154,6 +155,120 @@ server:
 			}
 
 			assert.Equalf(t, tt.want, got, "readTemplate(%v, %v, %v, %v)", tt.args.sysfs, tt.args.projectPathPrefix, tt.args.path, tt.args.tags)
+		})
+	}
+}
+
+func Test_data_Project(t *testing.T) {
+	type fields struct {
+		Tag              map[string]tag.Tag
+		Meta             MetaData
+		Now              string
+		projectPrefix    string
+		isPostprocessing bool
+	}
+	type args struct {
+		file string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
+	}{
+		{
+			name: "joins prefix with filename",
+			fields: fields{
+				projectPrefix: "prefix",
+			},
+			args: args{
+				file: "filename.md",
+			},
+			want: "prefix/filename.md",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := data{
+				Tag:              tt.fields.Tag,
+				Meta:             tt.fields.Meta,
+				Now:              tt.fields.Now,
+				projectPrefix:    tt.fields.projectPrefix,
+				isPostprocessing: tt.fields.isPostprocessing,
+			}
+			assert.Equalf(t, tt.want, d.Project(tt.args.file), "Project(%v)", tt.args.file)
+		})
+	}
+}
+
+func Test_data_Escape(t *testing.T) {
+	type fields struct {
+		Tag              map[string]tag.Tag
+		Meta             MetaData
+		Now              string
+		projectPrefix    string
+		isPostprocessing bool
+	}
+	type args struct {
+		value string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
+	}{
+		{
+			name: "no postprocessing",
+			fields: fields{
+				isPostprocessing: false,
+			},
+			args: args{
+				value: "{{ .SomeValue }}",
+			},
+			want: `{{"{{ .SomeValue }}"}}`,
+		},
+		{
+			name: "with \\\"",
+			fields: fields{
+				isPostprocessing: false,
+			},
+			args: args{
+				value: `{{ \".SomeValue\" }}`,
+			},
+			want: `{{"{{ \\\".SomeValue\\\" }}"}}`,
+		},
+		{
+			name: "with not escaped \"",
+			fields: fields{
+				isPostprocessing: false,
+			},
+			args: args{
+				value: `{{ ".SomeValue" }}`,
+			},
+			want: `{{"{{ \".SomeValue\" }}"}}`,
+		},
+		{
+			name: "with postprocessing",
+			fields: fields{
+				isPostprocessing: true,
+			},
+			args: args{
+				value: "{{ .SomeValue }}",
+			},
+			want: "{{ .SomeValue }}",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := data{
+				Tag:              tt.fields.Tag,
+				Meta:             tt.fields.Meta,
+				Now:              tt.fields.Now,
+				projectPrefix:    tt.fields.projectPrefix,
+				isPostprocessing: tt.fields.isPostprocessing,
+			}
+			assert.Equalf(t, tt.want, d.Escape(tt.args.value), "Escape(%v)", tt.args.value)
 		})
 	}
 }
