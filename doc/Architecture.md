@@ -9,20 +9,19 @@ your own implementations.
 The interfaces are:
 * `Loader` loads files from a given path.  
 * `loader.TagFinder` reads the file and returns all lines which are part of a found tag. It Does not process the raw lines.  
-* `TagProcessor` processes the raw data from the `TagFinder` and generates Tags out of them. It may also clean  
-comment-chars and spaces and combine some tags.  
-* TemplateLoader loads the templates from the `template` folder to pass them the generator.  
+* `TagFactories` convert the raw tags from the `TagFinder` and generates final Tags out of them.  
+* `TemplateLoader` loads the templates from the `template` folder to pass them the generator.  
 * `Generator` is responsible for postprocessing the tags and output the final file. which it just writes to the  
 passed `Writer`.  
   
 So the workflow is:  
 Loader -> TagFinder = tagList []tag.Raw tagList -> TagProcessor -> TemplateLoader -> Generator -> Writer  
-[core/atwhy.go:46]( core/atwhy.go )  
+[core/atwhy.go:44]( core/atwhy.go )  
 ```go
 type AtWhy struct {
 	Loader         Loader
 	Finder         loader.TagFinder
-	Processor      TagProcessor
+	TagFactories   []tag.Factory
 	Generator      Generator
 	TemplateLoader TemplateLoader
 

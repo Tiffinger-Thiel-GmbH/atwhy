@@ -7,7 +7,6 @@ import (
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/loader"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/processor"
 	mdTemplate "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 	"github.com/spf13/afero"
 )
@@ -34,9 +33,8 @@ type TemplateLoader interface {
 // @WHY atwhy_interfaces
 // * `Loader` loads files from a given path.
 // * `loader.TagFinder` reads the file and returns all lines which are part of a found tag. It Does not process the raw lines.
-// * `TagProcessor` processes the raw data from the `TagFinder` and generates Tags out of them. It may also clean
-// comment-chars and spaces and combine some tags.
-// * TemplateLoader loads the templates from the `template` folder to pass them the generator.
+// * `TagFactories` convert the raw tags from the `TagFinder` and generates final Tags out of them.
+// * `TemplateLoader` loads the templates from the `template` folder to pass them the generator.
 // * `Generator` is responsible for postprocessing the tags and output the final file. which it just writes to the
 // passed `Writer`.
 //
@@ -49,7 +47,7 @@ type TemplateLoader interface {
 type AtWhy struct {
 	Loader         Loader
 	Finder         loader.TagFinder
-	Processor      TagProcessor
+	TagFactories   []tag.Factory
 	Generator      Generator
 	TemplateLoader TemplateLoader
 
@@ -72,12 +70,10 @@ func New(gen Generator, projectPath string, projectPathPrefix string, templateFo
 			FS:             filesystem,
 			FileExtensions: extensions,
 		},
-		Processor: processor.Processor{
-			TagFactories: []tag.Factory{
-				tag.Doc,
-				tag.Code,
-				tag.ProjectLink,
-			},
+		TagFactories: []tag.Factory{
+			tag.Doc,
+			tag.Code,
+			tag.ProjectLink,
 		},
 		Generator: gen,
 		TemplateLoader: mdTemplate.Loader{
@@ -103,12 +99,25 @@ func (a *AtWhy) Load() ([]mdTemplate.Markdown, error) {
 		return nil, err
 	}
 
-	processedTags, err := a.Processor.Process(tags)
-	if err != nil {
-		return nil, err
+	var processed []tag.Tag
+
+	for i := range tags {
+		t := tags[i]
+
+		for _, factory := range a.TagFactories {
+			newTag, err := factory(t)
+			if err != nil {
+				return nil, err
+			}
+			if newTag == nil {
+				continue
+			}
+
+			processed = append(processed, newTag)
+		}
 	}
 
-	return a.TemplateLoader.Load(processedTags)
+	return a.TemplateLoader.Load(processed)
 }
 
 func (a *AtWhy) Generate(template mdTemplate.Markdown, writer io.Writer) error {
