@@ -24,7 +24,7 @@ jobs:
           make lint
 
       - name: Run
-        run: ./atwhy
+        run: go run .
 
       - name: Generate coverage report
         run: |
