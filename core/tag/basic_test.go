@@ -305,3 +305,15 @@ func TestCode(t *testing.T) {
 		})
 	}
 }
+
+func TestBasic(t *testing.T) {
+	b := Basic{
+		tagType:     TypeCode,
+		value:       "a value",
+		placeholder: "a_placeholder",
+	}
+
+	assert.Equal(t, b.tagType, b.Type())
+	assert.Equal(t, b.value, b.String())
+	assert.Equal(t, b.placeholder, b.Placeholder())
+}

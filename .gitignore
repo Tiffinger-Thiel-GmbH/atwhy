@@ -7,3 +7,4 @@ tools/install-dir
 *.tar.gz
 !README.md
 !/doc/**
+coverage.txt

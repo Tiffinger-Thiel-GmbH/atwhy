@@ -1,11 +1,12 @@
 package finder
 
 import (
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
+	"github.com/stretchr/testify/assert"
 )
 
 var testCommentConfig = map[string]CommentConfig{
@@ -190,6 +191,23 @@ asd
 `,
 				},
 			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "escaped @WHY",
+			fields: fields{
+				CommentConfig: testCommentConfig,
+			},
+			args: args{
+				filename: "file.go",
+				reader: strings.NewReader(`This is some fil
+// \@WHY LINK my_link_tag
+// Some text
+
+// \@WHY LINK another_link_tag
+`),
+			},
+			want:    nil,
 			wantErr: assert.NoError,
 		},
 	}

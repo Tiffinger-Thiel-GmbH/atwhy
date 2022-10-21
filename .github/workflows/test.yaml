@@ -29,7 +29,7 @@ jobs:
       - name: Generate coverage report
         run: |
           go generate
-          go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
+          go test ./... -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v3

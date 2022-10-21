@@ -6,3 +6,4 @@
 tools/install-dir
 *.tar.gz
 /templates
+coverage.txt

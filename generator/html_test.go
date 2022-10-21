@@ -1,8 +1,9 @@
 package generator
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHTML_Ext(t *testing.T) {
@@ -10,4 +11,10 @@ func TestHTML_Ext(t *testing.T) {
 		h := HTML{}
 		assert.Equal(t, ".html", h.Ext())
 	})
+}
+
+func TestHTML_Generate(t *testing.T) {
+	// Currently not easily testable
+	// And also we do not want to test Goldmark.
+	t.Skip()
 }
