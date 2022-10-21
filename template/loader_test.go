@@ -4,10 +4,11 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/spf13/afero"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/spf13/afero"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/stretchr/testify/assert"

@@ -16,19 +16,19 @@ The idea of athwy was born during a company-hackathon and since then evolved to 
 preview version.
 
 __Although most things are in a stable state, there may be small breaking changes until
-awhy reaches v1.0.0.__
+atwhy reaches v1.0.0.__
 
 ## Example
 
 As __atwhy__ itself uses __atwhy__, you can just 
-* look at the [templates](templates) folder of this project.
+* look at the [templates](/templates) folder of this project.
 * and search for `@WHY` in the whole project.
 
 ## Installation
 
 You have several options to install atwhy:
 * Just use docker to run a minimal image (It is multi-arch so it works on x64 and arm):  
-  `docker run --rm -i -p 4444:4444 -v $PWD:/project ghcr.io/tiffinger-thiel-gmbh/atwhy atwhy`  
+  `docker run --rm -i -p 4444:4444 -u $UID:$GID -v $PWD:/project ghcr.io/tiffinger-thiel-gmbh/atwhy atwhy`  
   You may add an alias to your shell for this.
 * [Install Go](https://go.dev/dl/) and run `go install github.com/Tiffinger-Thiel-GmbH/atwhy@latest`.  
   You may need to restart after installing Go to have the PATH setup correctly.
@@ -60,7 +60,7 @@ For more information run `atwhy serve --help`
 
 ### Templates
 
-The templates are by default inside the [templates](templates) folder of your project.  
+The templates are by default inside the [templates](/templates) folder of your project.  
 Each template results in one .md file.
 So if you have the file `templates/README.tpl.md` it will be generated to `README.md`.
 If you have the file `templates/doc/Usage.tpl.md` it will be generated to `doc/Usage.md`.
@@ -68,10 +68,11 @@ If you have the file `templates/doc/Usage.tpl.md` it will be generated to `doc/U
 The templates should be markdown files with a yaml header for metadata.  
   
 You can access a tag called `@WHY example_tag` using  
- ```text  
- # Example  
- {{ .Tag.example_tag }}  
- ```  
+  
+	```text  
+	# Example  
+	/{{ .Tag.example_tag }}  
+	```  
   
 Note: This uses the Go templating engine.  
 Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
@@ -130,15 +131,15 @@ There are also some special tags:
 The placeholder_names must follow these rules:  
 First char: only a-z (lowercase)  
 Rest:  
- * only a-z (lowercase)  
- * `-`  
- * `_`  
- * 0-9  
+  - only a-z (lowercase)  
+  - `-`  
+  - `_`  
+  - 0-9  
   
 Examles:  
- * any_tag_name  
- * supertag  
- * super-tag
+  - any_tag_name  
+  - supertag  
+  - super-tag
 
 The tags are terminated by
 
@@ -206,5 +207,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __17 May 22 20:32 +0200__
+This README was last updated on: __21 Oct 22 17:10 +0200__
 

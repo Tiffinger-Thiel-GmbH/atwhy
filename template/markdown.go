@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -72,10 +71,11 @@ type ServerData struct {
 // The templates should be markdown files with a yaml header for metadata.
 //
 // You can access a tag called `\@WHY example_tag` using
-//  ```text
-//  # Example
-//  {{ .Project "{{ .Tag.example_tag }}" }}
-//  ```
+//
+//	```text
+//	# Example
+//	{{ .Project "{{ .Tag.example_tag }}" }}
+//	```
 //
 // Note: This uses the Go templating engine.
 // Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
@@ -97,7 +97,7 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 	}
 	defer file.Close()
 
-	tplData, err := ioutil.ReadAll(file)
+	tplData, err := io.ReadAll(file)
 	if err != nil {
 		return Markdown{}, err
 	}

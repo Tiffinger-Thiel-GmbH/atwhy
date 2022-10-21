@@ -2,11 +2,12 @@ package finder
 
 import (
 	"bufio"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"io"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 )
 
 type CommentConfig struct {
@@ -155,7 +156,7 @@ func (f *Finder) Find(filename string, reader io.Reader) ([]tag.Raw, error) {
 }
 
 // findComment and sets the struct-variables
-//  currentCommentLine, currentLineIsLineComment, currentBlockIndex, currentlyInBlockComment
+// currentCommentLine, currentLineIsLineComment, currentBlockIndex, currentlyInBlockComment
 // accordingly.
 func (f *Finder) findComment(cfg CommentConfig, line string) {
 	defer func() {
@@ -215,24 +216,25 @@ func (f *Finder) findComment(cfg CommentConfig, line string) {
 
 // anyTagRegex matches all tags include a possible \ which is then checked as it escapes the tag.
 // Matches @ or \@ with any following postfix:
-//  DOC any_name
-//  DOC CODE any_name
-//  DOC CODE_END
-//  DOC LINK any_name
+//
+//	DOC any_name
+//	DOC CODE any_name
+//	DOC CODE_END
+//	DOC LINK any_name
 //
 // @WHY readme_tags_rules
 // The placeholder_names must follow these rules:
 // First char: only a-z (lowercase)
 // Rest:
-//  * only a-z (lowercase)
-//  * `-`
-//  * `_`
-//  * 0-9
+//   - only a-z (lowercase)
+//   - `-`
+//   - `_`
+//   - 0-9
 //
 // Examles:
-//  * any_tag_name
-//  * supertag
-//  * super-tag
+//   - any_tag_name
+//   - supertag
+//   - super-tag
 var anyTagRegex = regexp.MustCompile(`([\\]?)@WHY( ([A-Z_]+))?( ([a-z]+[a-z-_0-9]*))?`)
 
 // findTag using the anyTagRegex.
