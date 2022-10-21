@@ -30,7 +30,7 @@ func (b Basic) Placeholder() string {
 
 func textFactory(input Raw, isMarkdown bool) Basic {
 	// First remove windows line endings.
-	input.Value = strings.ReplaceAll(input.Value, "\r\n", "\r")
+	input.Value = strings.ReplaceAll(input.Value, "\r\n", "\n")
 
 	// Remove first line.
 	splitted := strings.SplitN(input.Value, "\n", 2)
