@@ -26,9 +26,9 @@ atwhy reaches v1.0.0.__
 
 ## Example
 
-As __atwhy__ itself uses __atwhy__, you can just 
+As __atwhy__ itself uses __atwhy__ very extensively, you can just
 * look at the [templates]({{ .Project "templates" }}) folder of this project.
-* and search for `@WHY` in the whole project.
+* and [search for `@WHY`](https://github.com/Tiffinger-Thiel-GmbH/atwhy/search?q=%5C%40WHY&type=) in the whole project.
 
 ## Installation
 

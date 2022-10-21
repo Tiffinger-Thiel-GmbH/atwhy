@@ -20,9 +20,9 @@ atwhy reaches v1.0.0.__
 
 ## Example
 
-As __atwhy__ itself uses __atwhy__, you can just 
+As __atwhy__ itself uses __atwhy__ very extensively, you can just
 * look at the [templates](/templates) folder of this project.
-* and search for `@WHY` in the whole project.
+* and [search for `@WHY`](https://github.com/Tiffinger-Thiel-GmbH/atwhy/search?q=%5C%40WHY&type=) in the whole project.
 
 ## Installation
 
@@ -207,5 +207,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __21 Oct 22 17:10 +0200__
+This README was last updated on: __21 Oct 22 22:37 +0200__
 

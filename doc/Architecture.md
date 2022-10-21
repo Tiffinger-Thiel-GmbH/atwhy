@@ -16,7 +16,7 @@ passed `Writer`.
   
 So the workflow is:  
 Loader -> TagFinder = tagList []tag.Raw tagList -> TagProcessor -> TemplateLoader -> Generator -> Writer  
-[core/atwhy.go:44]( /core/atwhy.go )  
+[core/atwhy.go:44](/core/atwhy.go)  
 ```go
 type AtWhy struct {
 	Loader         Loader

@@ -114,3 +114,194 @@ func Test_textFactory(t *testing.T) {
 		})
 	}
 }
+
+func TestProjectLink(t *testing.T) {
+	type args struct {
+		input Raw
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Tag
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "a simple link",
+			args: args{
+				input: Raw{
+					Type:        TypeLink,
+					Placeholder: "a_placeholder",
+					Filename:    "file.txt",
+					Line:        5,
+				},
+			},
+			want: Basic{
+				tagType:     TypeLink,
+				placeholder: "a_placeholder",
+				value:       `[file.txt:5]({{ .Project "file.txt" }})`,
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "not a TypeLink - should return nil, nil",
+			args: args{
+				input: Raw{
+					Type:        TypeCode,
+					Placeholder: "a_placeholder",
+					Filename:    "file.txt",
+					Line:        5,
+				},
+			},
+			want:    nil,
+			wantErr: assert.NoError,
+		},
+		{
+			name: `" should be escaped`,
+			args: args{
+				input: Raw{
+					Type:        TypeLink,
+					Placeholder: "a_placeholder",
+					Filename:    `fi"le.txt`,
+					Line:        5,
+				},
+			},
+			want: Basic{
+				tagType:     TypeLink,
+				placeholder: "a_placeholder",
+				value:       `[fi"le.txt:5]({{ .Project "fi\"le.txt" }})`,
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: `parentheses should be escaped`,
+			args: args{
+				input: Raw{
+					Type:        TypeLink,
+					Placeholder: "a_placeholder",
+					Filename:    `fi(l)[e].txt`,
+					Line:        5,
+				},
+			},
+			want: Basic{
+				tagType:     TypeLink,
+				placeholder: "a_placeholder",
+				value:       `[fi(l)\[e\].txt:5]({{ .Project "fi(l\)[e].txt" }})`,
+			},
+			wantErr: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ProjectLink(tt.args.input)
+
+			tt.wantErr(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestDoc(t *testing.T) {
+	type args struct {
+		input Raw
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Tag
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "simple text",
+			args: args{
+				input: Raw{
+					Type:        TypeDoc,
+					Placeholder: "a_placeholder",
+					Filename:    "file.txt",
+					Line:        5,
+					Value:       "header\nsome\ntext\n",
+				},
+			},
+			want: Basic{
+				tagType:     TypeDoc,
+				placeholder: "a_placeholder",
+				value:       "some  \ntext",
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "not a TypeDoc - should return nil, nil",
+			args: args{
+				input: Raw{
+					Type:        TypeCode,
+					Placeholder: "a_placeholder",
+					Filename:    "file.txt",
+					Line:        5,
+					Value:       "header\nsome\ntext\n",
+				},
+			},
+			want:    nil,
+			wantErr: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Doc(tt.args.input)
+
+			tt.wantErr(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestCode(t *testing.T) {
+	type args struct {
+		input Raw
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Tag
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "simple text",
+			args: args{
+				input: Raw{
+					Type:        TypeCode,
+					Placeholder: "a_placeholder",
+					Filename:    "file.txt",
+					Line:        5,
+					Value:       "header\nsome\ntext\n",
+				},
+			},
+			want: Basic{
+				tagType:     TypeCode,
+				placeholder: "a_placeholder",
+				value:       "```txt\nsome\ntext\n```\n",
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "not a TypeCode - should return nil, nil",
+			args: args{
+				input: Raw{
+					Type:        TypeDoc,
+					Placeholder: "a_placeholder",
+					Filename:    "file.txt",
+					Line:        5,
+					Value:       "header\nsome\ntext\n",
+				},
+			},
+			want:    nil,
+			wantErr: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Code(tt.args.input)
+
+			tt.wantErr(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
