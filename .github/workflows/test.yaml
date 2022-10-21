@@ -23,6 +23,9 @@ jobs:
           export PATH=$PATH:$(go env GOPATH)/bin
           make lint
 
+      - name: Run
+        run: ./atwhy
+
       - name: Generate coverage report
         run: |
           go generate
