@@ -38,8 +38,8 @@ func textFactory(input Raw, isMarkdown bool) Basic {
 
 	// If a body exists, use that. If not just leave the value empty.
 	if isMarkdown && len(splitted) >= 2 {
-		body = strings.ReplaceAll(splitted[1], "\n", "  \n")
-	} else if !isMarkdown {
+		body = strings.ReplaceAll(splitted[1], "\n", HardNewLine)
+	} else if !isMarkdown && len(splitted) >= 2 {
 		body = splitted[1]
 	}
 
