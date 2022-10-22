@@ -222,7 +222,7 @@ func (f *Finder) findComment(cfg CommentConfig, line string) {
 //	DOC CODE_END
 //	DOC LINK any_name
 //
-// @WHY readme_tags_rules
+// @WHY readme_tags-2_rules
 // The placeholder_names must follow these rules:
 // First char: only a-z (lowercase)
 // Rest:

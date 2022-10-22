@@ -40,23 +40,23 @@ You have several options to install atwhy:
 
 ### Command
 
-Usage:  
+__Generate__  
 Just run  
-```bash  
-atwhy --help  
-```  
 If nothing special is needed, just run the command without any arguments:  
 ```bash  
 atwhy  
 ```  
 It will use the default values and just work if a `templates` folder with some  
-templates (e.g. `templates/README.tpl.md`) exists.
-
+templates (e.g. `templates/README.tpl.md`) exists.  
+For more information run `atwhy --help`  
+  
+__Serve__  
 You can also serve the documentation on default host `localhost:4444` with:  
 ```bash  
 atwhy serve  
 ```  
-For more information run `atwhy serve --help`
+For more information run `atwhy serve --help`  
+
 
 ### Templates
 
@@ -73,16 +73,19 @@ You can access a tag called `@WHY example_tag` using
 	{{ .Tag.example_tag }}  
   
 Note: This uses the Go templating engine.  
-Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
-
+Therefore you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).  
 __Possible template values are:__  
 * Any Tag from the project: `{{ .Tag.example_tag }}`  
-* Current Datetime: `{{ .Now }}`  
+* Current date time: `{{ .Now }}`  
 * Metadata from the yaml header: `{{ .Meta.Title }}`  
 * Conversion of links to project-files (also in serve-mode): `{{ .Project "my/file/in/the/project.go" }}`  
   You need to use that if you want to generate links to actual files in your project.  
   This can also be used for pictures: `![aPicture]({{ .Project "path/to/the/picture.jpg" }})`  
-
+* Group of tags: `{{ .Group "tag_name_prefix" }}`  
+  This concatenates all tags starting with the given tag_name_prefix and the second parameter as separator.  
+  e.g. it matches `@WHY tag_name_prefix-0`, `@WHY tag_name_prefix-1`, ...  
+  These tags get sorted alphanumeric.  
+  
 __What if `{{` or `}}` is needed in the documentation?__  
 You can wrap them with `{{.Escape "..."}}`.  
 E.g.: `{{ .Escape "\"{{\"  and  \"}}\"" }}`  
@@ -90,7 +93,8 @@ Results in this markdown text: `"{{" and "}}"`
   
 __Note:__ You need to escape `"` with `\"`.  
   
-(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)
+(The official Go-Template way `{{ "{{ -- }}" }}` doesn't work in all cases with atwhy. `.Escape` works always.)  
+
 
 #### Header
 
@@ -124,8 +128,7 @@ You can use `@WHY <placeholder_name>` and then use that placeholder in any templ
 There are also some special tags:  
 * `@WHY LINK <placeholder_name>` can be used to just add a link to the file where the tag is in.  
 * `@WHY CODE <placeholder_name>` can be used to reference any code.  
-  It has to be closed by `@WHY CODE_END`
-
+  It has to be closed by `@WHY CODE_END`  
 The placeholder_names must follow these rules:  
 First char: only a-z (lowercase)  
 Rest:  
@@ -137,7 +140,8 @@ Rest:
 Examles:  
   - any_tag_name  
   - supertag  
-  - super-tag
+  - super-tag  
+
 
 The tags are terminated by
 
@@ -205,5 +209,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __22 Oct 22 15:20 +0200__
+This README was last updated on: __22 Oct 22 16:28 +0200__
 
