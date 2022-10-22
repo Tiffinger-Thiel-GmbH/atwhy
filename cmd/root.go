@@ -12,7 +12,6 @@ import (
 
 // @WHY readme_usage-0
 // __Generate__
-// Just run
 // If nothing special is needed, just run the command without any arguments:
 // ```bash
 // atwhy

@@ -41,7 +41,6 @@ You have several options to install atwhy:
 ### Command
 
 __Generate__  
-Just run  
 If nothing special is needed, just run the command without any arguments:  
 ```bash  
 atwhy  
@@ -209,5 +208,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __22 Oct 22 16:28 +0200__
+This README was last updated on: __22 Oct 22 17:50 +0200__
 
