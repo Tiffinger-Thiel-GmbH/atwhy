@@ -2,7 +2,7 @@ package tag
 
 type Type string
 
-// @WHY readme_tags
+// @WHY readme_tags-1
 // You can use `\@WHY <placeholder_name>` and then use that placeholder in any template.
 // There are also some special tags:
 // * `\@WHY LINK <placeholder_name>` can be used to just add a link to the file where the tag is in.

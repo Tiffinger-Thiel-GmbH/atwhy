@@ -46,9 +46,7 @@ You have several options to install atwhy:
 
 ### Command
 
-{{ .Tag.readme_usage }}
-
-{{ .Tag.readme_usage_serve }}
+{{ .Group "readme_usage" }}
 
 ### Templates
 
@@ -57,15 +55,11 @@ Each template results in one .md file.
 So if you have the file `templates/README.tpl.md` it will be generated to `README.md`.
 If you have the file `templates/doc/Usage.tpl.md` it will be generated to `doc/Usage.md`.
 
-{{ .Tag.doc_template }}
-
-{{ .Tag.doc_template_possible_tags }}  
-
-{{ .Tag.doc_template_escape_tag }}
+{{ .Group "doc_template_usage" }}
 
 #### Header
 
-{{ .Tag.doc_template_header_1 }}  
+{{ .Tag.doc_template_header }}  
 
 ### Tags
 
@@ -73,9 +67,7 @@ Tags are the heart of __atwhy__.
 Basically you can add them in any comment of any file and then reference them
 in any of the templates.
 
-{{ .Tag.readme_tags }}
-
-{{ .Tag.readme_tags_rules }}
+{{ .Group "readme_tags" }}
 
 The tags are terminated by
 

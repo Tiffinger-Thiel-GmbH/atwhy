@@ -5,13 +5,17 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 	"time"
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
+	"golang.org/x/text/collate"
+	"golang.org/x/text/language"
 	"gopkg.in/yaml.v2"
 
 	"github.com/spf13/afero"
@@ -23,7 +27,7 @@ var (
 	ErrMissingBody = errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
 )
 
-// @WHY doc_template_header_1
+// @WHY doc_template_header
 // Each template may have a yaml Header.
 // Example with all possible fields:
 // ```markdown
@@ -67,7 +71,7 @@ type ServerData struct {
 
 // Markdown
 //
-// @WHY doc_template
+// @WHY doc_template_usage
 // The templates should be markdown files with a yaml header for metadata.
 //
 // You can access a tag called `\@WHY example_tag` using
@@ -78,7 +82,7 @@ type ServerData struct {
 //	}}
 //
 // Note: This uses the Go templating engine.
-// Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
+// Therefore you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
 type Markdown struct {
 	ID                string
 	ProjectPathPrefix string
@@ -173,7 +177,8 @@ func (d data) Project(file string) string {
 // The default Go-Template way {{"{{   }}"}} works only in the
 // tags and not in the templates due to the preprocessing.
 //
-// @WHY doc_template_escape_tag
+// @WHY doc_template_usage-2_escape_tag
+//
 // __What if `{{"{{"}}` or `{{"}}"}}` is needed in the documentation?__
 // You can wrap them with `{{ .Escape "{{.Escape \"...\"}}" }}`.
 // E.g.: `{{ .Escape "{{ .Escape \"\\\"{{\\\"  and  \\\"}}\\\"\" }}" }}`
@@ -191,17 +196,47 @@ func (d data) Escape(value string) string {
 	return value
 }
 
+// Group finds all tags starting with the given prefix,
+// sorts them alphanumerically and then concatenates them
+// using hard-newlines.
+func (d data) Group(prefix string) string {
+	// Get all tags with that prefix.
+	var tagGroup []tag.Tag
+	for currentTagKey, currentTag := range d.Tag {
+		if strings.HasPrefix(currentTagKey, prefix) {
+			tagGroup = append(tagGroup, currentTag)
+		}
+	}
+
+	col := collate.New(language.Make("en-US"), collate.Numeric)
+
+	sort.Slice(tagGroup, func(i, j int) bool {
+		return col.CompareString(tagGroup[i].Placeholder(), tagGroup[j].Placeholder()) == -1
+	})
+
+	var result string
+	for _, currentTag := range tagGroup {
+		result += currentTag.String() + "  \n"
+	}
+
+	return result
+}
+
 // Execute the template
 func (t Markdown) Execute(writer io.Writer) error {
 
-	// @WHY doc_template_possible_tags
+	// @WHY doc_template_usage-1_possible_tags
 	// __Possible template values are:__
 	// * Any Tag from the project: `{{"{{ .Tag.example_tag }}"}}`
-	// * Current Datetime: `{{"{{ .Now }}"}}`
+	// * Current date time: `{{"{{ .Now }}"}}`
 	// * Metadata from the yaml header: `{{"{{ .Meta.Title }}"}}`
 	// * Conversion of links to project-files (also in serve-mode): `{{"{{ .Project \"my/file/in/the/project.go\" }}"}}`
 	//   You need to use that if you want to generate links to actual files in your project.
 	//   This can also be used for pictures: `{{ .Escape "![aPicture]({{ .Project \"path/to/the/picture.jpg\" }})" }}`
+	// * Group of tags: `{{"{{ .Group \"tag_name_prefix\" }}"}}`
+	//   This concatenates all tags starting with the given tag_name_prefix and the second parameter as separator.
+	//   e.g. it matches `\@WHY tag_name_prefix-0`, `\@WHY tag_name_prefix-1`, ...
+	//   These tags get sorted alphanumeric.
 
 	d := data{
 		Tag:  t.tagMap,
@@ -219,6 +254,7 @@ func (t Markdown) Execute(writer io.Writer) error {
 		return err
 	}
 
+	fmt.Println(buf.String())
 	// And then execute the postprocessing template.
 	// E.g. it can process the {{ .Project }} even if the links are inside the tags.
 	postProcessTemplate, err := template.New("postProcessing.md").Parse(buf.String())

@@ -10,18 +10,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// @WHY readme_usage
-// Usage:
+// @WHY readme_usage-0
+// __Generate__
 // Just run
-// ```bash
-// atwhy --help
-// ```
 // If nothing special is needed, just run the command without any arguments:
 // ```bash
 // atwhy
 // ```
 // It will use the default values and just work if a `templates` folder with some
 // templates (e.g. `templates/README.tpl.md`) exists.
+// For more information run `atwhy --help`
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
