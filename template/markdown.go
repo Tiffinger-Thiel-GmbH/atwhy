@@ -196,6 +196,9 @@ func (d data) Escape(value string) string {
 	return value
 }
 
+// Group finds all tags starting with the given prefix,
+// sorts them alphanumerically and then concatenates them
+// using hard-newlines.
 func (d data) Group(prefix string) string {
 	// Get all tags with that prefix.
 	var tagGroup []tag.Tag
