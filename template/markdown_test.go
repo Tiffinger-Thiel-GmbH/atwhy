@@ -3,11 +3,12 @@ package template
 import (
 	"bytes"
 	"fmt"
+	"testing"
+	"text/template"
+
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"text/template"
 )
 
 func testFileFS(name string, data []byte) afero.Fs {
@@ -415,6 +416,110 @@ func TestMarkdown_Execute(t1 *testing.T) {
 				return
 			}
 			assert.Equalf(t1, tt.wantWriter, writer.String(), "Execute(%v)", writer)
+		})
+	}
+}
+
+func mustTag(t tag.Tag, err error) tag.Tag {
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
+func Test_data_Group(t *testing.T) {
+	type fields struct {
+		Tag              map[string]tag.Tag
+		Meta             MetaData
+		Now              string
+		projectPrefix    string
+		isPostprocessing bool
+	}
+	type args struct {
+		prefix string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
+	}{
+		{
+			name: "group some tags",
+			fields: fields{
+				Tag: map[string]tag.Tag{
+					"test-0": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "test-0",
+						Value:       "header\na test0",
+					})),
+					"noo-1": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "noo-1",
+						Value:       "header\na test-1",
+					})),
+					"test-1": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "test-1",
+						Value:       "header\na test1",
+					})),
+				},
+			},
+			args: args{"test"},
+			want: `a test0  
+a test1  
+`,
+		},
+		{
+			name: "the tags get sorted alphanumerical",
+			fields: fields{
+				Tag: map[string]tag.Tag{
+					"testa-1": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "testa-1",
+						Value:       "header\na-1",
+					})),
+					"testa-100": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "testa-100",
+						Value:       "header\na-100",
+					})),
+					"testa-111": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "testa-111",
+						Value:       "header\na-111",
+					})),
+					"testa-10": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "testa-10",
+						Value:       "header\na-10",
+					})),
+					"testb-0": mustTag(tag.Doc(tag.Raw{
+						Type:        tag.TypeDoc,
+						Placeholder: "testb-0",
+						Value:       "header\nb-0",
+					})),
+				},
+			},
+			args: args{"test"},
+			want: `a-1  
+a-10  
+a-100  
+a-111  
+b-0  
+`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := data{
+				Tag:              tt.fields.Tag,
+				Meta:             tt.fields.Meta,
+				Now:              tt.fields.Now,
+				projectPrefix:    tt.fields.projectPrefix,
+				isPostprocessing: tt.fields.isPostprocessing,
+			}
+			assert.Equal(t, tt.want, d.Group(tt.args.prefix))
 		})
 	}
 }
