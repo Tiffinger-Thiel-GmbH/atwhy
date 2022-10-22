@@ -8,3 +8,4 @@ tools/install-dir
 !README.md
 !/doc/**
 coverage.txt
+__debug_bin
