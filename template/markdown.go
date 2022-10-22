@@ -72,10 +72,10 @@ type ServerData struct {
 //
 // You can access a tag called `\@WHY example_tag` using
 //
-//	```text
 //	# Example
-//	{{ .Project "{{ .Tag.example_tag }}" }}
-//	```
+//	{{ .Escape
+//	"{{ .Tag.example_tag }}"
+//	}}
 //
 // Note: This uses the Go templating engine.
 // Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).

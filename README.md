@@ -69,10 +69,8 @@ The templates should be markdown files with a yaml header for metadata.
   
 You can access a tag called `@WHY example_tag` using  
   
-	```text  
 	# Example  
-	/{{ .Tag.example_tag }}  
-	```  
+	{{ .Tag.example_tag }}  
   
 Note: This uses the Go templating engine.  
 Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
@@ -207,5 +205,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __21 Oct 22 22:37 +0200__
+This README was last updated on: __22 Oct 22 15:20 +0200__
 
