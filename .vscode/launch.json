@@ -11,6 +11,14 @@
             "mode": "auto",
             "program": ".",
             "args": ["serve"]
+        },
+        {
+            "name": "Run",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": ".",
+            "args": []
         }
     ]
 }

@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -19,6 +18,10 @@ import (
 )
 
 const templateSuffix = ".tpl.md"
+
+var (
+	ErrMissingBody = errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
+)
 
 // @WHY doc_template_header_1
 // Each template may have a yaml Header.
@@ -68,10 +71,11 @@ type ServerData struct {
 // The templates should be markdown files with a yaml header for metadata.
 //
 // You can access a tag called `\@WHY example_tag` using
-//  ```text
-//  # Example
-//  {{ .Project "{{ .Tag.example_tag }}" }}
-//  ```
+//
+//	```text
+//	# Example
+//	{{ .Project "{{ .Tag.example_tag }}" }}
+//	```
 //
 // Note: This uses the Go templating engine.
 // Therefor you can use the [Go templating syntax](https://learn.hashicorp.com/tutorials/nomad/go-template-syntax?in=nomad/templates).
@@ -80,15 +84,10 @@ type Markdown struct {
 	ProjectPathPrefix string
 	Name              string
 	Path              string
-	Value             string
 	Header            Header
 
 	template *template.Template
 	tagMap   map[string]tag.Tag
-}
-
-func (t Markdown) TemplatePath() string {
-	return t.Path
 }
 
 func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags mappedTags) (Markdown, error) {
@@ -98,7 +97,7 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 	}
 	defer file.Close()
 
-	tplData, err := ioutil.ReadAll(file)
+	tplData, err := io.ReadAll(file)
 	if err != nil {
 		return Markdown{}, err
 	}
@@ -122,7 +121,7 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 				return Markdown{}, err
 			}
 		} else {
-			return Markdown{}, errors.New("if the first line is '---' you have to include a yaml header as described in the atwhy readme")
+			return Markdown{}, ErrMissingBody
 		}
 	} else {
 		body = string(tplData)
@@ -146,7 +145,6 @@ func readTemplate(sysfs afero.Fs, projectPathPrefix string, path string, tags ma
 		ProjectPathPrefix: projectPathPrefix,
 		Name:              strings.TrimSuffix(filepath.Base(path), templateSuffix),
 		Path:              filepath.Dir(path),
-		Value:             body,
 
 		Header:   header,
 		template: tpl,
@@ -207,7 +205,7 @@ func (t Markdown) Execute(writer io.Writer) error {
 
 	d := data{
 		Tag:  t.tagMap,
-		Now:  time.Now().Format(time.RFC822Z),
+		Now:  time.Now().Format(time.RFC822Z), // TODO: add this as function instead of as value to be able to pass any format.
 		Meta: t.Header.Meta,
 
 		projectPrefix: t.ProjectPathPrefix,

@@ -23,10 +23,10 @@ race: dep ## Run data race detector
 	@go test -race -short ${PKG_LIST}
 
 coverage: ## Generate global code coverage report
-	echo TODO: ./tools/coverage.sh; 
+	@go test ./... -coverprofile=coverage.txt -covermode=atomic
 
 coverhtml: ## Generate global code coverage report in HTML
-	echo TODO: ./tools/coverage.sh html;
+	echo TODO...
 
 dep: ## Get the dependencies
 	@go get -v -d ./...
@@ -44,6 +44,7 @@ endif
 	
 clean: ## Remove previous build
 	@go clean
+	@rm coverage.txt
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

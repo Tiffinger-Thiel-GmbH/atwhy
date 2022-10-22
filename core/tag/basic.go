@@ -30,7 +30,7 @@ func (b Basic) Placeholder() string {
 
 func textFactory(input Raw, isMarkdown bool) Basic {
 	// First remove windows line endings.
-	input.Value = strings.ReplaceAll(input.Value, "\r\n", "\r")
+	input.Value = strings.ReplaceAll(input.Value, "\r\n", "\n")
 
 	// Remove first line.
 	splitted := strings.SplitN(input.Value, "\n", 2)
@@ -38,8 +38,9 @@ func textFactory(input Raw, isMarkdown bool) Basic {
 
 	// If a body exists, use that. If not just leave the value empty.
 	if isMarkdown && len(splitted) >= 2 {
-		body = strings.ReplaceAll(splitted[1], "\n", "  \n")
-	} else if !isMarkdown {
+		// Inject hard newlines, as the linter in many languages strips away empty spaces.
+		body = strings.ReplaceAll(splitted[1], "\n", HardNewLine)
+	} else if !isMarkdown && len(splitted) >= 2 {
 		body = splitted[1]
 	}
 
@@ -56,11 +57,16 @@ func ProjectLink(input Raw) (Tag, error) {
 		return nil, nil
 	}
 
+	escapedProjectFile := strings.ReplaceAll(input.Filename, `"`, `\"`)
+	escapedProjectFile = strings.ReplaceAll(escapedProjectFile, `)`, `\)`)
+	escapedTitle := strings.ReplaceAll(input.Filename, "[", `\[`)
+	escapedTitle = strings.ReplaceAll(escapedTitle, "]", `\]`)
+
 	return Basic{
 		tagType:     input.Type,
 		placeholder: input.Placeholder,
 		// Insert the link-path as relative to be able to replace it in the final rendering based on the template path.
-		value: "[" + input.Filename + ":" + strconv.Itoa(input.Line) + `]( {{ .Project "` + input.Filename + `" }} )`,
+		value: "[" + escapedTitle + ":" + strconv.Itoa(input.Line) + `]({{ .Project "` + escapedProjectFile + `" }})`,
 	}, nil
 }
 
@@ -70,9 +76,6 @@ func Doc(input Raw) (Tag, error) {
 	}
 
 	newTag := textFactory(input, true)
-
-	// Inject hard newlines, as the linter in many languages strips away empty spaces.
-	newTag.value = strings.ReplaceAll(newTag.value, "\r", HardNewLine)
 
 	return newTag, nil
 }

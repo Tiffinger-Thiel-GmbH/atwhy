@@ -1,11 +1,12 @@
 package generator
 
 import (
+	"io"
+	"strings"
+
 	mdTemplate "github.com/Tiffinger-Thiel-GmbH/atwhy/template"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
-	"io"
-	"strings"
 )
 
 type HTML struct {

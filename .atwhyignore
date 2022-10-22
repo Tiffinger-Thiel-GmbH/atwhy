@@ -6,3 +6,5 @@
 tools/install-dir
 *.tar.gz
 /templates
+coverage.txt
+__debug_bin

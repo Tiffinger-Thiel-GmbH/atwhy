@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"errors"
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
-	"github.com/spf13/cobra"
+	"fmt"
 	"path/filepath"
 	"strings"
+
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
+	"github.com/spf13/cobra"
 )
 
 var defaultComments = []string{
@@ -23,7 +25,8 @@ var defaultComments = []string{
 	// @WHY CODE_END
 }
 
-var ErrInvalidCommentString = errors.New("comment configuration has to be like '{extList}:{lineComment},{blockStart},{blockEnd}' (see --help)")
+var ErrInvalidCommentString = errors.New("comment configuration has to be like '{extList}:{lineComment}[,{blockStart},{blockEnd}]' (see --help)")
+var ErrInvalidCommentStringMissingBlock = fmt.Errorf("either blockStart or blockEnd is missing - %w", ErrInvalidCommentString)
 
 // LoadCommonArgs loads everything which is common through the different modes.
 func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath string, extensions []string, commentConfig map[string]finder.CommentConfig, err error) {
@@ -53,7 +56,6 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 		return "", "", nil, nil, err
 	}
 
-	commentConfig = make(map[string]finder.CommentConfig)
 	if len(comments) == 0 {
 		comments = append(comments, "DEFAULT")
 	}
@@ -71,10 +73,21 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 
 	comments = extendedComments
 
+	commentConfig, err = generateCommentConfig(comments)
+	if err != nil {
+		return "", "", nil, nil, err
+	}
+
+	return templatesFolder, projectPath, extensions, commentConfig, nil
+}
+
+func generateCommentConfig(comments []string) (map[string]finder.CommentConfig, error) {
+	commentConfig := make(map[string]finder.CommentConfig)
+
 	for _, comment := range comments {
 		split := strings.SplitN(comment, ":", 2)
 		if len(split) != 2 {
-			return "", "", nil, nil, ErrInvalidCommentString
+			return nil, ErrInvalidCommentString
 		}
 
 		commaPlaceholder := string([]byte{1})
@@ -95,14 +108,35 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 				cfg.LineComment = append(commentConfig[ext].LineComment, cfgSplit[0])
 			}
 
-			if len(cfgSplit) >= 3 && cfgSplit[1] != "" && cfgSplit[2] != "" {
+			if len(cfgSplit) >= 3 {
+				if cfgSplit[1] == "" || cfgSplit[2] == "" {
+					return nil, ErrInvalidCommentStringMissingBlock
+				}
+
 				cfg.BlockStart = append(commentConfig[ext].BlockStart, cfgSplit[1])
 				cfg.BlockEnd = append(commentConfig[ext].BlockEnd, cfgSplit[2])
+			} else if len(cfgSplit) == 2 {
+				return nil, ErrInvalidCommentStringMissingBlock
 			}
 
-			commentConfig[ext] = cfg
+			// If no config was found, just don't add the cfg.
+			if len(cfg.LineComment) > 0 || len(cfg.BlockStart) > 0 {
+				// Replace back the commaPlaceholder
+				cfg.LineComment = replaceInSlice(cfg.LineComment, commaPlaceholder, ",")
+				cfg.BlockStart = replaceInSlice(cfg.BlockStart, commaPlaceholder, ",")
+				cfg.BlockEnd = replaceInSlice(cfg.BlockEnd, commaPlaceholder, ",")
+				commentConfig[ext] = cfg
+			}
 		}
 	}
 
-	return templatesFolder, projectPath, extensions, commentConfig, nil
+	return commentConfig, nil
+}
+
+func replaceInSlice(source []string, value string, replacement string) []string {
+	var result []string
+	for _, in := range source {
+		result = append(result, strings.ReplaceAll(in, value, replacement))
+	}
+	return result
 }

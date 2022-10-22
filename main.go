@@ -1,4 +1,4 @@
-//go:generate go run . --ext .go
+//go:generate go run .
 
 package main
 
