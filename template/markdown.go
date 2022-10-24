@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"io"
 	"path/filepath"
 	"sort"
@@ -168,7 +167,7 @@ type data struct {
 }
 
 func (d data) Project(file string) string {
-	return filepath.Join(d.projectPrefix, file)
+	return filepath.ToSlash(filepath.Join(d.projectPrefix, file))
 }
 
 // Escape provides escaping of {{ and }} which works in the
@@ -254,7 +253,6 @@ func (t Markdown) Execute(writer io.Writer) error {
 		return err
 	}
 
-	fmt.Println(buf.String())
 	// And then execute the postprocessing template.
 	// E.g. it can process the {{ .Project }} even if the links are inside the tags.
 	postProcessTemplate, err := template.New("postProcessing.md").Parse(buf.String())
