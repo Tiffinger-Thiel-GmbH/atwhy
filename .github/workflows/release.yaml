@@ -44,9 +44,13 @@ jobs:
         run: |
           GOOS=windows GOARCH=amd64 make dist
           zip atwhy-windows_amd64.zip atwhy.exe
+      - name: Build and pack for Windows arm64
+        run: |
+          GOOS=windows GOARCH=arm64 make dist
+          zip atwhy-windows_arm64.zip atwhy.exe
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+        run: echo "name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -55,12 +59,13 @@ jobs:
           prerelease: false
           title: "atwhy ${{ steps.get_version.outputs.VERSION }}"
           files: |
-            atwhy-linux-amd64.tar.gz
-            atwhy-linux-armv7.tar.gz
-            atwhy-linux-arm64.tar.gz
-            atwhy-macos-amd64.tar.gz
-            atwhy-macos-arm64.tar.gz
-            atwhy-windows-amd64.zip
+            atwhy-linux_amd64.tar.gz
+            atwhy-linux_arm.tar.gz
+            atwhy-linux_arm64.tar.gz
+            atwhy-macos_amd64.tar.gz
+            atwhy-macos_arm64.tar.gz
+            atwhy-windows_amd64.zip
+            atwhy-windows_arm64.zip
             
   ghr_push:
     name: Publish docker image
