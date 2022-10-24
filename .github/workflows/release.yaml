@@ -8,10 +8,10 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.18
+      - name: Set up Go 1.19
         uses: actions/setup-go@v1
         with:
-          go-version: 1.18
+          go-version: 1.19
         id: go
 
       - name: Check out code
@@ -50,7 +50,7 @@ jobs:
           zip atwhy-windows_arm64.zip atwhy.exe
       - name: Get the version
         id: get_version
-        run: echo "name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
