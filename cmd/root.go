@@ -8,7 +8,6 @@ import (
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/core"
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/generator"
 	"github.com/spf13/afero"
-	"github.com/spf13/pflag"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
