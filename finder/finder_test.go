@@ -210,6 +210,21 @@ asd
 			want:    nil,
 			wantErr: assert.NoError,
 		},
+		{
+			name: "invalid @WHY",
+			fields: fields{
+				CommentConfig: testCommentConfig,
+			},
+			args: args{
+				filename: "file.go",
+				reader: strings.NewReader(`This is some fil
+// @WHY LINK my-tag
+// Some text
+`),
+			},
+			want:    nil,
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
