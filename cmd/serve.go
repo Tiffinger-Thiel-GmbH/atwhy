@@ -26,15 +26,18 @@ It serves it on the given host.
 (e.g. ":4444" to listen on all addresses, "localhost:4444" to listen only on localhost)
 Default is: "localhost:4444"`,
 	Run: func(cmd *cobra.Command, args []string) {
-		host := cmd.Flags().Arg(0)
-		if host == "" {
-			host = "localhost:4444"
-		}
-
-		templateFolder, projectPath, extensions, commentConfig, err := LoadCommonArgs(cmd)
+		templateFolder, projectPath, extensions, commentConfig, conf, err := LoadCommonArgs(cmd)
 		if err != nil {
 			cmd.PrintErrln(err)
 			return
+		}
+
+		host := cmd.Flags().Arg(0)
+		if host == "" {
+			host = conf.GetString("host")
+			if host == "" {
+				host = "localhost:4444"
+			}
 		}
 
 		var gen core.Generator = &generator.HTML{
