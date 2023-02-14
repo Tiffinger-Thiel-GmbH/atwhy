@@ -8,6 +8,7 @@ import (
 
 	"github.com/Tiffinger-Thiel-GmbH/atwhy/finder"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var defaultComments = []string{
@@ -29,32 +30,25 @@ var ErrInvalidCommentString = errors.New("comment configuration has to be like '
 var ErrInvalidCommentStringMissingBlock = fmt.Errorf("either blockStart or blockEnd is missing - %w", ErrInvalidCommentString)
 
 // LoadCommonArgs loads everything which is common through the different modes.
-func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath string, extensions []string, commentConfig map[string]finder.CommentConfig, err error) {
-	templatesFolder, err = cmd.Flags().GetString("templates-folder")
+func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath string, extensions []string, commentConfig map[string]finder.CommentConfig, conf *viper.Viper, err error) {
+	conf, err = initializeConfig(cmd)
 	if err != nil {
-		return "", "", nil, nil, err
+		cmd.PrintErrln(err)
+		return
 	}
 
-	projectPath, err = cmd.Flags().GetString("project")
-	if err != nil {
-		return "", "", nil, nil, err
-	}
+	templatesFolder = conf.GetString("templates-folder")
+
+	projectPath = conf.GetString("project")
 
 	// Make the path absolute.
 	projectPath, err = filepath.Abs(projectPath)
 	if err != nil {
-		return "", "", nil, nil, err
+		return "", "", nil, nil, conf, err
 	}
 
-	extensions, err = cmd.Flags().GetStringSlice("ext")
-	if err != nil {
-		return "", "", nil, nil, err
-	}
-
-	comments, err := cmd.Flags().GetStringArray("comment")
-	if err != nil {
-		return "", "", nil, nil, err
-	}
+	extensions = conf.GetStringSlice("ext")
+	comments := conf.GetStringSlice("comment")
 
 	if len(comments) == 0 {
 		comments = append(comments, "DEFAULT")
@@ -75,10 +69,10 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 
 	commentConfig, err = generateCommentConfig(comments)
 	if err != nil {
-		return "", "", nil, nil, err
+		return "", "", nil, nil, conf, err
 	}
 
-	return templatesFolder, projectPath, extensions, commentConfig, nil
+	return templatesFolder, projectPath, extensions, commentConfig, conf, nil
 }
 
 func generateCommentConfig(comments []string) (map[string]finder.CommentConfig, error) {
