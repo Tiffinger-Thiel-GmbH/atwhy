@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -41,7 +40,6 @@ Templates define how to combine the documentation annotations from all over the 
 
 		var gen core.Generator
 		generatorType := conf.GetString("generator")
-		fmt.Println(generatorType)
 		switch generatorType {
 		case "md":
 			gen = generator.Markdown{}

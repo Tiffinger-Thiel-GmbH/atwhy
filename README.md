@@ -38,6 +38,25 @@ You have several options to install atwhy:
 
 ## Usage
 
+### Config
+
+All CLI parameters can be configured in a config-file as well.  
+For in-depth explanations consult the **Command** section or use `atwhy --help`
+Example `atwhyrc.yaml`
+```yaml
+comment:
+  - DEFAULT # This is added by default if nothing is configured. You can omit it to avoid the default configuration.
+  - lol:# # Adds another file-type with the comment `#`
+ext: # Only search in files with the following file-endings (Default: empty -> all files get searched (if not in .atwhyignore))
+  - .go
+  - .ts
+  - .tsx
+generator: md # The generator to use (if not serving). (Default "md".)
+project: "src" # Use another working directory. (Default "" -> current working directory)
+templates-folder: templates # Location of the templates. (Default "templates".)
+host: localhost:1234 # The host to listen to in serve mode.
+```
+
 ### Command
 
 __Generate__  
@@ -205,5 +224,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __14 Feb 23 22:35 +0100__
+This README was last updated on: __15 Feb 23 00:52 +0100__
 

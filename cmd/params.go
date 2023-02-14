@@ -50,8 +50,6 @@ func LoadCommonArgs(cmd *cobra.Command) (templatesFolder string, projectPath str
 	extensions = conf.GetStringSlice("ext")
 	comments := conf.GetStringSlice("comment")
 
-	fmt.Println(comments)
-
 	if len(comments) == 0 {
 		comments = append(comments, "DEFAULT")
 	}
