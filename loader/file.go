@@ -1,10 +1,11 @@
 package loader
 
 import (
-	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 	"io"
 	"io/fs"
 	"strings"
+
+	"github.com/Tiffinger-Thiel-GmbH/atwhy/core/tag"
 
 	"github.com/aligator/nogo"
 	"github.com/spf13/afero"
@@ -24,9 +25,9 @@ func (fl File) Load(finder TagFinder) ([]tag.Raw, error) {
 
 	sysfs := afero.NewIOFS(fl.FS)
 
-	// @WHY readme.ignore
-	// If you want to ignore files, just add a `.atwhyignore` to the root of your project.
-	// It follows the syntax of a `.gitignore` and you may also add `.atwhyignore` files to subfolders.
+	// @WHY readme_ignore
+	// You can create a `.atwhyignore` file which just follows the `.gitignore` syntax.
+	// (If you find an inconsistency with the git-handling, please report it [here](https://github.com/aligator/NoGo/issues).)
 	n := nogo.New(nogo.DotGitRule)
 	if err := n.AddFromFS(sysfs, ".atwhyignore"); err != nil {
 		return nil, err

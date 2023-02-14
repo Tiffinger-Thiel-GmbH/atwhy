@@ -88,9 +88,7 @@ The following are the default, built-in rules:
 ### Ignore
 
 * You can pass something like `--ext ".go,.js,.ts"` to only process specific files.
-* You can create a `.atwhyignore` file which just follows the `.gitignore` syntax.  
-  (If you find an inconsistency with the git-handling, please report it 
-  [here](https://github.com/aligator/NoGo/issues).)
+* {{ .Tag.readme_ignore }}
 
 ## Distribute
 

@@ -2,6 +2,7 @@ package finder
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"path/filepath"
 	"regexp"
@@ -222,26 +223,35 @@ func (f *Finder) findComment(cfg CommentConfig, line string) {
 //	DOC CODE_END
 //	DOC LINK any_name
 //
-// @WHY readme_tags-2_rules
+// @WHY readme_tags2_rules
 // The placeholder_names must follow these rules:
 // First char: only a-z (lowercase)
 // Rest:
 //   - only a-z (lowercase)
-//   - `-`
 //   - `_`
 //   - 0-9
 //
 // Examles:
 //   - any_tag_name
 //   - supertag
-//   - super-tag
-var anyTagRegex = regexp.MustCompile(`([\\]?)@WHY( ([A-Z_]+))?( ([a-z]+[a-z-_0-9]*))?`)
+var anyTagRegex = regexp.MustCompile(`([\\]?)@WHY( ([A-Z_]+))?( ([a-z]+[a-z_0-9]*))? *$`)
+
+var anyAtWhyRegex = regexp.MustCompile(`([\\]?)@WHY`)
 
 // findTag using the anyTagRegex.
 // It already pre-fills the first comment line if a new one was found.
 func (f *Finder) findTag() *tag.Raw {
+	isAtWhy := anyAtWhyRegex.MatchString(f.currentCommentLine)
+	if !isAtWhy {
+		return nil
+	}
+
 	matches := anyTagRegex.FindAllStringSubmatch(f.currentCommentLine, 1)
 	if matches == nil {
+		if !strings.Contains(f.currentCommentLine, "\\@WHY") {
+			// Found \@WHY but it is not valid. Print a info for the user.
+			fmt.Printf("found a @WHY which doesn't match the required format:\n%v\n", f.currentCommentLine)
+		}
 		return nil
 	}
 

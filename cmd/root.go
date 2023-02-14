@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// @WHY readme_usage-0
+// @WHY readme_usage0
 // __Generate__
 // If nothing special is needed, just run the command without any arguments:
 // ```bash

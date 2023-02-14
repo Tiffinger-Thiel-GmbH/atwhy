@@ -176,7 +176,7 @@ func (d data) Project(file string) string {
 // The default Go-Template way {{"{{   }}"}} works only in the
 // tags and not in the templates due to the preprocessing.
 //
-// @WHY doc_template_usage-2_escape_tag
+// @WHY doc_template_usage2_escape_tag
 //
 // __What if `{{"{{"}}` or `{{"}}"}}` is needed in the documentation?__
 // You can wrap them with `{{ .Escape "{{.Escape \"...\"}}" }}`.
@@ -224,7 +224,7 @@ func (d data) Group(prefix string) string {
 // Execute the template
 func (t Markdown) Execute(writer io.Writer) error {
 
-	// @WHY doc_template_usage-1_possible_tags
+	// @WHY doc_template_usage1_possible_tags
 	// __Possible template values are:__
 	// * Any Tag from the project: `{{"{{ .Tag.example_tag }}"}}`
 	// * Current date time: `{{"{{ .Now }}"}}`
@@ -234,7 +234,7 @@ func (t Markdown) Execute(writer io.Writer) error {
 	//   This can also be used for pictures: `{{ .Escape "![aPicture]({{ .Project \"path/to/the/picture.jpg\" }})" }}`
 	// * Group of tags: `{{"{{ .Group \"tag_name_prefix\" }}"}}`
 	//   This concatenates all tags starting with the given tag_name_prefix and the second parameter as separator.
-	//   e.g. it matches `\@WHY tag_name_prefix-0`, `\@WHY tag_name_prefix-1`, ...
+	//   e.g. it matches `\@WHY tag_name_prefix0`, `\@WHY tag_name_prefix1`, ...
 	//   These tags get sorted alphanumeric.
 
 	d := data{

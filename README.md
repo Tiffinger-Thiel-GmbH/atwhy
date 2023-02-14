@@ -82,7 +82,7 @@ __Possible template values are:__
   This can also be used for pictures: `![aPicture]({{ .Project "path/to/the/picture.jpg" }})`  
 * Group of tags: `{{ .Group "tag_name_prefix" }}`  
   This concatenates all tags starting with the given tag_name_prefix and the second parameter as separator.  
-  e.g. it matches `@WHY tag_name_prefix-0`, `@WHY tag_name_prefix-1`, ...  
+  e.g. it matches `@WHY tag_name_prefix0`, `@WHY tag_name_prefix1`, ...  
   These tags get sorted alphanumeric.  
   
 __What if `{{` or `}}` is needed in the documentation?__  
@@ -132,14 +132,12 @@ The placeholder_names must follow these rules:
 First char: only a-z (lowercase)  
 Rest:  
   - only a-z (lowercase)  
-  - `-`  
   - `_`  
   - 0-9  
   
 Examles:  
   - any_tag_name  
   - supertag  
-  - super-tag  
 
 
 The tags are terminated by
@@ -194,8 +192,7 @@ The following are the default, built-in rules:
 
 * You can pass something like `--ext ".go,.js,.ts"` to only process specific files.
 * You can create a `.atwhyignore` file which just follows the `.gitignore` syntax.  
-  (If you find an inconsistency with the git-handling, please report it 
-  [here](https://github.com/aligator/NoGo/issues).)
+(If you find an inconsistency with the git-handling, please report it [here](https://github.com/aligator/NoGo/issues).)
 
 ## Distribute
 
@@ -208,5 +205,5 @@ The following are the default, built-in rules:
 Run `go build .`  
 
 ---
-This README was last updated on: __22 Oct 22 17:50 +0200__
+This README was last updated on: __14 Feb 23 22:35 +0100__
 

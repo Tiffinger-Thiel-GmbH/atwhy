@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// @WHY readme_usage-1_serve
+// @WHY readme_usage1_serve
 //
 // __Serve__
 // You can also serve the documentation on default host `localhost:4444` with:
