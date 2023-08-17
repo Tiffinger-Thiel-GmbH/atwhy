@@ -6,7 +6,7 @@ require (
 	github.com/aligator/nogo v0.3.1
 	github.com/spf13/afero v1.9.5
 	github.com/spf13/cobra v1.7.0
-	github.com/yuin/goldmark v1.5.5
+	github.com/yuin/goldmark v1.5.6
 	github.com/yuin/goldmark-highlighting v0.0.0-20210516132338-9216f9c5aa01
 	gopkg.in/yaml.v2 v2.4.0
 )
